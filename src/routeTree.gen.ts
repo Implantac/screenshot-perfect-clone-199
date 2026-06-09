@@ -13,6 +13,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
 import { Route as AppImoveisRouteImport } from './routes/_app.imoveis'
+import { Route as AppHoldingsRouteImport } from './routes/_app.holdings'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -33,13 +34,20 @@ const AppImoveisRoute = AppImoveisRouteImport.update({
   path: '/imoveis',
   getParentRoute: () => AppRoute,
 } as any)
+const AppHoldingsRoute = AppHoldingsRouteImport.update({
+  id: '/holdings',
+  path: '/holdings',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
   '/riscos': typeof AppRiscosRoute
 }
 export interface FileRoutesByTo {
+  '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
   '/riscos': typeof AppRiscosRoute
   '/': typeof AppIndexRoute
@@ -47,16 +55,23 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/_app/holdings': typeof AppHoldingsRoute
   '/_app/imoveis': typeof AppImoveisRoute
   '/_app/riscos': typeof AppRiscosRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/imoveis' | '/riscos'
+  fullPaths: '/' | '/holdings' | '/imoveis' | '/riscos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/imoveis' | '/riscos' | '/'
-  id: '__root__' | '/_app' | '/_app/imoveis' | '/_app/riscos' | '/_app/'
+  to: '/holdings' | '/imoveis' | '/riscos' | '/'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_app/holdings'
+    | '/_app/imoveis'
+    | '/_app/riscos'
+    | '/_app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -93,16 +108,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppImoveisRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/holdings': {
+      id: '/_app/holdings'
+      path: '/holdings'
+      fullPath: '/holdings'
+      preLoaderRoute: typeof AppHoldingsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppHoldingsRoute: typeof AppHoldingsRoute
   AppImoveisRoute: typeof AppImoveisRoute
   AppRiscosRoute: typeof AppRiscosRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppHoldingsRoute: AppHoldingsRoute,
   AppImoveisRoute: AppImoveisRoute,
   AppRiscosRoute: AppRiscosRoute,
   AppIndexRoute: AppIndexRoute,
