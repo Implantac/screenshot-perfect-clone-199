@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AppSaudeDocumentalRouteImport } from './routes/_app.saude-documental'
 import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
 import { Route as AppImoveisRouteImport } from './routes/_app.imoveis'
 import { Route as AppHoldingsRouteImport } from './routes/_app.holdings'
@@ -23,6 +24,11 @@ const AppRoute = AppRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSaudeDocumentalRoute = AppSaudeDocumentalRouteImport.update({
+  id: '/saude-documental',
+  path: '/saude-documental',
   getParentRoute: () => AppRoute,
 } as any)
 const AppRiscosRoute = AppRiscosRouteImport.update({
@@ -52,12 +58,14 @@ export interface FileRoutesByFullPath {
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
   '/riscos': typeof AppRiscosRoute
+  '/saude-documental': typeof AppSaudeDocumentalRoute
 }
 export interface FileRoutesByTo {
   '/family-office': typeof AppFamilyOfficeRoute
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
   '/riscos': typeof AppRiscosRoute
+  '/saude-documental': typeof AppSaudeDocumentalRoute
   '/': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -67,13 +75,26 @@ export interface FileRoutesById {
   '/_app/holdings': typeof AppHoldingsRoute
   '/_app/imoveis': typeof AppImoveisRoute
   '/_app/riscos': typeof AppRiscosRoute
+  '/_app/saude-documental': typeof AppSaudeDocumentalRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/family-office' | '/holdings' | '/imoveis' | '/riscos'
+  fullPaths:
+    | '/'
+    | '/family-office'
+    | '/holdings'
+    | '/imoveis'
+    | '/riscos'
+    | '/saude-documental'
   fileRoutesByTo: FileRoutesByTo
-  to: '/family-office' | '/holdings' | '/imoveis' | '/riscos' | '/'
+  to:
+    | '/family-office'
+    | '/holdings'
+    | '/imoveis'
+    | '/riscos'
+    | '/saude-documental'
+    | '/'
   id:
     | '__root__'
     | '/_app'
@@ -81,6 +102,7 @@ export interface FileRouteTypes {
     | '/_app/holdings'
     | '/_app/imoveis'
     | '/_app/riscos'
+    | '/_app/saude-documental'
     | '/_app/'
   fileRoutesById: FileRoutesById
 }
@@ -102,6 +124,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/saude-documental': {
+      id: '/_app/saude-documental'
+      path: '/saude-documental'
+      fullPath: '/saude-documental'
+      preLoaderRoute: typeof AppSaudeDocumentalRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/riscos': {
@@ -140,6 +169,7 @@ interface AppRouteChildren {
   AppHoldingsRoute: typeof AppHoldingsRoute
   AppImoveisRoute: typeof AppImoveisRoute
   AppRiscosRoute: typeof AppRiscosRoute
+  AppSaudeDocumentalRoute: typeof AppSaudeDocumentalRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -148,6 +178,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppHoldingsRoute: AppHoldingsRoute,
   AppImoveisRoute: AppImoveisRoute,
   AppRiscosRoute: AppRiscosRoute,
+  AppSaudeDocumentalRoute: AppSaudeDocumentalRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
@@ -159,3 +190,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
