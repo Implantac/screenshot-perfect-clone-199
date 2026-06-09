@@ -57,18 +57,24 @@ function DashboardExecutivo() {
             <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase">Centro de Comando</h2>
           </div>
           <p className="text-muted-foreground text-lg font-medium max-w-2xl leading-relaxed">
-            Monitoramento de <span className="text-foreground font-bold">Saúde Patrimonial</span>, Compliance e Inteligência Documental em tempo real.
+            Gestão estratégica de <span className="text-foreground font-bold">Patrimônio Familiar & Holdings</span> com inteligência preditiva.
           </p>
         </div>
         
-        <div className="flex items-center gap-4 bg-white/5 p-4 rounded-[2rem] border border-white/5 backdrop-blur-md">
-          <div className="text-right">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Compliance Score</p>
-            <p className="text-2xl font-black text-primary">96.8<span className="text-xs ml-1 opacity-50">%</span></p>
+        <div className="flex items-center gap-6">
+          <div className="flex flex-col items-end">
+             <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Patrimônio Líquido</p>
+             <p className="text-3xl font-black text-foreground">R$ 482.5<span className="text-xs ml-1 opacity-50">M</span></p>
           </div>
-          <div className="h-10 w-[1px] bg-white/10 mx-2" />
-          <div className="h-14 w-14 rounded-full border-4 border-primary/20 border-t-primary flex items-center justify-center relative">
-             <ShieldCheck className="h-6 w-6 text-primary" />
+          <div className="flex items-center gap-4 bg-white/5 p-4 rounded-[2rem] border border-white/5 backdrop-blur-md">
+            <div className="text-right">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Compliance Score</p>
+              <p className="text-2xl font-black text-primary">96.8<span className="text-xs ml-1 opacity-50">%</span></p>
+            </div>
+            <div className="h-10 w-[1px] bg-white/10 mx-2" />
+            <div className="h-14 w-14 rounded-full border-4 border-primary/20 border-t-primary flex items-center justify-center relative">
+               <ShieldCheck className="h-6 w-6 text-primary" />
+            </div>
           </div>
         </div>
       </div>
