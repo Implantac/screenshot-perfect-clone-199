@@ -11,7 +11,11 @@ import {
   Settings, 
   User,
   Landmark,
-  FileSearch
+  FileSearch,
+  Sparkles,
+  DollarSign,
+  Scale,
+  Map as MapIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -20,7 +24,8 @@ const navGroups = [
   {
     label: "Inteligência",
     items: [
-      { label: "Dashboard Executivo", icon: LayoutDashboard, to: "/" },
+      { label: "Painel Executivo", icon: LayoutDashboard, to: "/" },
+      { label: "Sala de Guerra IA", icon: Sparkles, to: "/inteligencia" },
       { label: "Central de Riscos", icon: ShieldAlert, to: "/riscos" },
       { label: "Saúde Documental", icon: FileSearch, to: "/saude-documental" },
     ]
@@ -29,6 +34,7 @@ const navGroups = [
     label: "Ativos",
     items: [
       { label: "Imóveis (Urbano/Rural)", icon: Building2, to: "/imoveis" },
+      { label: "Cartografia Global", icon: MapIcon, to: "/mapa" },
       { label: "Holdings & Societário", icon: Boxes, to: "/holdings" },
       { label: "Family Office", icon: Users2, to: "/family-office" },
     ]
@@ -36,9 +42,11 @@ const navGroups = [
   {
     label: "Governança",
     items: [
+      { label: "Financeiro & Fiscal", icon: DollarSign, to: "/financeiro" },
+      { label: "Assessoria Jurídica", icon: Scale, to: "/legal" },
       { label: "Compliance Score", icon: ShieldCheck, to: "/compliance" },
-      { label: "Gestão de Fornecedores", icon: Handshake, to: "/fornecedores" },
       { label: "Regularização", icon: Landmark, to: "/regularizacao" },
+      { label: "Gestão de Fornecedores", icon: Handshake, to: "/fornecedores" },
     ]
   }
 ];
