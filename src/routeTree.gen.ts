@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AppImplantacaoRouteImport } from './routes/_app.implantacao'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -21,24 +22,32 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppImplantacaoRoute = AppImplantacaoRouteImport.update({
+  id: '/implantacao',
+  path: '/implantacao',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/implantacao': typeof AppImplantacaoRoute
 }
 export interface FileRoutesByTo {
+  '/implantacao': typeof AppImplantacaoRoute
   '/': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/_app/implantacao': typeof AppImplantacaoRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/implantacao'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/_app' | '/_app/'
+  to: '/implantacao' | '/'
+  id: '__root__' | '/_app' | '/_app/implantacao' | '/_app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -61,14 +70,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/implantacao': {
+      id: '/_app/implantacao'
+      path: '/implantacao'
+      fullPath: '/implantacao'
+      preLoaderRoute: typeof AppImplantacaoRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppImplantacaoRoute: typeof AppImplantacaoRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppImplantacaoRoute: AppImplantacaoRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
