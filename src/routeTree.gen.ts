@@ -14,6 +14,7 @@ import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
 import { Route as AppImoveisRouteImport } from './routes/_app.imoveis'
 import { Route as AppHoldingsRouteImport } from './routes/_app.holdings'
+import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -39,14 +40,21 @@ const AppHoldingsRoute = AppHoldingsRouteImport.update({
   path: '/holdings',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFamilyOfficeRoute = AppFamilyOfficeRouteImport.update({
+  id: '/family-office',
+  path: '/family-office',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/family-office': typeof AppFamilyOfficeRoute
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
   '/riscos': typeof AppRiscosRoute
 }
 export interface FileRoutesByTo {
+  '/family-office': typeof AppFamilyOfficeRoute
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
   '/riscos': typeof AppRiscosRoute
@@ -55,6 +63,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/_app/family-office': typeof AppFamilyOfficeRoute
   '/_app/holdings': typeof AppHoldingsRoute
   '/_app/imoveis': typeof AppImoveisRoute
   '/_app/riscos': typeof AppRiscosRoute
@@ -62,12 +71,13 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/holdings' | '/imoveis' | '/riscos'
+  fullPaths: '/' | '/family-office' | '/holdings' | '/imoveis' | '/riscos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/holdings' | '/imoveis' | '/riscos' | '/'
+  to: '/family-office' | '/holdings' | '/imoveis' | '/riscos' | '/'
   id:
     | '__root__'
     | '/_app'
+    | '/_app/family-office'
     | '/_app/holdings'
     | '/_app/imoveis'
     | '/_app/riscos'
@@ -115,10 +125,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHoldingsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/family-office': {
+      id: '/_app/family-office'
+      path: '/family-office'
+      fullPath: '/family-office'
+      preLoaderRoute: typeof AppFamilyOfficeRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppFamilyOfficeRoute: typeof AppFamilyOfficeRoute
   AppHoldingsRoute: typeof AppHoldingsRoute
   AppImoveisRoute: typeof AppImoveisRoute
   AppRiscosRoute: typeof AppRiscosRoute
@@ -126,6 +144,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppFamilyOfficeRoute: AppFamilyOfficeRoute,
   AppHoldingsRoute: AppHoldingsRoute,
   AppImoveisRoute: AppImoveisRoute,
   AppRiscosRoute: AppRiscosRoute,
