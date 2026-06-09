@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
+import { Route as AppImoveisRouteImport } from './routes/_app.imoveis'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -27,27 +28,35 @@ const AppRiscosRoute = AppRiscosRouteImport.update({
   path: '/riscos',
   getParentRoute: () => AppRoute,
 } as any)
+const AppImoveisRoute = AppImoveisRouteImport.update({
+  id: '/imoveis',
+  path: '/imoveis',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/imoveis': typeof AppImoveisRoute
   '/riscos': typeof AppRiscosRoute
 }
 export interface FileRoutesByTo {
+  '/imoveis': typeof AppImoveisRoute
   '/riscos': typeof AppRiscosRoute
   '/': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/_app/imoveis': typeof AppImoveisRoute
   '/_app/riscos': typeof AppRiscosRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/riscos'
+  fullPaths: '/' | '/imoveis' | '/riscos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/riscos' | '/'
-  id: '__root__' | '/_app' | '/_app/riscos' | '/_app/'
+  to: '/imoveis' | '/riscos' | '/'
+  id: '__root__' | '/_app' | '/_app/imoveis' | '/_app/riscos' | '/_app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,15 +86,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRiscosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/imoveis': {
+      id: '/_app/imoveis'
+      path: '/imoveis'
+      fullPath: '/imoveis'
+      preLoaderRoute: typeof AppImoveisRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppImoveisRoute: typeof AppImoveisRoute
   AppRiscosRoute: typeof AppRiscosRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppImoveisRoute: AppImoveisRoute,
   AppRiscosRoute: AppRiscosRoute,
   AppIndexRoute: AppIndexRoute,
 }
