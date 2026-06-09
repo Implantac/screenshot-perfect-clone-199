@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppSuporteRouteImport } from './routes/_app.suporte'
+import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
 import { Route as AppImplantacaoRouteImport } from './routes/_app.implantacao'
 import { Route as AppDesenvolvimentoRouteImport } from './routes/_app.desenvolvimento'
 
@@ -29,6 +30,11 @@ const AppSuporteRoute = AppSuporteRouteImport.update({
   path: '/suporte',
   getParentRoute: () => AppRoute,
 } as any)
+const AppRiscosRoute = AppRiscosRouteImport.update({
+  id: '/riscos',
+  path: '/riscos',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppImplantacaoRoute = AppImplantacaoRouteImport.update({
   id: '/implantacao',
   path: '/implantacao',
@@ -44,11 +50,13 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/desenvolvimento': typeof AppDesenvolvimentoRoute
   '/implantacao': typeof AppImplantacaoRoute
+  '/riscos': typeof AppRiscosRoute
   '/suporte': typeof AppSuporteRoute
 }
 export interface FileRoutesByTo {
   '/desenvolvimento': typeof AppDesenvolvimentoRoute
   '/implantacao': typeof AppImplantacaoRoute
+  '/riscos': typeof AppRiscosRoute
   '/suporte': typeof AppSuporteRoute
   '/': typeof AppIndexRoute
 }
@@ -57,19 +65,21 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/_app/desenvolvimento': typeof AppDesenvolvimentoRoute
   '/_app/implantacao': typeof AppImplantacaoRoute
+  '/_app/riscos': typeof AppRiscosRoute
   '/_app/suporte': typeof AppSuporteRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/desenvolvimento' | '/implantacao' | '/suporte'
+  fullPaths: '/' | '/desenvolvimento' | '/implantacao' | '/riscos' | '/suporte'
   fileRoutesByTo: FileRoutesByTo
-  to: '/desenvolvimento' | '/implantacao' | '/suporte' | '/'
+  to: '/desenvolvimento' | '/implantacao' | '/riscos' | '/suporte' | '/'
   id:
     | '__root__'
     | '/_app'
     | '/_app/desenvolvimento'
     | '/_app/implantacao'
+    | '/_app/riscos'
     | '/_app/suporte'
     | '/_app/'
   fileRoutesById: FileRoutesById
@@ -101,6 +111,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSuporteRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/riscos': {
+      id: '/_app/riscos'
+      path: '/riscos'
+      fullPath: '/riscos'
+      preLoaderRoute: typeof AppRiscosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/implantacao': {
       id: '/_app/implantacao'
       path: '/implantacao'
@@ -121,6 +138,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppDesenvolvimentoRoute: typeof AppDesenvolvimentoRoute
   AppImplantacaoRoute: typeof AppImplantacaoRoute
+  AppRiscosRoute: typeof AppRiscosRoute
   AppSuporteRoute: typeof AppSuporteRoute
   AppIndexRoute: typeof AppIndexRoute
 }
@@ -128,6 +146,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppDesenvolvimentoRoute: AppDesenvolvimentoRoute,
   AppImplantacaoRoute: AppImplantacaoRoute,
+  AppRiscosRoute: AppRiscosRoute,
   AppSuporteRoute: AppSuporteRoute,
   AppIndexRoute: AppIndexRoute,
 }
