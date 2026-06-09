@@ -13,6 +13,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppSuporteRouteImport } from './routes/_app.suporte'
 import { Route as AppImplantacaoRouteImport } from './routes/_app.implantacao'
+import { Route as AppDesenvolvimentoRouteImport } from './routes/_app.desenvolvimento'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -33,13 +34,20 @@ const AppImplantacaoRoute = AppImplantacaoRouteImport.update({
   path: '/implantacao',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDesenvolvimentoRoute = AppDesenvolvimentoRouteImport.update({
+  id: '/desenvolvimento',
+  path: '/desenvolvimento',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/desenvolvimento': typeof AppDesenvolvimentoRoute
   '/implantacao': typeof AppImplantacaoRoute
   '/suporte': typeof AppSuporteRoute
 }
 export interface FileRoutesByTo {
+  '/desenvolvimento': typeof AppDesenvolvimentoRoute
   '/implantacao': typeof AppImplantacaoRoute
   '/suporte': typeof AppSuporteRoute
   '/': typeof AppIndexRoute
@@ -47,16 +55,23 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/_app/desenvolvimento': typeof AppDesenvolvimentoRoute
   '/_app/implantacao': typeof AppImplantacaoRoute
   '/_app/suporte': typeof AppSuporteRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/implantacao' | '/suporte'
+  fullPaths: '/' | '/desenvolvimento' | '/implantacao' | '/suporte'
   fileRoutesByTo: FileRoutesByTo
-  to: '/implantacao' | '/suporte' | '/'
-  id: '__root__' | '/_app' | '/_app/implantacao' | '/_app/suporte' | '/_app/'
+  to: '/desenvolvimento' | '/implantacao' | '/suporte' | '/'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_app/desenvolvimento'
+    | '/_app/implantacao'
+    | '/_app/suporte'
+    | '/_app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -93,16 +108,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppImplantacaoRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/desenvolvimento': {
+      id: '/_app/desenvolvimento'
+      path: '/desenvolvimento'
+      fullPath: '/desenvolvimento'
+      preLoaderRoute: typeof AppDesenvolvimentoRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppDesenvolvimentoRoute: typeof AppDesenvolvimentoRoute
   AppImplantacaoRoute: typeof AppImplantacaoRoute
   AppSuporteRoute: typeof AppSuporteRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppDesenvolvimentoRoute: AppDesenvolvimentoRoute,
   AppImplantacaoRoute: AppImplantacaoRoute,
   AppSuporteRoute: AppSuporteRoute,
   AppIndexRoute: AppIndexRoute,
