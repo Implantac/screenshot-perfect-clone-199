@@ -21,7 +21,7 @@ function SettingsPage() {
           <SettingsTab icon={Bell} label="Notificações" />
           <SettingsTab icon={Palette} label="Personalização" />
           <SettingsTab icon={Globe} label="Integrações" />
-          <SettingsTab icon={HelpCircle} label="Suporte & Ajuda" />
+          <SettingsTab icon={HelpCircle} label="Manual da Plataforma" />
         </div>
 
         <div className="lg:col-span-3 glass-card rounded-[2.5rem] p-10 space-y-10">
