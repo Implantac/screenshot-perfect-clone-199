@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AppSuporteRouteImport } from './routes/_app.suporte'
 import { Route as AppImplantacaoRouteImport } from './routes/_app.implantacao'
 
 const AppRoute = AppRouteImport.update({
@@ -22,6 +23,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSuporteRoute = AppSuporteRouteImport.update({
+  id: '/suporte',
+  path: '/suporte',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppImplantacaoRoute = AppImplantacaoRouteImport.update({
   id: '/implantacao',
   path: '/implantacao',
@@ -31,23 +37,26 @@ const AppImplantacaoRoute = AppImplantacaoRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/implantacao': typeof AppImplantacaoRoute
+  '/suporte': typeof AppSuporteRoute
 }
 export interface FileRoutesByTo {
   '/implantacao': typeof AppImplantacaoRoute
+  '/suporte': typeof AppSuporteRoute
   '/': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/_app/implantacao': typeof AppImplantacaoRoute
+  '/_app/suporte': typeof AppSuporteRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/implantacao'
+  fullPaths: '/' | '/implantacao' | '/suporte'
   fileRoutesByTo: FileRoutesByTo
-  to: '/implantacao' | '/'
-  id: '__root__' | '/_app' | '/_app/implantacao' | '/_app/'
+  to: '/implantacao' | '/suporte' | '/'
+  id: '__root__' | '/_app' | '/_app/implantacao' | '/_app/suporte' | '/_app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -70,6 +79,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/suporte': {
+      id: '/_app/suporte'
+      path: '/suporte'
+      fullPath: '/suporte'
+      preLoaderRoute: typeof AppSuporteRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/implantacao': {
       id: '/_app/implantacao'
       path: '/implantacao'
@@ -82,11 +98,13 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppImplantacaoRoute: typeof AppImplantacaoRoute
+  AppSuporteRoute: typeof AppSuporteRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppImplantacaoRoute: AppImplantacaoRoute,
+  AppSuporteRoute: AppSuporteRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
