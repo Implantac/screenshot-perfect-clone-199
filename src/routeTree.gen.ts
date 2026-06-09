@@ -13,6 +13,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppSaudeDocumentalRouteImport } from './routes/_app.saude-documental'
 import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
+import { Route as AppRegularizacaoRouteImport } from './routes/_app.regularizacao'
 import { Route as AppImoveisRouteImport } from './routes/_app.imoveis'
 import { Route as AppHoldingsRouteImport } from './routes/_app.holdings'
 import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
@@ -35,6 +36,11 @@ const AppSaudeDocumentalRoute = AppSaudeDocumentalRouteImport.update({
 const AppRiscosRoute = AppRiscosRouteImport.update({
   id: '/riscos',
   path: '/riscos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRegularizacaoRoute = AppRegularizacaoRouteImport.update({
+  id: '/regularizacao',
+  path: '/regularizacao',
   getParentRoute: () => AppRoute,
 } as any)
 const AppImoveisRoute = AppImoveisRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/family-office': typeof AppFamilyOfficeRoute
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
+  '/regularizacao': typeof AppRegularizacaoRoute
   '/riscos': typeof AppRiscosRoute
   '/saude-documental': typeof AppSaudeDocumentalRoute
 }
@@ -72,6 +79,7 @@ export interface FileRoutesByTo {
   '/family-office': typeof AppFamilyOfficeRoute
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
+  '/regularizacao': typeof AppRegularizacaoRoute
   '/riscos': typeof AppRiscosRoute
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/': typeof AppIndexRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   '/_app/family-office': typeof AppFamilyOfficeRoute
   '/_app/holdings': typeof AppHoldingsRoute
   '/_app/imoveis': typeof AppImoveisRoute
+  '/_app/regularizacao': typeof AppRegularizacaoRoute
   '/_app/riscos': typeof AppRiscosRoute
   '/_app/saude-documental': typeof AppSaudeDocumentalRoute
   '/_app/': typeof AppIndexRoute
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
     | '/family-office'
     | '/holdings'
     | '/imoveis'
+    | '/regularizacao'
     | '/riscos'
     | '/saude-documental'
   fileRoutesByTo: FileRoutesByTo
@@ -103,6 +113,7 @@ export interface FileRouteTypes {
     | '/family-office'
     | '/holdings'
     | '/imoveis'
+    | '/regularizacao'
     | '/riscos'
     | '/saude-documental'
     | '/'
@@ -113,6 +124,7 @@ export interface FileRouteTypes {
     | '/_app/family-office'
     | '/_app/holdings'
     | '/_app/imoveis'
+    | '/_app/regularizacao'
     | '/_app/riscos'
     | '/_app/saude-documental'
     | '/_app/'
@@ -152,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRiscosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/regularizacao': {
+      id: '/_app/regularizacao'
+      path: '/regularizacao'
+      fullPath: '/regularizacao'
+      preLoaderRoute: typeof AppRegularizacaoRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/imoveis': {
       id: '/_app/imoveis'
       path: '/imoveis'
@@ -188,6 +207,7 @@ interface AppRouteChildren {
   AppFamilyOfficeRoute: typeof AppFamilyOfficeRoute
   AppHoldingsRoute: typeof AppHoldingsRoute
   AppImoveisRoute: typeof AppImoveisRoute
+  AppRegularizacaoRoute: typeof AppRegularizacaoRoute
   AppRiscosRoute: typeof AppRiscosRoute
   AppSaudeDocumentalRoute: typeof AppSaudeDocumentalRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -198,6 +218,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppFamilyOfficeRoute: AppFamilyOfficeRoute,
   AppHoldingsRoute: AppHoldingsRoute,
   AppImoveisRoute: AppImoveisRoute,
+  AppRegularizacaoRoute: AppRegularizacaoRoute,
   AppRiscosRoute: AppRiscosRoute,
   AppSaudeDocumentalRoute: AppSaudeDocumentalRoute,
   AppIndexRoute: AppIndexRoute,
