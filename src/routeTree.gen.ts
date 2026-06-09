@@ -11,7 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AppSaudeDocumentalRouteImport } from './routes/_app.saude-documental'
 import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
+import { Route as AppRegularizacaoRouteImport } from './routes/_app.regularizacao'
+import { Route as AppImoveisRouteImport } from './routes/_app.imoveis'
+import { Route as AppHoldingsRouteImport } from './routes/_app.holdings'
+import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
+import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
+import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -22,32 +29,117 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSaudeDocumentalRoute = AppSaudeDocumentalRouteImport.update({
+  id: '/saude-documental',
+  path: '/saude-documental',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppRiscosRoute = AppRiscosRouteImport.update({
   id: '/riscos',
   path: '/riscos',
   getParentRoute: () => AppRoute,
 } as any)
+const AppRegularizacaoRoute = AppRegularizacaoRouteImport.update({
+  id: '/regularizacao',
+  path: '/regularizacao',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppImoveisRoute = AppImoveisRouteImport.update({
+  id: '/imoveis',
+  path: '/imoveis',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppHoldingsRoute = AppHoldingsRouteImport.update({
+  id: '/holdings',
+  path: '/holdings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFornecedoresRoute = AppFornecedoresRouteImport.update({
+  id: '/fornecedores',
+  path: '/fornecedores',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFamilyOfficeRoute = AppFamilyOfficeRouteImport.update({
+  id: '/family-office',
+  path: '/family-office',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppComplianceRoute = AppComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/compliance': typeof AppComplianceRoute
+  '/family-office': typeof AppFamilyOfficeRoute
+  '/fornecedores': typeof AppFornecedoresRoute
+  '/holdings': typeof AppHoldingsRoute
+  '/imoveis': typeof AppImoveisRoute
+  '/regularizacao': typeof AppRegularizacaoRoute
   '/riscos': typeof AppRiscosRoute
+  '/saude-documental': typeof AppSaudeDocumentalRoute
 }
 export interface FileRoutesByTo {
+  '/compliance': typeof AppComplianceRoute
+  '/family-office': typeof AppFamilyOfficeRoute
+  '/fornecedores': typeof AppFornecedoresRoute
+  '/holdings': typeof AppHoldingsRoute
+  '/imoveis': typeof AppImoveisRoute
+  '/regularizacao': typeof AppRegularizacaoRoute
   '/riscos': typeof AppRiscosRoute
+  '/saude-documental': typeof AppSaudeDocumentalRoute
   '/': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/_app/compliance': typeof AppComplianceRoute
+  '/_app/family-office': typeof AppFamilyOfficeRoute
+  '/_app/fornecedores': typeof AppFornecedoresRoute
+  '/_app/holdings': typeof AppHoldingsRoute
+  '/_app/imoveis': typeof AppImoveisRoute
+  '/_app/regularizacao': typeof AppRegularizacaoRoute
   '/_app/riscos': typeof AppRiscosRoute
+  '/_app/saude-documental': typeof AppSaudeDocumentalRoute
   '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/riscos'
+  fullPaths:
+    | '/'
+    | '/compliance'
+    | '/family-office'
+    | '/fornecedores'
+    | '/holdings'
+    | '/imoveis'
+    | '/regularizacao'
+    | '/riscos'
+    | '/saude-documental'
   fileRoutesByTo: FileRoutesByTo
-  to: '/riscos' | '/'
-  id: '__root__' | '/_app' | '/_app/riscos' | '/_app/'
+  to:
+    | '/compliance'
+    | '/family-office'
+    | '/fornecedores'
+    | '/holdings'
+    | '/imoveis'
+    | '/regularizacao'
+    | '/riscos'
+    | '/saude-documental'
+    | '/'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_app/compliance'
+    | '/_app/family-office'
+    | '/_app/fornecedores'
+    | '/_app/holdings'
+    | '/_app/imoveis'
+    | '/_app/regularizacao'
+    | '/_app/riscos'
+    | '/_app/saude-documental'
+    | '/_app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -70,6 +162,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/saude-documental': {
+      id: '/_app/saude-documental'
+      path: '/saude-documental'
+      fullPath: '/saude-documental'
+      preLoaderRoute: typeof AppSaudeDocumentalRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/riscos': {
       id: '/_app/riscos'
       path: '/riscos'
@@ -77,16 +176,72 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRiscosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/regularizacao': {
+      id: '/_app/regularizacao'
+      path: '/regularizacao'
+      fullPath: '/regularizacao'
+      preLoaderRoute: typeof AppRegularizacaoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/imoveis': {
+      id: '/_app/imoveis'
+      path: '/imoveis'
+      fullPath: '/imoveis'
+      preLoaderRoute: typeof AppImoveisRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/holdings': {
+      id: '/_app/holdings'
+      path: '/holdings'
+      fullPath: '/holdings'
+      preLoaderRoute: typeof AppHoldingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/fornecedores': {
+      id: '/_app/fornecedores'
+      path: '/fornecedores'
+      fullPath: '/fornecedores'
+      preLoaderRoute: typeof AppFornecedoresRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/family-office': {
+      id: '/_app/family-office'
+      path: '/family-office'
+      fullPath: '/family-office'
+      preLoaderRoute: typeof AppFamilyOfficeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/compliance': {
+      id: '/_app/compliance'
+      path: '/compliance'
+      fullPath: '/compliance'
+      preLoaderRoute: typeof AppComplianceRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppComplianceRoute: typeof AppComplianceRoute
+  AppFamilyOfficeRoute: typeof AppFamilyOfficeRoute
+  AppFornecedoresRoute: typeof AppFornecedoresRoute
+  AppHoldingsRoute: typeof AppHoldingsRoute
+  AppImoveisRoute: typeof AppImoveisRoute
+  AppRegularizacaoRoute: typeof AppRegularizacaoRoute
   AppRiscosRoute: typeof AppRiscosRoute
+  AppSaudeDocumentalRoute: typeof AppSaudeDocumentalRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppComplianceRoute: AppComplianceRoute,
+  AppFamilyOfficeRoute: AppFamilyOfficeRoute,
+  AppFornecedoresRoute: AppFornecedoresRoute,
+  AppHoldingsRoute: AppHoldingsRoute,
+  AppImoveisRoute: AppImoveisRoute,
+  AppRegularizacaoRoute: AppRegularizacaoRoute,
   AppRiscosRoute: AppRiscosRoute,
+  AppSaudeDocumentalRoute: AppSaudeDocumentalRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
@@ -98,13 +253,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

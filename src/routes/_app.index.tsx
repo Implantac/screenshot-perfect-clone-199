@@ -7,9 +7,11 @@ import {
   ArrowUpRight, 
   Building2, 
   Boxes,
-  Briefcase,
   FileText,
-  MapPin
+  PieChart,
+  TrendingUp,
+  FileSearch,
+  Users2
 } from "lucide-react";
 import { 
   AreaChart, 
@@ -18,163 +20,214 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer 
+  ResponsiveContainer,
+  BarChart,
+  Bar
 } from "recharts";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
-const data = [
-  { name: "Jan", saude: 82 },
-  { name: "Fev", saude: 85 },
-  { name: "Mar", saude: 84 },
-  { name: "Abr", saude: 88 },
-  { name: "Mai", saude: 92 },
-  { name: "Jun", saude: 96 },
+const complianceData = [
+  { name: "Jan", score: 82 },
+  { name: "Fev", score: 85 },
+  { name: "Mar", score: 84 },
+  { name: "Abr", score: 88 },
+  { name: "Mai", score: 92 },
+  { name: "Jun", score: 96 },
+];
+
+const propertyDist = [
+  { name: "Urbano", value: 45, color: "var(--color-primary)" },
+  { name: "Rural", value: 35, color: "#10b981" },
+  { name: "Societário", value: 20, color: "#3b82f6" },
 ];
 
 export const Route = createFileRoute("/_app/")({
-  component: Dashboard,
+  component: DashboardExecutivo,
 });
 
-function Dashboard() {
+function DashboardExecutivo() {
   return (
-    <div className="space-y-10 animate-in fade-in duration-700">
-      {/* Top Banner - Intelligence Summary */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-3">
-            Cérebro Patrimonial 
-            <span className="text-primary h-2 w-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--color-primary)]" />
-          </h2>
-          <p className="text-muted-foreground mt-2 max-w-xl text-lg leading-relaxed">
-            Gestão consolidada de holdings e ativos. Identificamos <span className="text-primary font-bold">5 inconsistências documentais</span> críticas que requerem sua atenção.
+    <div className="space-y-10 animate-in fade-in duration-1000">
+      {/* Executive Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-1 bg-primary rounded-full shadow-[0_0_12px_var(--color-primary)]" />
+            <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase">Centro de Comando</h2>
+          </div>
+          <p className="text-muted-foreground text-lg font-medium max-w-2xl leading-relaxed">
+            Monitoramento de <span className="text-foreground font-bold">Saúde Patrimonial</span>, Compliance e Inteligência Documental em tempo real.
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-2xl">
-            <p className="text-[10px] uppercase tracking-wider text-emerald-500 font-bold">Saúde Global</p>
-            <p className="text-lg font-bold text-emerald-500 leading-none mt-1">Ótima</p>
+        
+        <div className="flex items-center gap-4 bg-white/5 p-4 rounded-[2rem] border border-white/5 backdrop-blur-md">
+          <div className="text-right">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Compliance Score</p>
+            <p className="text-2xl font-black text-primary">96.8<span className="text-xs ml-1 opacity-50">%</span></p>
           </div>
-          <button className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all">
-            Relatório Executivo
-          </button>
+          <div className="h-10 w-[1px] bg-white/10 mx-2" />
+          <div className="h-14 w-14 rounded-full border-4 border-primary/20 border-t-primary flex items-center justify-center relative">
+             <ShieldCheck className="h-6 w-6 text-primary" />
+          </div>
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard 
-          title="Patrimônio Consolidado" 
-          value="R$ 248.4M" 
-          trend="+4.2%" 
-          icon={Landmark} 
-          color="text-primary"
-          description="Avaliação em tempo real"
+      {/* Primary Health Indicators */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <HealthCard 
+          title="Saúde Patrimonial" 
+          value="R$ 482.5M" 
+          status="Em Alta"
+          color="primary"
+          icon={Landmark}
+          description="Valor total de ativos sob gestão"
+          metrics={[{ label: "Urbanos", val: "65%" }, { label: "Rurais", val: "35%" }]}
         />
-        <StatCard 
-          title="Compliance Score" 
-          value="96.8" 
-          trend="+1.4%" 
-          icon={ShieldCheck} 
-          color="text-emerald-500"
-          description="Risco regulatório baixo"
+        <HealthCard 
+          title="Saúde Documental" 
+          value="94.2%" 
+          status="Regular"
+          color="blue"
+          icon={FileSearch}
+          description="Validação de matrículas e ônus"
+          metrics={[{ label: "Validados", val: "1.2k" }, { label: "Pendentes", val: "42" }]}
         />
-        <StatCard 
-          title="Ativos Gerenciados" 
-          value="32" 
-          trend="+2" 
-          icon={Building2} 
-          color="text-blue-500"
-          description="Imóveis, Rural e Sociedades"
-        />
-        <StatCard 
-          title="Alertas de Risco" 
-          value="05" 
-          trend="-2" 
-          icon={AlertTriangle} 
-          color="text-orange-500"
-          description="Pendências documentais"
+        <HealthCard 
+          title="Saúde Regulatória" 
+          value="98.1%" 
+          status="Excelente"
+          color="emerald"
+          icon={ShieldCheck}
+          description="Certidões e licenças ativas"
+          metrics={[{ label: "SLA", val: "100%" }, { label: "Alertas", val: "0" }]}
         />
       </div>
 
-      {/* Main Analysis Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Performance Chart */}
-        <div className="lg:col-span-2 glass-card rounded-[2rem] p-8 space-y-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+      {/* Intelligence & Analytics Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Compliance Evolution */}
+        <div className="lg:col-span-8 glass-card rounded-[2.5rem] p-10 space-y-8 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+             <TrendingUp className="h-32 w-32" />
+          </div>
+          
+          <div className="flex items-center justify-between relative z-10">
+            <div>
+              <h3 className="text-xl font-bold flex items-center gap-3">
                 <Activity className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold">Performance de Governança</h3>
-                <p className="text-xs text-muted-foreground">Evolução do índice de saúde patrimonial</p>
-              </div>
+                Inteligência de Compliance
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1">Evolução histórica do score de governança</p>
             </div>
             <div className="flex gap-2">
-              <button className="px-3 py-1.5 rounded-lg bg-white/5 text-[10px] font-bold uppercase hover:bg-white/10 transition-all">Exportar</button>
+              <button className="px-4 py-2 bg-white/5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all">Relatório IA</button>
             </div>
           </div>
           
-          <div className="h-[320px] w-full">
+          <div className="h-[350px] w-full relative z-10">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data}>
+              <AreaChart data={complianceData}>
                 <defs>
-                  <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.3}/>
+                  <linearGradient id="compGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.4}/>
                     <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="oklch(1 0 0 / 0.05)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="oklch(1 0 0 / 0.03)" vertical={false} />
                 <XAxis 
                   dataKey="name" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fill: "var(--color-muted-foreground)", fontSize: 12, fontWeight: 500 }} 
+                  tick={{ fill: "var(--color-muted-foreground)", fontSize: 11, fontWeight: 700 }} 
                 />
-                <YAxis hide />
+                <YAxis hide domain={[0, 100]} />
                 <Tooltip 
+                  cursor={{ stroke: 'var(--color-primary)', strokeWidth: 1 }}
                   contentStyle={{ 
-                    backgroundColor: "oklch(0.12 0.015 250)", 
+                    backgroundColor: "oklch(0.1 0.015 250)", 
                     border: "1px solid oklch(1 0 0 / 0.1)",
-                    borderRadius: "16px",
-                    boxShadow: "0 10px 30px -10px rgba(0,0,0,0.5)"
+                    borderRadius: "20px",
+                    boxShadow: "0 20px 40px -10px rgba(0,0,0,0.6)"
                   }} 
                 />
                 <Area 
                   type="monotone" 
-                  dataKey="saude" 
+                  dataKey="score" 
                   stroke="var(--color-primary)" 
                   fillOpacity={1} 
-                  fill="url(#chartGradient)" 
+                  fill="url(#compGradient)" 
                   strokeWidth={4}
+                  animationDuration={2000}
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Critical Alerts & Quick Info */}
-        <div className="space-y-6">
-          <div className="glass-card rounded-[2rem] p-8 space-y-6">
-            <h3 className="text-lg font-bold">Mapa Societário</h3>
+        {/* Risk Summary */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="glass-card rounded-[2.5rem] p-8 space-y-6">
+            <h3 className="text-lg font-bold flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-orange-500" />
+              Pendências Críticas
+            </h3>
             <div className="space-y-4">
-              <HoldingItem name="Holding Alencar S.A." participation="Main" value="R$ 142M" />
-              <HoldingItem name="Agroinvest Participações" participation="75%" value="R$ 54M" />
-              <HoldingItem name="SP Urbanismo Ltda" participation="100%" value="R$ 52M" />
+              <RiskItem 
+                title="Vencimento Certidão SEFAZ" 
+                target="Holding Alencar" 
+                days="2d" 
+                severity="critical"
+              />
+              <RiskItem 
+                title="Inconsistência de Matrícula" 
+                target="Fazenda Santa Fé" 
+                days="IA" 
+                severity="high"
+              />
+              <RiskItem 
+                title="Renovação AVCB" 
+                target="Sede Empresarial" 
+                days="12d" 
+                severity="medium"
+              />
+              <RiskItem 
+                title="Procuração Vencida" 
+                target="Sócio Majoritário" 
+                days="Exp" 
+                severity="critical"
+              />
             </div>
-            <button className="w-full py-4 bg-white/5 border border-white/5 rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all">
-              Ver Organograma
+            <button className="w-full py-4 bg-white/5 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all">
+              Central de Riscos
             </button>
           </div>
 
-          <div className="glass-card rounded-[2rem] p-8 space-y-6">
-            <h3 className="text-lg font-bold">Saúde por Categoria</h3>
-            <div className="space-y-5">
-              <CategoryHealth label="Imóveis Urbanos" score={98} color="bg-emerald-500" />
-              <CategoryHealth label="Agronegócio" score={82} color="bg-orange-500" />
-              <CategoryHealth label="Documental" score={74} color="bg-red-500" />
-            </div>
+          <div className="glass-card rounded-[2.5rem] p-8 space-y-6">
+             <h3 className="text-lg font-bold flex items-center gap-2">
+                <Boxes className="h-5 w-5 text-blue-500" />
+                Estrutura Societária
+             </h3>
+             <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                   <p className="text-[10px] uppercase font-bold text-muted-foreground">Holdings</p>
+                   <p className="text-xl font-black mt-1">04</p>
+                </div>
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                   <p className="text-[10px] uppercase font-bold text-muted-foreground">Sócios</p>
+                   <p className="text-xl font-black mt-1">12</p>
+                </div>
+             </div>
+             <div className="flex -space-x-3 items-center">
+                {[1,2,3,4].map(i => (
+                  <div key={i} className="h-10 w-10 rounded-full border-2 border-background bg-accent overflow-hidden">
+                    <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i+10}`} alt="Sócio" />
+                  </div>
+                ))}
+                <div className="h-10 w-10 rounded-full border-2 border-background bg-white/10 flex items-center justify-center text-[10px] font-bold">
+                  +8
+                </div>
+             </div>
           </div>
         </div>
       </div>
@@ -182,61 +235,58 @@ function Dashboard() {
   );
 }
 
-function StatCard({ title, value, trend, icon: Icon, color, description }: any) {
+function HealthCard({ title, value, status, color, icon: Icon, description, metrics }: any) {
+  const colors: any = {
+    primary: "text-primary bg-primary/10 border-primary/20",
+    emerald: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
+    blue: "text-blue-500 bg-blue-500/10 border-blue-500/20",
+  };
+
   return (
-    <div className="glass-card rounded-[2rem] p-7 space-y-5 relative overflow-hidden group hover:border-primary/20 transition-all">
-      <div className="flex items-center justify-between">
-        <div className={cn("p-3 rounded-2xl bg-white/5", color)}>
-          <Icon className="h-6 w-6" />
+    <div className="glass-card rounded-[2.5rem] p-8 space-y-6 group hover:border-white/20 transition-all border border-transparent">
+      <div className="flex items-start justify-between">
+        <div className={cn("p-4 rounded-2xl transition-transform group-hover:scale-110 duration-500", colors[color])}>
+          <Icon className="h-8 w-8" />
         </div>
-        <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2.5 py-1.5 rounded-full">
-          {trend}
-          <ArrowUpRight className="h-3.5 w-3.5" />
+        <div className={cn("px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest", colors[color])}>
+          {status}
         </div>
       </div>
+      
       <div>
-        <p className="text-sm text-muted-foreground font-semibold tracking-tight">{title}</p>
-        <h4 className="text-2xl font-black mt-1 text-foreground">{value}</h4>
-        <div className="flex items-center gap-2 mt-3">
-          <div className="h-1.5 w-1.5 rounded-full bg-primary/40" />
-          <p className="text-[10px] text-muted-foreground/60 uppercase tracking-widest font-bold">{description}</p>
-        </div>
+        <p className="text-sm font-bold text-muted-foreground tracking-tight">{title}</p>
+        <h4 className="text-3xl font-black mt-1">{value}</h4>
+        <p className="text-xs text-muted-foreground/60 mt-2 leading-relaxed">{description}</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+        {metrics.map((m: any) => (
+          <div key={m.label}>
+            <p className="text-[10px] font-black uppercase text-muted-foreground/40">{m.label}</p>
+            <p className="text-sm font-bold text-foreground mt-0.5">{m.val}</p>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-function HoldingItem({ name, participation, value }: any) {
-  return (
-    <div className="flex items-center justify-between group cursor-pointer">
-      <div className="flex items-center gap-3">
-        <div className="h-9 w-9 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-primary/30 transition-all">
-          <Boxes className="h-4 w-4 text-muted-foreground" />
-        </div>
-        <div>
-          <p className="text-sm font-bold truncate max-w-[120px]">{name}</p>
-          <p className="text-[10px] text-muted-foreground font-bold">{participation}</p>
-        </div>
-      </div>
-      <p className="text-sm font-bold text-primary">{value}</p>
-    </div>
-  );
-}
+function RiskItem({ title, target, days, severity }: any) {
+  const sev: any = {
+    critical: "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]",
+    high: "bg-orange-500",
+    medium: "bg-blue-500",
+  };
 
-function CategoryHealth({ label, score, color }: any) {
   return (
-    <div className="space-y-2">
-      <div className="flex justify-between text-xs font-bold">
-        <span className="text-muted-foreground uppercase tracking-wider">{label}</span>
-        <span>{score}%</span>
+    <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-transparent hover:border-white/5 group">
+      <div className={cn("h-2.5 w-2.5 rounded-full shrink-0", sev[severity])} />
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-bold truncate group-hover:text-primary transition-colors">{title}</p>
+        <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">{target}</p>
       </div>
-      <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-        <motion.div 
-          initial={{ width: 0 }}
-          animate={{ width: `${score}%` }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-          className={cn("h-full", color)} 
-        />
+      <div className="text-right">
+        <p className={cn("text-xs font-black", severity === 'critical' ? 'text-red-400' : 'text-foreground')}>{days}</p>
       </div>
     </div>
   );
