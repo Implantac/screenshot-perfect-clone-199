@@ -16,6 +16,7 @@ import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
 import { Route as AppRegularizacaoRouteImport } from './routes/_app.regularizacao'
 import { Route as AppImoveisRouteImport } from './routes/_app.imoveis'
 import { Route as AppHoldingsRouteImport } from './routes/_app.holdings'
+import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
 import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
 import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
 
@@ -53,6 +54,11 @@ const AppHoldingsRoute = AppHoldingsRouteImport.update({
   path: '/holdings',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFornecedoresRoute = AppFornecedoresRouteImport.update({
+  id: '/fornecedores',
+  path: '/fornecedores',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppFamilyOfficeRoute = AppFamilyOfficeRouteImport.update({
   id: '/family-office',
   path: '/family-office',
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/compliance': typeof AppComplianceRoute
   '/family-office': typeof AppFamilyOfficeRoute
+  '/fornecedores': typeof AppFornecedoresRoute
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
   '/regularizacao': typeof AppRegularizacaoRoute
@@ -77,6 +84,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/compliance': typeof AppComplianceRoute
   '/family-office': typeof AppFamilyOfficeRoute
+  '/fornecedores': typeof AppFornecedoresRoute
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
   '/regularizacao': typeof AppRegularizacaoRoute
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/_app/compliance': typeof AppComplianceRoute
   '/_app/family-office': typeof AppFamilyOfficeRoute
+  '/_app/fornecedores': typeof AppFornecedoresRoute
   '/_app/holdings': typeof AppHoldingsRoute
   '/_app/imoveis': typeof AppImoveisRoute
   '/_app/regularizacao': typeof AppRegularizacaoRoute
@@ -102,6 +111,7 @@ export interface FileRouteTypes {
     | '/'
     | '/compliance'
     | '/family-office'
+    | '/fornecedores'
     | '/holdings'
     | '/imoveis'
     | '/regularizacao'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
   to:
     | '/compliance'
     | '/family-office'
+    | '/fornecedores'
     | '/holdings'
     | '/imoveis'
     | '/regularizacao'
@@ -122,6 +133,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/_app/compliance'
     | '/_app/family-office'
+    | '/_app/fornecedores'
     | '/_app/holdings'
     | '/_app/imoveis'
     | '/_app/regularizacao'
@@ -185,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHoldingsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/fornecedores': {
+      id: '/_app/fornecedores'
+      path: '/fornecedores'
+      fullPath: '/fornecedores'
+      preLoaderRoute: typeof AppFornecedoresRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/family-office': {
       id: '/_app/family-office'
       path: '/family-office'
@@ -205,6 +224,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppComplianceRoute: typeof AppComplianceRoute
   AppFamilyOfficeRoute: typeof AppFamilyOfficeRoute
+  AppFornecedoresRoute: typeof AppFornecedoresRoute
   AppHoldingsRoute: typeof AppHoldingsRoute
   AppImoveisRoute: typeof AppImoveisRoute
   AppRegularizacaoRoute: typeof AppRegularizacaoRoute
@@ -216,6 +236,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppComplianceRoute: AppComplianceRoute,
   AppFamilyOfficeRoute: AppFamilyOfficeRoute,
+  AppFornecedoresRoute: AppFornecedoresRoute,
   AppHoldingsRoute: AppHoldingsRoute,
   AppImoveisRoute: AppImoveisRoute,
   AppRegularizacaoRoute: AppRegularizacaoRoute,
