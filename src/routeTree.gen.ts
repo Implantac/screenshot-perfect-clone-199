@@ -16,6 +16,7 @@ import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
 import { Route as AppImoveisRouteImport } from './routes/_app.imoveis'
 import { Route as AppHoldingsRouteImport } from './routes/_app.holdings'
 import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
+import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -51,9 +52,15 @@ const AppFamilyOfficeRoute = AppFamilyOfficeRouteImport.update({
   path: '/family-office',
   getParentRoute: () => AppRoute,
 } as any)
+const AppComplianceRoute = AppComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/compliance': typeof AppComplianceRoute
   '/family-office': typeof AppFamilyOfficeRoute
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
@@ -61,6 +68,7 @@ export interface FileRoutesByFullPath {
   '/saude-documental': typeof AppSaudeDocumentalRoute
 }
 export interface FileRoutesByTo {
+  '/compliance': typeof AppComplianceRoute
   '/family-office': typeof AppFamilyOfficeRoute
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
@@ -71,6 +79,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/_app/compliance': typeof AppComplianceRoute
   '/_app/family-office': typeof AppFamilyOfficeRoute
   '/_app/holdings': typeof AppHoldingsRoute
   '/_app/imoveis': typeof AppImoveisRoute
@@ -82,6 +91,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/compliance'
     | '/family-office'
     | '/holdings'
     | '/imoveis'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/saude-documental'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/compliance'
     | '/family-office'
     | '/holdings'
     | '/imoveis'
@@ -98,6 +109,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_app'
+    | '/_app/compliance'
     | '/_app/family-office'
     | '/_app/holdings'
     | '/_app/imoveis'
@@ -161,10 +173,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFamilyOfficeRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/compliance': {
+      id: '/_app/compliance'
+      path: '/compliance'
+      fullPath: '/compliance'
+      preLoaderRoute: typeof AppComplianceRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppComplianceRoute: typeof AppComplianceRoute
   AppFamilyOfficeRoute: typeof AppFamilyOfficeRoute
   AppHoldingsRoute: typeof AppHoldingsRoute
   AppImoveisRoute: typeof AppImoveisRoute
@@ -174,6 +194,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppComplianceRoute: AppComplianceRoute,
   AppFamilyOfficeRoute: AppFamilyOfficeRoute,
   AppHoldingsRoute: AppHoldingsRoute,
   AppImoveisRoute: AppImoveisRoute,
