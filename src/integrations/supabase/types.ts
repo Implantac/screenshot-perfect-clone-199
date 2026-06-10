@@ -235,6 +235,161 @@ export type Database = {
           },
         ]
       }
+      jarvis_action_plans: {
+        Row: {
+          created_at: string
+          due_date: string | null
+          id: string
+          impact_analysis: string | null
+          insight_id: string | null
+          priority: string
+          responsible_id: string | null
+          status: string | null
+          suggested_resolution: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          impact_analysis?: string | null
+          insight_id?: string | null
+          priority: string
+          responsible_id?: string | null
+          status?: string | null
+          suggested_resolution?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          impact_analysis?: string | null
+          insight_id?: string | null
+          priority?: string
+          responsible_id?: string | null
+          status?: string | null
+          suggested_resolution?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jarvis_action_plans_insight_id_fkey"
+            columns: ["insight_id"]
+            isOneToOne: false
+            referencedRelation: "jarvis_insights"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jarvis_action_plans_responsible_id_fkey"
+            columns: ["responsible_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jarvis_health_scores: {
+        Row: {
+          compliance_score: number | null
+          documental_score: number | null
+          entity_id: string | null
+          global_score: number | null
+          id: string
+          patrimonial_score: number | null
+          recorded_at: string
+          risk_score: number | null
+        }
+        Insert: {
+          compliance_score?: number | null
+          documental_score?: number | null
+          entity_id?: string | null
+          global_score?: number | null
+          id?: string
+          patrimonial_score?: number | null
+          recorded_at?: string
+          risk_score?: number | null
+        }
+        Update: {
+          compliance_score?: number | null
+          documental_score?: number | null
+          entity_id?: string | null
+          global_score?: number | null
+          id?: string
+          patrimonial_score?: number | null
+          recorded_at?: string
+          risk_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jarvis_health_scores_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jarvis_insights: {
+        Row: {
+          asset_id: string | null
+          created_at: string
+          description: string
+          entity_id: string | null
+          id: string
+          is_resolved: boolean | null
+          metadata: Json | null
+          severity: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          asset_id?: string | null
+          created_at?: string
+          description: string
+          entity_id?: string | null
+          id?: string
+          is_resolved?: boolean | null
+          metadata?: Json | null
+          severity: string
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          asset_id?: string | null
+          created_at?: string
+          description?: string
+          entity_id?: string | null
+          id?: string
+          is_resolved?: boolean | null
+          metadata?: Json | null
+          severity?: string
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jarvis_insights_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jarvis_insights_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
           created_at: string | null
