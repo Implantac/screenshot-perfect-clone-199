@@ -139,12 +139,12 @@ function JarvisGraphPage() {
           </div>
         </div>
 
-        <div className="absolute top-10 right-10 flex flex-col gap-3">
-          <button className="h-12 w-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all">
-            <Zap className="h-5 w-5 text-primary" />
+        <div className="absolute top-10 right-10 flex flex-col gap-4">
+          <button className="h-14 w-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all shadow-xl shadow-primary/10 group">
+            <Zap className="h-6 w-6 text-primary group-hover:text-primary-foreground" />
           </button>
-          <button className="h-12 w-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all">
-            <Search className="h-5 w-5 text-muted-foreground" />
+          <button className="h-14 w-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all shadow-xl">
+            <Search className="h-6 w-6 text-muted-foreground" />
           </button>
         </div>
       </div>
