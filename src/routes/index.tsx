@@ -111,10 +111,11 @@ function LandingPage() {
       <section className="py-40 px-6">
         <div className="max-w-7xl mx-auto">
           <SectionHeader title="INVESTIMENTO" badge="Projeção Estratégica" subtitle="Escalabilidade para qualquer estrutura de capital." />
-          <div className="grid md:grid-cols-3 gap-8">
-            <PricingCard plan="Professional" price="R$ 997" desc="Para consultorias e escritórios." features={["Governança Básica", "Compliance", "Jarvis (Básico)"]} />
-            <PricingCard highlighted plan="Business" price="R$ 2.997" desc="Para empresas e holdings." features={["Jarvis AI", "Compliance 360", "Knowledge Graph"]} />
-            <PricingCard plan="Enterprise" price="R$ 7.997" desc="Para family offices." features={["Digital Twin", "Agro Patrimonial", "Suporte Premium"]} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <PricingCard plan="Professional" price="R$ 997" desc="Para escritórios e consultorias." features={["Governança Básica", "Gestão Documental", "Suporte Padrão"]} />
+            <PricingCard highlighted plan="Business" price="R$ 2.997" desc="Para holdings e empresas." features={["Jarvis AI (Diretor Digital)", "Compliance 360", "Knowledge Graph Engine"]} />
+            <PricingCard plan="Enterprise" price="R$ 7.997" desc="Para Family Offices e Grupos." features={["Digital Twin de Ativos", "Agro Patrimonial", "Data Room Estratégico"]} />
+            <PricingCard plan="Corporate" price="Sob Consulta" desc="Para grandes grupos econômicos." features={["Customização Total", "SLA Exclusivo", "Integração via API"]} />
           </div>
         </div>
       </section>
