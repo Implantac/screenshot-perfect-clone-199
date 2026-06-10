@@ -21,7 +21,13 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { SectionHeader, FeatureCard, ComparisonTable, PricingCard } from "@/components/LandingPageComponents";
+import { 
+  SectionHeader, 
+  FeatureCard, 
+  ComparisonTable, 
+  PricingCard,
+  KnowledgeGraphAnimation 
+} from "@/components/LandingPageComponents";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -61,6 +67,24 @@ function LandingPage() {
         </button>
       </nav>
 
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-3xl pt-32 px-8 flex flex-col gap-8 md:hidden"
+          >
+            {["Soluções", "Tecnologia", "Análise", "Empresa"].map((item) => (
+              <a key={item} href="#" className="text-2xl font-black uppercase tracking-widest text-white/70 hover:text-white">{item}</a>
+            ))}
+            <div className="h-px w-full bg-white/10 my-4" />
+            <a href="/login" className="text-2xl font-black uppercase tracking-widest text-primary">Acessar</a>
+            <Button className="rounded-2xl h-16 bg-primary text-black font-black uppercase tracking-widest text-xs">Solicitar Demonstração</Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Hero */}
       <section className="pt-40 md:pt-64 pb-20 md:pb-40 px-4 md:px-8 relative overflow-hidden w-full executive-grid">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-transparent to-background" />
@@ -89,7 +113,7 @@ function LandingPage() {
               transition={{ delay: 0.3 }}
               className="text-xl md:text-3xl text-muted-foreground max-w-4xl mx-auto leading-relaxed font-medium italic"
             >
-              A nova categoria em inteligência patrimonial. Proteção, governança e conformidade em um ecossistema autônomo de alta performance.
+              O Sistema Operacional do Patrimônio Corporativo. A primeira plataforma brasileira capaz de centralizar governança, compliance e inteligência executiva em um único ambiente.
             </motion.p>
           </div>
 
@@ -105,9 +129,12 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Seção 2: O Problema */}
+      <ProblemSection />
+
+      {/* Features - A Solução */}
       <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <SectionHeader badge="Soluções" title="Governança Patrimonial Inteligente" subtitle="Não somos um software de gestão comum. Somos o sistema operacional para proteção e governança patrimonial de longo prazo." />
+        <SectionHeader badge="A Solução" title="Governança Patrimonial Inteligente" subtitle="O USE PATRIUM não é apenas um software. É o Sistema Operacional que unifica todas as verticais de gestão e conformidade." />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <FeatureCard delay={0.1} icon={Network} title="Knowledge Graph" desc="Mapeamento total da rede societária, conectando holdings, sócios e ativos em tempo real." />
           <FeatureCard delay={0.2} icon={Lock} title="Digital Twin" desc="Espelhamento digital de ativos com rastreabilidade total de documentos, riscos e histórico." />
@@ -115,19 +142,73 @@ function LandingPage() {
         </div>
       </section>
 
-      <ProblemSection />
-
-      {/* Comparison */}
+      {/* Knowledge Graph Preview */}
       <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <SectionHeader badge="Análise" title="Por que o Patrium?" />
+        <SectionHeader badge="Tecnologia" title="Relacionamentos Conectados" subtitle="Visualize a capilaridade total do seu patrimônio. Da Holding ao Ativo final, tudo interligado pelo Knowledge Graph." />
+        <KnowledgeGraphAnimation />
+      </section>
+
+      {/* Jarvis Section */}
+      <section className="py-20 md:py-32 px-4 md:px-8 bg-gradient-to-b from-transparent via-primary/5 to-transparent relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 blur-[150px] -z-10 animate-pulse" />
+        <div className="max-w-6xl mx-auto glass-card p-8 md:p-16 rounded-[2.5rem] md:rounded-[4rem] border-white/5 bg-black/40 backdrop-blur-3xl">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            <div className="flex-1 space-y-8">
+              <div className="h-16 w-16 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/30">
+                <Sparkles className="h-8 w-8 text-primary" />
+              </div>
+              <h2 className="text-4xl md:text-6xl font-black tracking-tighter italic uppercase leading-none">CONHEÇA O <span className="text-primary">JARVIS</span></h2>
+              <p className="text-primary/60 font-black tracking-widest uppercase text-xs">Seu Diretor Patrimonial Digital</p>
+              <p className="text-muted-foreground text-xl leading-relaxed">
+                O Jarvis monitora continuamente seu patrimônio. Ele detecta riscos, gera insights estratégicos e cria planos de ação automáticos para garantir a conformidade total.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  "Detecta riscos em tempo real", 
+                  "Gera planos de ação", 
+                  "Prioriza problemas críticos", 
+                  "Sugere decisões executivas"
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-primary" />
+                    <span className="text-[10px] font-black uppercase tracking-widest opacity-80">{item}</span>
+                  </div>
+                ))}
+              </div>
+              <Button size="lg" className="rounded-2xl px-10 h-16 bg-primary text-black font-black uppercase tracking-widest text-[10px]">Ativar Jarvis Intelligence</Button>
+            </div>
+            <div className="flex-1 w-full bg-white/[0.02] rounded-[3rem] border border-white/10 p-8 space-y-6">
+              <div className="space-y-4">
+                <div className="flex gap-4 items-start p-4 rounded-2xl bg-white/5 border border-white/10">
+                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/40 shrink-0">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                  </div>
+                  <p className="text-xs font-medium italic text-white/80">"Detectei 3 certidões que vencem nos próximos 15 dias. Deseja que eu gere o protocolo de renovação?"</p>
+                </div>
+                <div className="flex gap-4 items-start p-4 rounded-2xl bg-white/5 border border-white/10 translate-x-4">
+                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/40 shrink-0">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                  </div>
+                  <p className="text-xs font-medium italic text-white/80">"Uma licença ambiental para a Fazenda X expira em 12 dias. Plano de ação prioritário criado."</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison Table */}
+      <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
+        <SectionHeader badge="Análise de Mercado" title="Patrium vs Legacy Systems" subtitle="A governança patrimonial de alta performance exige tecnologia de nova geração." />
         <ComparisonTable />
       </section>
 
+      {/* Market Analysis / Quem utiliza */}
       <MarketAnalysis />
 
       {/* Pricing */}
       <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <SectionHeader badge="Planos" title="Investimento Estratégico" />
+        <SectionHeader badge="Planos" title="Investimento Estratégico" subtitle="Estruturas de custo escaláveis para escritórios, holdings e grupos econômicos." />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <PricingCard plan="Professional" price="R$ 997" desc="Para escritórios e consultorias." features={["Governança Patrimonial", "Gestão Documental", "Suporte Básico"]} />
           <PricingCard plan="Business" price="R$ 2.997" desc="Para holdings e empresas." highlighted={true} features={["Tudo do Professional", "Digital Twin", "Compliance 360", "Knowledge Graph"]} />
@@ -136,106 +217,72 @@ function LandingPage() {
         </div>
       </section>
 
-
-      {/* Jarvis Special Section */}
-      <section className="py-20 md:py-32 px-4 md:px-8 bg-gradient-to-b from-transparent via-primary/5 to-transparent">
-        <div className="max-w-6xl mx-auto glass-card p-8 md:p-16 rounded-[2.5rem] md:rounded-[4rem] border-white/5 bg-black/40 backdrop-blur-3xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 blur-[120px] -z-10 animate-pulse" />
-          <div className="flex flex-col lg:flex-row items-center gap-16">
-            <div className="flex-1 space-y-8">
-              <div className="h-16 w-16 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/30">
-                <Sparkles className="h-8 w-8 text-primary" />
-              </div>
-              <h2 className="text-4xl md:text-6xl font-black tracking-tighter italic uppercase leading-none">CONHEÇA O <span className="text-primary">JARVIS</span></h2>
-              <p className="text-muted-foreground text-xl leading-relaxed">
-                Seu Diretor Patrimonial Digital. O Jarvis monitora continuamente seu patrimônio, detectando riscos antes que se tornem problemas e gerando planos de ação estratégicos automaticamente.
-              </p>
-              <div className="space-y-4">
-                {["Monitoramento de Contratos e Imóveis", "Alertas de Certidões e Licenças", "Identificação de Riscos em Tempo Real", "Insights de Governança e Compliance"].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-primary" />
-                    <span className="text-xs font-black uppercase tracking-widest">{item}</span>
-                  </div>
-                ))}
-              </div>
-              <Button size="lg" className="rounded-2xl px-10 h-14 bg-primary text-white font-black uppercase tracking-widest text-[10px]">Ver em Ação</Button>
-            </div>
-            <div className="flex-1 w-full aspect-square bg-white/5 rounded-2xl md:rounded-[3rem] border border-white/10 flex items-center justify-center shadow-2xl overflow-hidden">
-              <div className="text-center p-8">
-                <Cpu className="h-16 w-16 text-primary mx-auto mb-6 opacity-50" />
-                <p className="text-muted-foreground font-black italic tracking-widest uppercase text-xs opacity-50">Jarvis Intelligence Core</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      {/* Vision Section */}
       <VisionSection />
 
       {/* Roadmap */}
       <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <SectionHeader badge="Evolução" title="Roadmap Tecnológico" />
+        <SectionHeader badge="Futuro" title="Roadmap Tecnológico" subtitle="Nossa trajetória rumo à autonomia total da governança patrimonial." />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            { phase: "Fase 1", title: "Governança Patrimonial", status: "Nativo" },
-            { phase: "Fase 2", title: "Compliance Automático", status: "Nativo" },
-            { phase: "Fase 3", title: "Jarvis AI Avançado", status: "Beta" },
-            { phase: "Fase 4", title: "Agro Patrimonial", status: "Próximo" }
+            { phase: "Fase 1", title: "Governança Patrimonial", status: "Operacional" },
+            { phase: "Fase 2", title: "Compliance Preditivo", status: "Operacional" },
+            { phase: "Fase 3", title: "Regularização Imobiliária", status: "Beta" },
+            { phase: "Fase 4", title: "Jarvis Autônomo 2.0", status: "Próximo" }
           ].map((item, i) => (
-            <div key={i} className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5">
-              <span className="text-[10px] font-black text-primary uppercase tracking-widest block mb-2">{item.phase}</span>
-              <h4 className="text-lg font-bold mb-4">{item.title}</h4>
-              <span className={`text-[8px] px-2 py-1 rounded-full font-black uppercase tracking-widest ${item.status === 'Nativo' ? 'bg-green-500/10 text-green-500' : 'bg-primary/10 text-primary'}`}>
-                {item.status}
-              </span>
+            <div key={i} className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 space-y-4">
+              <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">{item.phase}</span>
+              <h4 className="text-lg font-bold italic uppercase">{item.title}</h4>
+              <div className="flex items-center gap-2">
+                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                <span className="text-[8px] font-black uppercase tracking-widest text-white/40">{item.status}</span>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
       {/* Footer */}
-
       <footer className="py-20 px-4 md:px-8 border-t border-white/5 bg-[#030303]">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+        <div className="max-w-7xl mx-auto space-y-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
             <div className="space-y-6">
               <div className="flex items-center gap-2">
-                <img src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" alt="Logo" className="h-6" />
-                <span className="font-black tracking-widest text-lg uppercase italic">USE PATRIUM</span>
+                <img src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" alt="Logo" className="h-8" />
+                <span className="font-black tracking-widest text-xl uppercase italic">USE PATRIUM</span>
               </div>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Líder em tecnologia para Governança Patrimonial e Inteligência Executiva no Brasil.
+              <p className="text-muted-foreground text-sm leading-relaxed italic font-medium">
+                O futuro da Governança Patrimonial. Protegendo legados através de inteligência executiva de alta performance.
               </p>
             </div>
             <div>
-              <h4 className="text-[10px] font-black uppercase tracking-widest mb-6">Plataforma</h4>
-              <ul className="space-y-4 text-sm text-muted-foreground font-medium">
-                <li><a href="#" className="hover:text-primary transition-colors">Digital Twin</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Jarvis AI</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Knowledge Graph</a></li>
+              <h4 className="text-[10px] font-black uppercase tracking-widest mb-6 text-primary">Plataforma</h4>
+              <ul className="space-y-4 text-xs font-bold uppercase tracking-widest text-white/60">
+                <li><a href="#" className="hover:text-primary transition-colors">Jarvis Intelligence</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Digital Twin Hub</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Compliance Protocol</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-[10px] font-black uppercase tracking-widest mb-6">Empresa</h4>
-              <ul className="space-y-4 text-sm text-muted-foreground font-medium">
-                <li><a href="#" className="hover:text-primary transition-colors">Sobre Nós</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Segurança</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Contato</a></li>
+              <h4 className="text-[10px] font-black uppercase tracking-widest mb-6 text-primary">Governança</h4>
+              <ul className="space-y-4 text-xs font-bold uppercase tracking-widest text-white/60">
+                <li><a href="#" className="hover:text-primary transition-colors">Holdings</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Agronegócio</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Family Office</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-[10px] font-black uppercase tracking-widest mb-6">Newsletter</h4>
+              <h4 className="text-[10px] font-black uppercase tracking-widest mb-6 text-primary">Corporativo</h4>
               <div className="flex gap-2">
-                <input type="email" placeholder="E-mail corporativo" className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs w-full outline-none focus:border-primary/50 transition-all" />
-                <Button className="rounded-xl h-10 w-10 p-0"><ArrowRight className="h-4 w-4" /></Button>
+                <Button className="rounded-xl flex-grow h-12 bg-white text-black font-black uppercase tracking-widest text-[10px]">Falar com Especialista</Button>
               </div>
             </div>
           </div>
-          <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-            <p>© 2026 Strategy & Governance • Secure Infrastructure</p>
+          <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] font-black uppercase tracking-[0.4em] text-white/20">
+            <p>© 2026 PATRIUM OS • SYSTEMIC GOVERNANCE INFRASTRUCTURE</p>
             <div className="flex gap-8">
-              <a href="#">Privacidade</a>
-              <a href="#">Termos</a>
+              <a href="#">Security Protocol</a>
+              <a href="#">Terms of Intelligence</a>
             </div>
           </div>
         </div>
@@ -246,15 +293,15 @@ function LandingPage() {
 
 function ProblemSection() {
   const problems = [
-    { title: "Documentação Dispersa", desc: "A fragmentação de dados em silos analógicos e digitais impede a tomada de decisão estratégica." },
-    { title: "Invisibilidade de Riscos", desc: "Prazos e certidões críticas negligenciadas geram passivos ocultos e insegurança jurídica." },
-    { title: "Operação Dependente", desc: "Processos manuais e dependência de pessoal-chave criam gargalos na governança patrimonial." },
-    { title: "Opacidade Estrutural", desc: "Dificuldade técnica em visualizar a capilaridade societária e a exposição real a riscos." },
+    { title: "Silos de Dados", desc: "Documentação dispersa em múltiplos ambientes gerando opacidade operacional." },
+    { title: "Riscos Invisíveis", desc: "Prazos críticos negligenciados que resultam em passivos jurídicos e financeiros." },
+    { title: "Falta de Governança", desc: "Processos manuais e dependência de pessoal-chave sem trilha de auditoria." },
+    { title: "Risco Sucessório", desc: "Patrimônios vulneráveis a quebras de compliance e falta de visibilidade societária." },
   ];
 
   return (
     <section className="py-20 md:py-40 px-4 md:px-8 max-w-7xl mx-auto">
-      <SectionHeader badge="O Desafio Executivo" title="A Complexidade Silenciosa" subtitle="Patrimônios complexos exigem um nível de vigilância que transcende as capacidades humanas tradicionais." />
+      <SectionHeader badge="O Desafio Executivo" title="A Complexidade Silenciosa" subtitle="Patrimônios complexos sem um sistema operacional centralizado estão expostos a riscos sistêmicos inevitáveis." />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {problems.map((p, i) => (
           <div key={i} className="p-10 rounded-[3rem] bg-red-500/[0.01] border border-red-500/10 space-y-6 hover:bg-red-500/[0.02] transition-colors group">
@@ -276,36 +323,36 @@ function MarketAnalysis() {
       <div className="absolute inset-0 executive-grid opacity-30" />
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center relative z-10">
         <div className="space-y-12">
-          <SectionHeader badge="Intelligence Report" title="Uma Nova Categoria de Software" subtitle="O mercado global de Family Offices e Holdings exige um sistema operacional dedicado." />
+          <SectionHeader badge="Intelligence Report" title="Verticalização Setorial" subtitle="O USE PATRIUM é desenhado para as estruturas patrimoniais mais complexas do país." />
           <div className="space-y-8">
             <div className="flex gap-6 p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/[0.05] hover:border-primary/20 transition-all backdrop-blur-xl">
-              <TrendingUp className="h-10 w-10 text-primary shrink-0" />
+              <Building2 className="h-10 w-10 text-primary shrink-0" />
               <div>
-                <h5 className="font-black italic uppercase tracking-tight text-lg mb-2">Escalabilidade Patrimonial</h5>
-                <p className="text-sm text-muted-foreground italic font-medium leading-relaxed">Infraestrutura preparada para a gestão de ativos multi-geracionais e estruturas complexas.</p>
+                <h5 className="font-black italic uppercase tracking-tight text-lg mb-2">Holdings & Family Offices</h5>
+                <p className="text-sm text-muted-foreground italic font-medium leading-relaxed">Centralização de múltiplas empresas e sócios em um único grafo de governança.</p>
               </div>
             </div>
             <div className="flex gap-6 p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/[0.05] hover:border-primary/20 transition-all backdrop-blur-xl">
-              <Scale className="h-10 w-10 text-primary shrink-0" />
+              <Globe className="h-10 w-10 text-primary shrink-0" />
               <div>
-                <h5 className="font-black italic uppercase tracking-tight text-lg mb-2">Soberania de Compliance</h5>
-                <p className="text-sm text-muted-foreground italic font-medium leading-relaxed">Monitoramento preditivo que garante a regularidade total dos ativos em tempo real.</p>
+                <h5 className="font-black italic uppercase tracking-tight text-lg mb-2">Agronegócio Patrimonial</h5>
+                <p className="text-sm text-muted-foreground italic font-medium leading-relaxed">Gestão de fazendas, matrículas, CAR, licenças e ativos biológicos com precisão militar.</p>
               </div>
             </div>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-6">
           {[
-            { label: "Holdings Estratégicas", icon: Building2 },
-            { label: "Family Offices", icon: Users },
-            { label: "Grupos do Agronegócio", icon: Globe },
-            { label: "Boutiques Jurídicas", icon: Scale }
+            { label: "Consultorias", icon: Briefcase },
+            { label: "Boutiques Jurídicas", icon: Scale },
+            { label: "Grupos do Agro", icon: Globe },
+            { label: "Family Offices", icon: Users }
           ].map((item, i) => (
             <div key={i} className="aspect-square rounded-[3.5rem] bg-white/[0.02] border border-white/[0.05] flex flex-col items-center justify-center p-8 text-center space-y-6 hover:border-primary/40 transition-all group backdrop-blur-xl">
               <div className="h-16 w-16 rounded-2xl bg-white/[0.03] flex items-center justify-center border border-white/[0.05] group-hover:scale-110 group-hover:bg-primary/10 transition-all">
                 <item.icon className="h-8 w-8 text-primary/60 group-hover:text-primary transition-colors" />
               </div>
-              <span className="text-xs font-black uppercase tracking-[0.2em] leading-tight italic">{item.label}</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] leading-tight italic">{item.label}</span>
             </div>
           ))}
         </div>
@@ -324,12 +371,12 @@ function VisionSection() {
         viewport={{ once: true }}
         className="space-y-16"
       >
-        <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">Manifesto Patrium</span>
+        <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">Próxima Geração</span>
         <h2 className="text-5xl md:text-[8rem] font-black italic uppercase tracking-tighter leading-[0.8] drop-shadow-2xl">
-          THE FUTURE OF <br /> <span className="text-primary">GOVERNANCE.</span>
+          THE FUTURE OF <br /> <span className="text-primary">PATRIMONY.</span>
         </h2>
         <p className="text-xl md:text-4xl text-muted-foreground leading-tight font-medium italic max-w-4xl mx-auto">
-          "Estamos projetando um sistema operacional capaz de eternizar o legado de empresas e famílias através da tecnologia."
+          "O USE PATRIUM está construindo um cérebro patrimonial capaz de proteger, organizar e potencializar o patrimônio de gerações."
         </p>
         <div className="pt-12">
           <Button size="lg" className="rounded-full px-16 h-20 bg-white text-black font-black uppercase tracking-[0.3em] text-xs hover:scale-105 transition-all shadow-2xl border-none">Solicitar Demonstração</Button>
@@ -338,6 +385,3 @@ function VisionSection() {
     </section>
   );
 }
-
-
-

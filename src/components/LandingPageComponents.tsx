@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { 
   ShieldCheck, 
   ArrowRight, 
@@ -19,10 +19,15 @@ import {
   Database,
   Users,
   BarChart3,
-  Scale
+  Scale,
+  Target,
+  PieChart,
+  HardHat,
+  Gavel
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useRef } from "react";
 
 export function SectionHeader({ title, subtitle, badge }: { title: string; subtitle?: string; badge?: string }) {
   return (
@@ -92,25 +97,24 @@ export function FeatureCard({ icon: Icon, title, desc, delay = 0 }: any) {
 
 export function ComparisonTable() {
   const features = [
-    { name: "Governança Patrimonial", patrium: true, traditional: "Parcial", erp: "Não" },
-    { name: "Jarvis AI (Especialista Digital)", patrium: true, traditional: false, erp: false },
-    { name: "Knowledge Graph Engine", patrium: true, traditional: false, erp: false },
-    { name: "Digital Twin (Ativos Reais)", patrium: true, traditional: false, erp: false },
-    { name: "Compliance Autônomo 360", patrium: true, traditional: "Manual", erp: "Estático" },
-    { name: "Gestão de Estruturas (Holdings)", patrium: true, traditional: false, erp: "Limitado" },
-    { name: "Family Office Virtual Desk", patrium: true, traditional: false, erp: false },
-    { name: "Inteligência Geoespacial", patrium: true, traditional: false, erp: false },
+    { name: "Governança Patrimonial", patrium: true, competition: "Manual / Silos", value: "Protocolo 360°" },
+    { name: "Jarvis AI (Cérebro Digital)", patrium: true, competition: "Não Possui", value: "Monitoramento 24/7" },
+    { name: "Knowledge Graph Engine", patrium: true, competition: "Relatórios Estáticos", value: "Conectividade Total" },
+    { name: "Digital Twin (Ativos Reais)", patrium: true, competition: "Pastas Físicas / Drive", value: "Rastreabilidade Digital" },
+    { name: "Compliance Autônomo 360", patrium: true, competition: "Reativo / Multas", value: "Preditivo / Proteção" },
+    { name: "Gestão de Estruturas (Holdings)", patrium: true, competition: "Planilhas Complexas", value: "Governança Unificada" },
+    { name: "Agronegócio Patrimonial", patrium: true, competition: "Sistemas ERP Genéricos", value: "Vertical Especializada" },
   ];
 
   return (
     <div className="overflow-x-auto rounded-[3rem] border border-white/[0.05] bg-white/[0.01] w-full scrollbar-none backdrop-blur-3xl shadow-2xl">
-      <table className="w-full text-left border-collapse min-w-[800px]">
+      <table className="w-full text-left border-collapse min-w-[900px]">
         <thead>
           <tr className="border-b border-white/[0.05]">
             <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Category / Feature</th>
             <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-primary bg-primary/[0.02]">USE PATRIUM OS</th>
-            <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60">Legacy Systems</th>
-            <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60">Standard ERP</th>
+            <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60">Sistemas Tradicionais</th>
+            <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-primary/60">Vantagem Competitiva</th>
           </tr>
         </thead>
         <tbody>
@@ -118,15 +122,13 @@ export function ComparisonTable() {
             <tr key={i} className="border-b border-white/[0.03] last:border-0 hover:bg-white/[0.02] transition-colors group">
               <td className="p-8 px-10 font-bold text-base italic uppercase tracking-tight">{f.name}</td>
               <td className="p-8 px-10 bg-primary/[0.01]">
-                {f.patrium ? (
-                  <div className="flex items-center gap-3 text-primary">
-                    <CheckCircle2 className="h-5 w-5" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Full Protocol</span>
-                  </div>
-                ) : null}
+                <div className="flex items-center gap-3 text-primary">
+                  <CheckCircle2 className="h-5 w-5" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Full Protocol</span>
+                </div>
               </td>
-              <td className="p-8 px-10 text-sm text-muted-foreground/50 font-medium italic">{f.traditional === false ? "—" : f.traditional}</td>
-              <td className="p-8 px-10 text-sm text-muted-foreground/50 font-medium italic">{f.erp === false ? "—" : f.erp}</td>
+              <td className="p-8 px-10 text-sm text-muted-foreground/50 font-medium italic">{f.competition}</td>
+              <td className="p-8 px-10 text-sm text-primary/80 font-black uppercase tracking-widest">{f.value}</td>
             </tr>
           ))}
         </tbody>
@@ -168,5 +170,54 @@ export function PricingCard({ plan, price, desc, features, highlighted = false }
         Ativar Protocolo
       </Button>
     </Card>
+  );
+}
+
+export function KnowledgeGraphAnimation() {
+  return (
+    <div className="relative w-full aspect-square md:aspect-video bg-black/40 rounded-[3rem] border border-white/5 overflow-hidden flex items-center justify-center">
+      <div className="absolute inset-0 executive-grid opacity-20" />
+      <div className="relative z-10 w-full max-w-2xl px-8 py-12 flex flex-col items-center justify-center gap-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full">
+          {[
+            { label: "Empresa", icon: Building2 },
+            { label: "Holding", icon: Briefcase },
+            { label: "Sócio", icon: Users },
+            { label: "Imóvel", icon: Building2 },
+            { label: "Contrato", icon: FileText },
+            { label: "Licença", icon: ShieldCheck },
+            { label: "Processo", icon: Scale },
+            { label: "Jarvis", icon: Sparkles, color: "text-primary" }
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.1 }}
+              className="flex flex-col items-center gap-4"
+            >
+              <div className="h-16 w-16 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-2xl relative overflow-hidden group">
+                <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <item.icon className={`h-6 w-6 ${item.color || "text-white/40"}`} />
+                
+                {/* Visual lines simulation */}
+                {i < 4 && (
+                  <motion.div 
+                    className="absolute h-px bg-primary/20 top-1/2 left-full w-24 origin-left"
+                    animate={{ scaleX: [0, 1], opacity: [0, 1] }}
+                    transition={{ repeat: Infinity, duration: 4, delay: i }}
+                  />
+                )}
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-white/60 italic">{item.label}</span>
+            </motion.div>
+          ))}
+        </div>
+        
+        <div className="mt-8 text-center">
+          <p className="text-xs font-black uppercase tracking-[0.5em] text-primary/40 animate-pulse">Relacionamento em Tempo Real</p>
+        </div>
+      </div>
+    </div>
   );
 }
