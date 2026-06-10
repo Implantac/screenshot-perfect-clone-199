@@ -18,6 +18,7 @@ import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
 import { Route as AppRegularizacaoRouteImport } from './routes/_app.regularizacao'
 import { Route as AppMapaRouteImport } from './routes/_app.mapa'
 import { Route as AppLegalRouteImport } from './routes/_app.legal'
+import { Route as AppJarvisRouteImport } from './routes/_app.jarvis'
 import { Route as AppInteligenciaRouteImport } from './routes/_app.inteligencia'
 import { Route as AppImoveisRouteImport } from './routes/_app.imoveis'
 import { Route as AppHoldingsRouteImport } from './routes/_app.holdings'
@@ -25,6 +26,7 @@ import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
 import { Route as AppFinanceiroRouteImport } from './routes/_app.financeiro'
 import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
 import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
+import { Route as AppJarvisIndexRouteImport } from './routes/_app.jarvis.index'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -70,6 +72,11 @@ const AppLegalRoute = AppLegalRouteImport.update({
   path: '/legal',
   getParentRoute: () => AppRoute,
 } as any)
+const AppJarvisRoute = AppJarvisRouteImport.update({
+  id: '/jarvis',
+  path: '/jarvis',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppInteligenciaRoute = AppInteligenciaRouteImport.update({
   id: '/inteligencia',
   path: '/inteligencia',
@@ -105,6 +112,11 @@ const AppComplianceRoute = AppComplianceRouteImport.update({
   path: '/compliance',
   getParentRoute: () => AppRoute,
 } as any)
+const AppJarvisIndexRoute = AppJarvisIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppJarvisRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -116,12 +128,14 @@ export interface FileRoutesByFullPath {
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
   '/inteligencia': typeof AppInteligenciaRoute
+  '/jarvis': typeof AppJarvisRouteWithChildren
   '/legal': typeof AppLegalRoute
   '/mapa': typeof AppMapaRoute
   '/regularizacao': typeof AppRegularizacaoRoute
   '/riscos': typeof AppRiscosRoute
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/settings': typeof AppSettingsRoute
+  '/jarvis/': typeof AppJarvisIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -139,6 +153,7 @@ export interface FileRoutesByTo {
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/settings': typeof AppSettingsRoute
   '/': typeof AppIndexRoute
+  '/jarvis': typeof AppJarvisIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -151,6 +166,7 @@ export interface FileRoutesById {
   '/_app/holdings': typeof AppHoldingsRoute
   '/_app/imoveis': typeof AppImoveisRoute
   '/_app/inteligencia': typeof AppInteligenciaRoute
+  '/_app/jarvis': typeof AppJarvisRouteWithChildren
   '/_app/legal': typeof AppLegalRoute
   '/_app/mapa': typeof AppMapaRoute
   '/_app/regularizacao': typeof AppRegularizacaoRoute
@@ -158,6 +174,7 @@ export interface FileRoutesById {
   '/_app/saude-documental': typeof AppSaudeDocumentalRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/jarvis/': typeof AppJarvisIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,12 +188,14 @@ export interface FileRouteTypes {
     | '/holdings'
     | '/imoveis'
     | '/inteligencia'
+    | '/jarvis'
     | '/legal'
     | '/mapa'
     | '/regularizacao'
     | '/riscos'
     | '/saude-documental'
     | '/settings'
+    | '/jarvis/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -194,6 +213,7 @@ export interface FileRouteTypes {
     | '/saude-documental'
     | '/settings'
     | '/'
+    | '/jarvis'
   id:
     | '__root__'
     | '/_app'
@@ -205,6 +225,7 @@ export interface FileRouteTypes {
     | '/_app/holdings'
     | '/_app/imoveis'
     | '/_app/inteligencia'
+    | '/_app/jarvis'
     | '/_app/legal'
     | '/_app/mapa'
     | '/_app/regularizacao'
@@ -212,6 +233,7 @@ export interface FileRouteTypes {
     | '/_app/saude-documental'
     | '/_app/settings'
     | '/_app/'
+    | '/_app/jarvis/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -284,6 +306,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLegalRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/jarvis': {
+      id: '/_app/jarvis'
+      path: '/jarvis'
+      fullPath: '/jarvis'
+      preLoaderRoute: typeof AppJarvisRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/inteligencia': {
       id: '/_app/inteligencia'
       path: '/inteligencia'
@@ -333,8 +362,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppComplianceRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/jarvis/': {
+      id: '/_app/jarvis/'
+      path: '/'
+      fullPath: '/jarvis/'
+      preLoaderRoute: typeof AppJarvisIndexRouteImport
+      parentRoute: typeof AppJarvisRoute
+    }
   }
 }
+
+interface AppJarvisRouteChildren {
+  AppJarvisIndexRoute: typeof AppJarvisIndexRoute
+}
+
+const AppJarvisRouteChildren: AppJarvisRouteChildren = {
+  AppJarvisIndexRoute: AppJarvisIndexRoute,
+}
+
+const AppJarvisRouteWithChildren = AppJarvisRoute._addFileChildren(
+  AppJarvisRouteChildren,
+)
 
 interface AppRouteChildren {
   AppComplianceRoute: typeof AppComplianceRoute
@@ -344,6 +392,7 @@ interface AppRouteChildren {
   AppHoldingsRoute: typeof AppHoldingsRoute
   AppImoveisRoute: typeof AppImoveisRoute
   AppInteligenciaRoute: typeof AppInteligenciaRoute
+  AppJarvisRoute: typeof AppJarvisRouteWithChildren
   AppLegalRoute: typeof AppLegalRoute
   AppMapaRoute: typeof AppMapaRoute
   AppRegularizacaoRoute: typeof AppRegularizacaoRoute
@@ -361,6 +410,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppHoldingsRoute: AppHoldingsRoute,
   AppImoveisRoute: AppImoveisRoute,
   AppInteligenciaRoute: AppInteligenciaRoute,
+  AppJarvisRoute: AppJarvisRouteWithChildren,
   AppLegalRoute: AppLegalRoute,
   AppMapaRoute: AppMapaRoute,
   AppRegularizacaoRoute: AppRegularizacaoRoute,

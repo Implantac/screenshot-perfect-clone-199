@@ -12,7 +12,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [isAiOpen, setIsAiOpen] = useState(false);
   const [chatInput, setChatInput] = useState("");
   const [messages, setMessages] = useState([
-    { text: "Olá, Gestor. Como posso auxiliar em sua estratégia patrimonial hoje?", isAi: true }
+    { text: "Protocolos JARVIS iniciados. Como posso auxiliar em sua estratégia patrimonial hoje, Gestor?", isAi: true }
   ]);
 
   const handleSendMessage = () => {
@@ -59,7 +59,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-all shadow-lg shadow-primary/20 active:scale-95"
             >
               <Sparkles className="h-4 w-4" />
-              Copiloto IA
+              Jarvis AI
             </button>
           </div>
         </header>
@@ -112,8 +112,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                     </div>
 
                     <div>
-                      <h2 className="font-bold text-lg leading-tight uppercase tracking-tighter">Copiloto IA Patrium</h2>
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Inteligência Patrimonial Ativa</p>
+                      <h2 className="font-bold text-lg leading-tight uppercase tracking-tighter">JARVIS PATRIUM</h2>
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Diretor Patrimonial Digital</p>
                     </div>
                   </div>
                   <button 
@@ -131,7 +131,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                         Sugestão do Dia
                      </p>
                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        Detectamos uma variação positiva de mercado para ativos rurais no Centro-Oeste. Sua Fazenda Santa Fé valorizou aproximadamente <span className="text-primary font-bold">R$ 2.4M</span> no último trimestre.
+                        Detectamos uma variação positiva de mercado para ativos rurais no Centro-Oeste. Sua Fazenda Santa Fé valorizou aproximadamente <span className="text-primary font-bold">R$ 2.4M</span> no último trimestre. Recomendo atualização do dossiê de mercado.
                      </p>
                      <button className="w-full py-3 bg-primary/10 text-primary rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-primary/20 transition-all">
                         Ver Dossiê de Mercado

@@ -30,7 +30,7 @@ const navGroups = [
     label: "Inteligência",
     items: [
       { label: "Centro de Comando", icon: LayoutDashboard, to: "/" },
-      { label: "Sala de Guerra IA", icon: Sparkles, to: "/inteligencia" },
+      { label: "Jarvis AI", icon: Sparkles, to: "/jarvis" },
       { label: "Central de Riscos", icon: ShieldAlert, to: "/riscos" },
       { label: "Saúde Documental", icon: FileSearch, to: "/saude-documental" },
     ]
