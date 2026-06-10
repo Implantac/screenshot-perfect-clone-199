@@ -161,7 +161,7 @@ function LoginPage() {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -171,8 +171,14 @@ function LoginPage() {
           }
         });
         if (error) throw error;
-        toast.success("Conta criada com sucesso! Verifique seu e-mail ou faça login.");
-        setIsSignUp(false);
+        
+        if (data.session) {
+          toast.success("Conta criada e autenticada com sucesso!");
+          navigate({ to: "/dashboard" });
+        } else {
+          toast.success("Conta criada com sucesso! Verifique seu e-mail ou faça login.");
+          setIsSignUp(false);
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -183,10 +189,12 @@ function LoginPage() {
         navigate({ to: "/dashboard" });
       }
     } catch (error: any) {
+      console.error("Auth error:", error);
       toast.error(error.message || "Erro ao realizar autenticação");
     } finally {
       setLoading(false);
     }
+
   };
 
   return (
