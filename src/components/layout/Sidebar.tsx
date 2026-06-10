@@ -7,7 +7,6 @@ import {
   ShieldCheck, 
   Boxes, 
   Handshake, 
-  Search, 
   Settings, 
   User,
   Landmark,
@@ -15,7 +14,9 @@ import {
   Sparkles,
   DollarSign,
   Scale,
-  Map as MapIcon
+  Map as MapIcon,
+  PieChart,
+  Network
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -24,7 +25,7 @@ const navGroups = [
   {
     label: "Inteligência",
     items: [
-      { label: "Painel Executivo", icon: LayoutDashboard, to: "/" },
+      { label: "Centro de Comando", icon: LayoutDashboard, to: "/" },
       { label: "Sala de Guerra IA", icon: Sparkles, to: "/inteligencia" },
       { label: "Central de Riscos", icon: ShieldAlert, to: "/riscos" },
       { label: "Saúde Documental", icon: FileSearch, to: "/saude-documental" },
@@ -33,8 +34,8 @@ const navGroups = [
   {
     label: "Ativos",
     items: [
-      { label: "Imóveis (Urbano/Rural)", icon: Building2, to: "/imoveis" },
-      { label: "Cartografia Global", icon: MapIcon, to: "/mapa" },
+      { label: "Imóveis (U/R)", icon: Building2, to: "/imoveis" },
+      { label: "Mapa Patrimonial", icon: MapIcon, to: "/mapa" },
       { label: "Holdings & Societário", icon: Boxes, to: "/holdings" },
       { label: "Family Office", icon: Users2, to: "/family-office" },
     ]
@@ -62,7 +63,7 @@ export function Sidebar() {
           <ShieldCheck className="text-primary-foreground h-5 w-5" />
         </div>
         <div>
-          <h1 className="text-lg font-bold tracking-tight text-foreground leading-none">USE PATRIUM</h1>
+          <h1 className="text-lg font-bold tracking-tight text-foreground leading-none uppercase">USE PATRIUM</h1>
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground mt-1.5 font-semibold">Cérebro Patrimonial</p>
         </div>
       </div>

@@ -57,7 +57,7 @@ function DashboardExecutivo() {
             <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase">Centro de Comando</h2>
           </div>
           <p className="text-muted-foreground text-lg font-medium max-w-2xl leading-relaxed">
-            Gestão estratégica de <span className="text-foreground font-bold">Patrimônio Familiar & Holdings</span> com inteligência preditiva.
+            Gestão estratégica de <span className="text-foreground font-bold">Governança Patrimonial, Compliance e Inteligência Documental</span>.
           </p>
         </div>
         

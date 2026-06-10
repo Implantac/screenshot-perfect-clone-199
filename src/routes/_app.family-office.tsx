@@ -49,8 +49,8 @@ function FamilyOffice() {
                      <Heart className="h-7 w-7" />
                   </div>
                   <div>
-                     <h3 className="text-2xl font-black">Plano Sucessório</h3>
-                     <p className="text-sm text-muted-foreground">Última revisão: 12 de Junho, 2026</p>
+                     <h3 className="text-2xl font-black">Célula Family Office</h3>
+                     <p className="text-sm text-muted-foreground">Planejamento sucessório e blindagem patrimonial</p>
                   </div>
                </div>
                <div className="flex items-center gap-2 bg-emerald-500/10 text-emerald-500 px-4 py-2 rounded-xl text-xs font-bold border border-emerald-500/10">
