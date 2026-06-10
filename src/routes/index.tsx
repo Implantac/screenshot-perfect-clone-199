@@ -87,9 +87,112 @@ function LandingPage() {
           <PricingCard plan="Professional" price="R$ 997" desc="Para escritórios e consultorias." features={["Governança Patrimonial", "Gestão Documental", "Suporte Básico"]} />
           <PricingCard plan="Business" price="R$ 2.997" desc="Para holdings e empresas." highlighted={true} features={["Tudo do Professional", "Digital Twin", "Compliance 360", "Knowledge Graph"]} />
           <PricingCard plan="Enterprise" price="R$ 7.997" desc="Para grupos econômicos e FOs." features={["Jarvis AI Autônomo", "Gestão de Riscos", "Due Diligence Avançada", "Suporte Dedicated"]} />
+          <PricingCard plan="Corporate" price="Sob Consulta" desc="Grandes grupos econômicos." features={["Customização Total", "Multi-Agentes Jarvis", "Segurança Militar", "SLA Garantido"]} />
         </div>
       </section>
+
+      {/* Jarvis Special Section */}
+      <section className="py-20 md:py-32 px-4 md:px-8 bg-gradient-to-b from-transparent via-primary/5 to-transparent">
+        <div className="max-w-6xl mx-auto glass-card p-8 md:p-16 rounded-[2.5rem] md:rounded-[4rem] border-white/5 bg-black/40 backdrop-blur-3xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 blur-[120px] -z-10 animate-pulse" />
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            <div className="flex-1 space-y-8">
+              <div className="h-16 w-16 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/30">
+                <Sparkles className="h-8 w-8 text-primary" />
+              </div>
+              <h2 className="text-4xl md:text-6xl font-black tracking-tighter italic uppercase leading-none">CONHEÇA O <span className="text-primary">JARVIS</span></h2>
+              <p className="text-muted-foreground text-xl leading-relaxed">
+                Seu Diretor Patrimonial Digital. O Jarvis monitora continuamente seu patrimônio, detectando riscos antes que se tornem problemas e gerando planos de ação estratégicos automaticamente.
+              </p>
+              <div className="space-y-4">
+                {["Monitoramento de Contratos e Imóveis", "Alertas de Certidões e Licenças", "Identificação de Riscos em Tempo Real", "Insights de Governança e Compliance"].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-primary" />
+                    <span className="text-xs font-black uppercase tracking-widest">{item}</span>
+                  </div>
+                ))}
+              </div>
+              <Button size="lg" className="rounded-2xl px-10 h-14 bg-primary text-white font-black uppercase tracking-widest text-[10px]">Ver em Ação</Button>
+            </div>
+            <div className="flex-1 w-full aspect-square bg-white/5 rounded-[3rem] border border-white/10 flex items-center justify-center shadow-2xl">
+              <div className="text-center p-8">
+                <Cpu className="h-16 w-16 text-primary mx-auto mb-6 opacity-50" />
+                <p className="text-muted-foreground font-black italic tracking-widest uppercase text-xs opacity-50">Jarvis Intelligence Core</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Roadmap */}
+      <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
+        <SectionHeader badge="Evolução" title="Roadmap Tecnológico" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {[
+            { phase: "Fase 1", title: "Governança Patrimonial", status: "Nativo" },
+            { phase: "Fase 2", title: "Compliance Automático", status: "Nativo" },
+            { phase: "Fase 3", title: "Jarvis AI Avançado", status: "Beta" },
+            { phase: "Fase 4", title: "Agro Patrimonial", status: "Próximo" }
+          ].map((item, i) => (
+            <div key={i} className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5">
+              <span className="text-[10px] font-black text-primary uppercase tracking-widest block mb-2">{item.phase}</span>
+              <h4 className="text-lg font-bold mb-4">{item.title}</h4>
+              <span className={`text-[8px] px-2 py-1 rounded-full font-black uppercase tracking-widest ${item.status === 'Nativo' ? 'bg-green-500/10 text-green-500' : 'bg-primary/10 text-primary'}`}>
+                {item.status}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-20 px-4 md:px-8 border-t border-white/5 bg-[#030303]">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+            <div className="space-y-6">
+              <div className="flex items-center gap-2">
+                <img src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" alt="Logo" className="h-6" />
+                <span className="font-black tracking-widest text-lg uppercase italic">USE PATRIUM</span>
+              </div>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Líder em tecnologia para Governança Patrimonial e Inteligência Executiva no Brasil.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-widest mb-6">Plataforma</h4>
+              <ul className="space-y-4 text-sm text-muted-foreground font-medium">
+                <li><a href="#" className="hover:text-primary transition-colors">Digital Twin</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Jarvis AI</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Knowledge Graph</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-widest mb-6">Empresa</h4>
+              <ul className="space-y-4 text-sm text-muted-foreground font-medium">
+                <li><a href="#" className="hover:text-primary transition-colors">Sobre Nós</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Segurança</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors">Contato</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-widest mb-6">Newsletter</h4>
+              <div className="flex gap-2">
+                <input type="email" placeholder="E-mail corporativo" className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs w-full outline-none focus:border-primary/50 transition-all" />
+                <Button className="rounded-xl h-10 w-10 p-0"><ArrowRight className="h-4 w-4" /></Button>
+              </div>
+            </div>
+          </div>
+          <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+            <p>© 2026 Strategy & Governance • Secure Infrastructure</p>
+            <div className="flex gap-8">
+              <a href="#">Privacidade</a>
+              <a href="#">Termos</a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
+
 
