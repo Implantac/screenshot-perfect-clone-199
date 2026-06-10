@@ -36,7 +36,7 @@ const complianceData = [
   { name: "Jun", score: 96 },
 ];
 
-export const Route = createFileRoute("/_app/")({
+export const Route = createFileRoute("/_app/dashboard")({
   component: DashboardExecutivo,
 });
 
