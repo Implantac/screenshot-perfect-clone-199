@@ -65,7 +65,7 @@ function JarvisChatPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-200px)] lg:h-[calc(100vh-280px)] flex flex-col gap-6">
+    <div className="h-[calc(100vh-200px)] lg:h-[calc(100vh-280px)] flex flex-col gap-6 max-w-[1800px] mx-auto w-full">
       <div className="flex-1 flex flex-col lg:flex-row gap-8 min-h-0">
         
         {/* Main Chat Area */}
