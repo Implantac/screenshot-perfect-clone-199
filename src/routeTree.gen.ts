@@ -27,6 +27,7 @@ import { Route as AppFinanceiroRouteImport } from './routes/_app.financeiro'
 import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
 import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
 import { Route as AppJarvisIndexRouteImport } from './routes/_app.jarvis.index'
+import { Route as AppJarvisInsightsRouteImport } from './routes/_app.jarvis.insights'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -117,6 +118,11 @@ const AppJarvisIndexRoute = AppJarvisIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppJarvisRoute,
 } as any)
+const AppJarvisInsightsRoute = AppJarvisInsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
+  getParentRoute: () => AppJarvisRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -135,6 +141,7 @@ export interface FileRoutesByFullPath {
   '/riscos': typeof AppRiscosRoute
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/settings': typeof AppSettingsRoute
+  '/jarvis/insights': typeof AppJarvisInsightsRoute
   '/jarvis/': typeof AppJarvisIndexRoute
 }
 export interface FileRoutesByTo {
@@ -153,6 +160,7 @@ export interface FileRoutesByTo {
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/settings': typeof AppSettingsRoute
   '/': typeof AppIndexRoute
+  '/jarvis/insights': typeof AppJarvisInsightsRoute
   '/jarvis': typeof AppJarvisIndexRoute
 }
 export interface FileRoutesById {
@@ -174,6 +182,7 @@ export interface FileRoutesById {
   '/_app/saude-documental': typeof AppSaudeDocumentalRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/jarvis/insights': typeof AppJarvisInsightsRoute
   '/_app/jarvis/': typeof AppJarvisIndexRoute
 }
 export interface FileRouteTypes {
@@ -195,6 +204,7 @@ export interface FileRouteTypes {
     | '/riscos'
     | '/saude-documental'
     | '/settings'
+    | '/jarvis/insights'
     | '/jarvis/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -213,6 +223,7 @@ export interface FileRouteTypes {
     | '/saude-documental'
     | '/settings'
     | '/'
+    | '/jarvis/insights'
     | '/jarvis'
   id:
     | '__root__'
@@ -233,6 +244,7 @@ export interface FileRouteTypes {
     | '/_app/saude-documental'
     | '/_app/settings'
     | '/_app/'
+    | '/_app/jarvis/insights'
     | '/_app/jarvis/'
   fileRoutesById: FileRoutesById
 }
@@ -369,14 +381,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppJarvisIndexRouteImport
       parentRoute: typeof AppJarvisRoute
     }
+    '/_app/jarvis/insights': {
+      id: '/_app/jarvis/insights'
+      path: '/insights'
+      fullPath: '/jarvis/insights'
+      preLoaderRoute: typeof AppJarvisInsightsRouteImport
+      parentRoute: typeof AppJarvisRoute
+    }
   }
 }
 
 interface AppJarvisRouteChildren {
+  AppJarvisInsightsRoute: typeof AppJarvisInsightsRoute
   AppJarvisIndexRoute: typeof AppJarvisIndexRoute
 }
 
 const AppJarvisRouteChildren: AppJarvisRouteChildren = {
+  AppJarvisInsightsRoute: AppJarvisInsightsRoute,
   AppJarvisIndexRoute: AppJarvisIndexRoute,
 }
 
@@ -429,3 +450,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
