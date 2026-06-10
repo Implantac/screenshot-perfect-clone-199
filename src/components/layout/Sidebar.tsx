@@ -69,13 +69,15 @@ export function Sidebar() {
   return (
     <div className="flex h-screen w-72 flex-col bg-sidebar border-r border-sidebar-border relative z-20 shadow-2xl">
       {/* Brand */}
-      <div className="flex h-24 items-center px-6">
+      <div className="flex h-24 flex-col justify-center px-6 gap-2">
         <img 
           src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
           alt="Use Patrium" 
-          className="h-10 w-auto object-contain"
+          className="h-10 w-auto object-contain self-start"
         />
+        <h1 className="text-xl font-black tracking-[0.2em] text-foreground leading-none uppercase font-sans">USE PATRIUM</h1>
       </div>
+
 
 
       {/* Navigation */}

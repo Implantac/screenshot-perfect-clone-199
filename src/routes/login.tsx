@@ -51,15 +51,17 @@ function LoginPage() {
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none -translate-x-1/2 translate-y-1/2" />
       
       <div className="w-full max-w-[450px] space-y-8 animate-in fade-in zoom-in duration-700">
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center justify-center mb-4">
+        <div className="text-center space-y-6">
+          <div className="inline-flex items-center justify-center mb-2">
             <img 
               src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
               alt="Use Patrium" 
-              className="h-16 w-auto object-contain animate-in fade-in zoom-in duration-1000"
+              className="h-20 w-auto object-contain animate-in fade-in zoom-in duration-1000"
             />
           </div>
+          <h1 className="text-5xl font-black tracking-[0.25em] text-foreground uppercase animate-in slide-in-from-bottom-4 duration-1000 delay-200">USE PATRIUM</h1>
         </div>
+
 
 
         <div className="glass-card rounded-[2.5rem] p-10 space-y-8 border-white/10 relative overflow-hidden">
