@@ -113,13 +113,14 @@ export function Sidebar() {
             }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             style={{ transformStyle: "preserve-3d" }}
-            className="text-lg font-black tracking-[0.45em] text-center uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_2px_10px_rgba(196,146,76,0.2)]"
+            className="text-xs font-black tracking-[0.45em] text-center uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_2px_10px_rgba(196,146,76,0.2)]"
           >
             USE PATRIUM
           </motion.h1>
           {/* Sculpted Depth Shadow */}
           <h1 
-            className="absolute inset-0 text-lg font-black tracking-[0.45em] text-center uppercase font-sans text-[#4d3311] blur-[0.5px] pointer-events-none select-none" 
+            className="absolute inset-0 text-xs font-black tracking-[0.45em] text-center uppercase font-sans text-[#4d3311] blur-[0.5px] pointer-events-none select-none" 
+
             style={{ transform: "translateZ(-1px) translateY(1.5px)" }}
           >
             USE PATRIUM
