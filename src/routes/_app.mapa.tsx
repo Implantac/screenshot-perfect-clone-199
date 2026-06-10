@@ -21,19 +21,19 @@ export const Route = createFileRoute("/_app/mapa")({
 
 function MapaGlobal() {
   return (
-    <div className="h-[calc(100vh-140px)] flex flex-col gap-6 animate-in fade-in duration-700">
+    <div className="h-[calc(100vh-140px)] flex flex-col gap-6 animate-in fade-in duration-700 max-w-[1800px] mx-auto w-full">
       {/* Header Controls */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
          <div className="space-y-1">
             <h2 className="text-3xl font-black tracking-tight uppercase">Cartografia Patrimonial</h2>
             <p className="text-muted-foreground">Geolocalização em tempo real de ativos rurais e urbanos.</p>
          </div>
          <div className="flex gap-3">
-            <button className="h-11 px-6 bg-white/5 border border-white/10 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-2">
+            <button className="h-11 px-4 md:px-6 bg-white/5 border border-white/10 rounded-xl font-bold text-[10px] md:text-xs uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2 flex-1 md:flex-none">
                <Layers className="h-4 w-4" />
                Camadas Satélite
             </button>
-            <button className="h-11 px-6 bg-primary text-primary-foreground rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2">
+            <button className="h-11 px-4 md:px-6 bg-primary text-primary-foreground rounded-xl font-bold text-[10px] md:text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center justify-center gap-2 flex-1 md:flex-none">
                <Navigation className="h-4 w-4" />
                Roteirizar Inspeção
             </button>
@@ -55,7 +55,7 @@ function MapaGlobal() {
          <MapMarker top="65%" left="32%" label="Reserva das Águas" type="rural" />
 
          {/* UI Overlays */}
-         <div className="absolute top-8 left-8 z-10 w-80 space-y-4">
+         <div className="absolute top-4 left-4 md:top-8 md:left-8 z-10 w-[calc(100%-2rem)] md:w-80 space-y-4">
             <div className="glass-card p-4 rounded-3xl bg-background/60 backdrop-blur-md border-white/10 shadow-2xl">
                <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -89,16 +89,16 @@ function MapaGlobal() {
          </div>
 
          {/* Zoom Controls */}
-         <div className="absolute bottom-8 right-8 z-10 flex flex-col gap-2">
-            <button className="h-12 w-12 bg-background/60 backdrop-blur-md border border-white/10 rounded-xl flex items-center justify-center font-black text-lg hover:bg-white/10 transition-all shadow-xl">+</button>
-            <button className="h-12 w-12 bg-background/60 backdrop-blur-md border border-white/10 rounded-xl flex items-center justify-center font-black text-lg hover:bg-white/10 transition-all shadow-xl">-</button>
-            <button className="h-12 w-12 bg-primary rounded-xl flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/30 hover:scale-105 transition-all mt-2">
-               <Maximize2 className="h-5 w-5" />
+          <div className="absolute bottom-4 right-4 md:bottom-8 md:right-8 z-10 flex flex-col gap-2">
+            <button className="h-10 w-10 md:h-12 md:w-12 bg-background/60 backdrop-blur-md border border-white/10 rounded-xl flex items-center justify-center font-black text-lg hover:bg-white/10 transition-all shadow-xl">+</button>
+            <button className="h-10 w-10 md:h-12 md:w-12 bg-background/60 backdrop-blur-md border border-white/10 rounded-xl flex items-center justify-center font-black text-lg hover:bg-white/10 transition-all shadow-xl">-</button>
+            <button className="h-10 w-10 md:h-12 md:w-12 bg-primary rounded-xl flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/30 hover:scale-105 transition-all mt-2">
+               <Maximize2 className="h-4 w-4 md:h-5 md:w-5" />
             </button>
-         </div>
+          </div>
 
          {/* Floating IA Banner */}
-         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 glass-card px-8 py-4 rounded-full bg-primary/10 backdrop-blur-xl border-primary/20 flex items-center gap-6 shadow-2xl">
+         <div className="absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 z-10 glass-card px-4 md:px-8 py-3 md:py-4 rounded-3xl md:rounded-full bg-primary/10 backdrop-blur-xl border-primary/20 flex flex-col md:flex-row items-center gap-4 md:gap-6 shadow-2xl w-[calc(100%-2rem)] md:w-auto">
             <div className="flex items-center gap-3">
                <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground animate-pulse">
                   <Zap className="h-4 w-4" />
@@ -108,7 +108,7 @@ function MapaGlobal() {
                   <p className="text-xs font-bold text-foreground">Valorização de +12% estimada para ativos em MT no próximo ciclo.</p>
                </div>
             </div>
-            <div className="h-6 w-[1px] bg-primary/20" />
+            <div className="h-px w-full md:h-6 md:w-[1px] bg-primary/20" />
             <button className="text-[10px] font-black uppercase tracking-widest hover:underline flex items-center gap-1 text-primary">
                Ver Dossiê Mercado
                <ChevronRight className="h-3 w-3" />
