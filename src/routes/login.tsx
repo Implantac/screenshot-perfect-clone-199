@@ -161,6 +161,7 @@ function LoginPage() {
 
     try {
       if (isSignUp) {
+        console.log("Attempting signup for:", email);
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -170,7 +171,13 @@ function LoginPage() {
             }
           }
         });
-        if (error) throw error;
+        
+        if (error) {
+          console.error("Signup error details:", error);
+          throw error;
+        }
+        
+        console.log("Signup success data:", data);
         
         if (data.session) {
           toast.success("Conta criada e autenticada com sucesso!");
@@ -180,20 +187,25 @@ function LoginPage() {
           setIsSignUp(false);
         }
       } else {
+        console.log("Attempting login for:", email);
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        if (error) throw error;
+        if (error) {
+          console.error("Login error details:", error);
+          throw error;
+        }
         toast.success("Bem-vindo ao Use Patrium");
         navigate({ to: "/dashboard" });
       }
     } catch (error: any) {
-      console.error("Auth error:", error);
+      console.error("Auth process error:", error);
       toast.error(error.message || "Erro ao realizar autenticação");
     } finally {
       setLoading(false);
     }
+
 
   };
 
