@@ -53,7 +53,7 @@ function LandingPage() {
           </div>
           <div className="flex flex-col">
             <span className="font-black tracking-[0.4em] text-lg uppercase italic leading-none">USE PATRIUM</span>
-            <span className="text-[7px] font-bold tracking-[0.6em] uppercase text-primary/80 mt-1">Institutional Governance</span>
+            <span className="text-[7px] font-bold tracking-[0.6em] uppercase text-primary/80 mt-1">Governança Institucional</span>
           </div>
         </div>
         
@@ -79,12 +79,12 @@ function LandingPage() {
             className="inline-flex items-center gap-3 px-6 py-2 rounded-full border border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-[0.5em] text-primary"
           >
             <div className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_10px_#d4a355]" />
-            Patrimonial Operating System
+            Sistema Operacional Patrimonial
           </motion.div>
           
           <h1 className="text-8xl md:text-[14rem] font-black uppercase italic leading-[0.75] tracking-tighter mix-blend-difference">
-            THE NEW <br />
-            <span className="text-primary italic">STANDARD.</span>
+            O NOVO <br />
+            <span className="text-primary italic">PADRÃO.</span>
           </h1>
 
           <p className="text-xl md:text-3xl text-white/60 font-light italic max-w-3xl mx-auto leading-relaxed">
@@ -97,7 +97,7 @@ function LandingPage() {
               Protocolo Demo
             </Button>
             <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.4em] text-white/30 italic">
-              <Plus className="h-4 w-4" /> Discover Jarvis AI
+              <Plus className="h-4 w-4" /> Conheça Jarvis AI
             </div>
           </div>
         </motion.div>
@@ -107,7 +107,7 @@ function LandingPage() {
           transition={{ repeat: Infinity, duration: 2 }}
           className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30"
         >
-          <span className="text-[8px] font-black uppercase tracking-[0.5em] vertical-text">Scroll to explore</span>
+          <span className="text-[8px] font-black uppercase tracking-[0.5em] vertical-text">Role para explorar</span>
           <div className="w-px h-12 bg-white/20" />
         </motion.div>
       </section>
@@ -117,10 +117,10 @@ function LandingPage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-32 items-end">
           <div className="space-y-12">
             <div className="inline-block text-[10px] font-black uppercase tracking-[0.5em] text-primary/60 italic border-b border-primary/20 pb-2">
-              The Architecture of Legacy
+              A Arquitetura do Legado
             </div>
             <h2 className="text-6xl md:text-9xl font-black italic uppercase leading-[0.85] tracking-tighter">
-              BEYOND <br />
+              ALÉM DO <br />
               COMPLIANCE.
             </h2>
           </div>
@@ -130,7 +130,7 @@ function LandingPage() {
               A governança moderna exige antecipação, conexão total e inteligência autônoma."
             </p>
             <div className="h-px w-24 bg-primary" />
-            <p className="text-sm text-white/40 font-bold uppercase tracking-[0.2em] italic">USE PATRIUM STRATEGIC PAPER v2.0</p>
+            <p className="text-sm text-white/40 font-bold uppercase tracking-[0.2em] italic">USE PATRIUM RELATÓRIO ESTRATÉGICO v2.0</p>
           </div>
         </div>
 
@@ -156,7 +156,7 @@ function LandingPage() {
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center space-y-24">
           <div className="space-y-6">
             <div className="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.5em] text-primary">
-              <Sparkles className="h-4 w-4" /> Jarvis Strategic Director
+              <Sparkles className="h-4 w-4" /> Jarvis Diretor Estratégico
             </div>
             <h2 className="text-5xl md:text-8xl font-black italic uppercase tracking-tighter leading-none">
               O PRIMEIRO DIRETOR <br />
@@ -193,15 +193,15 @@ function LandingPage() {
       <section className="relative z-20 py-60 px-6 md:px-12 text-center bg-[#030303]">
         <div className="max-w-5xl mx-auto space-y-16">
           <h2 className="text-6xl md:text-[10rem] font-black italic uppercase leading-[0.8] tracking-tighter">
-            THE FUTURE <br />
-            IS <span className="text-primary italic">PRIVATE.</span>
+            O FUTURO <br />
+            É <span className="text-primary italic">RESTRITO.</span>
           </h2>
           <p className="text-xl md:text-3xl text-white/60 italic font-light max-w-2xl mx-auto">
             Sua governança merece o estado da arte. Junte-se à nova categoria de infraestrutura estratégica.
           </p>
           <div className="pt-12">
             <Button size="lg" className="h-24 px-20 rounded-[2.5rem] bg-white text-black font-black uppercase tracking-[0.4em] text-xs hover:bg-primary transition-all">
-              Agendar Board Meeting
+              Agendar Reunião de Conselho
             </Button>
           </div>
         </div>
@@ -213,10 +213,10 @@ function LandingPage() {
             <div className="h-4 w-4 bg-white rounded-sm rotate-45" />
             <span className="text-[10px] font-black uppercase tracking-[0.4em]">USE PATRIUM</span>
           </div>
-          <p className="text-[8px] font-black uppercase tracking-[0.5em]">SYSTEMIC GOVERNANCE INFRASTRUCTURE © 2026</p>
+          <p className="text-[8px] font-black uppercase tracking-[0.5em]">INFRAESTRUTURA DE GOVERNANÇA SISTÊMICA © 2026</p>
           <div className="flex items-center gap-8">
-            <a href="#" className="text-[8px] font-black uppercase tracking-[0.5em]">LEGAL</a>
-            <a href="#" className="text-[8px] font-black uppercase tracking-[0.5em]">PRIVACY</a>
+            <a href="#" className="text-[8px] font-black uppercase tracking-[0.5em]">JURÍDICO</a>
+            <a href="#" className="text-[8px] font-black uppercase tracking-[0.5em]">PRIVACIDADE</a>
           </div>
         </div>
       </footer>

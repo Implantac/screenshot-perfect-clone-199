@@ -94,7 +94,7 @@ export function FeatureCard({ icon: Icon, title, desc, delay = 0 }: any) {
       </div>
       
       <div className="mt-12 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-primary/40 group-hover:text-primary transition-colors cursor-pointer">
-        Explore Solution
+        Explorar Solução
         <ArrowRight className="h-4 w-4" />
       </div>
     </motion.div>
@@ -117,11 +117,11 @@ export function ComparisonTable() {
       <table className="w-full text-left border-collapse min-w-[1000px]">
         <thead>
           <tr className="border-b border-white/[0.05]">
-            <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Category / Feature</th>
+            <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Categoria / Funcionalidade</th>
             <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-primary bg-primary/[0.02]">USE PATRIUM OS</th>
             <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60 text-center">SAP / Oracle</th>
             <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60 text-center">SoftExpert / Senior</th>
-            <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60 text-center">Legacy Systems</th>
+            <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60 text-center">Sistemas Legados</th>
           </tr>
         </thead>
         <tbody>
@@ -131,7 +131,7 @@ export function ComparisonTable() {
               <td className="p-8 px-10 bg-primary/[0.01]">
                 <div className="flex items-center gap-3 text-primary">
                   <CheckCircle2 className="h-5 w-5" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Native Protocol</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Protocolo Nativo</span>
                 </div>
               </td>
               <td className="p-8 px-10 text-center text-sm text-muted-foreground/50 font-medium italic">{f.sap}</td>
@@ -150,7 +150,7 @@ export function PricingCard({ plan, price, desc, features, highlighted = false }
     <Card className={`p-10 md:p-14 rounded-[3.5rem] flex flex-col h-full bg-[#080808] border-white/[0.05] relative overflow-hidden transition-all duration-700 hover:scale-[1.03] hover:shadow-2xl hover:shadow-primary/10 ${highlighted ? 'ring-2 ring-primary/50 border-primary/20 shadow-primary/5' : ''}`}>
       {highlighted && (
         <div className="absolute top-0 right-0 bg-primary text-black text-[9px] font-black uppercase tracking-[0.3em] px-6 py-2 rounded-bl-3xl">
-          Market Leader Choice
+          Escolha dos Líderes de Mercado
         </div>
       )}
       
@@ -290,7 +290,7 @@ export function KnowledgeGraphAnimation() {
           ))}
         </div>
         <div className="mt-8 text-center p-4 rounded-full bg-white/[0.02] border border-white/10">
-          <p className="text-[9px] font-black uppercase tracking-[0.5em] text-primary/40 animate-pulse">Graph Core Engine Active</p>
+          <p className="text-[9px] font-black uppercase tracking-[0.5em] text-primary/40 animate-pulse">Motor de Grafo Ativo</p>
         </div>
       </div>
     </div>
