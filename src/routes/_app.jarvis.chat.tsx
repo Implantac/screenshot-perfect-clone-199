@@ -19,8 +19,15 @@ export const Route = createFileRoute("/_app/jarvis/chat")({
   component: JarvisChatPage,
 });
 
+interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  suggestions?: string[];
+}
+
 function JarvisChatPage() {
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<Message[]>([
     { 
       id: "1",
       role: "assistant", 
