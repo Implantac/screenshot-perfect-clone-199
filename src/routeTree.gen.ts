@@ -26,6 +26,7 @@ import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
 import { Route as AppFinanceiroRouteImport } from './routes/_app.financeiro'
 import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
 import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
+import { Route as AppJarvisIndexRouteImport } from './routes/_app.jarvis.index'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -111,6 +112,11 @@ const AppComplianceRoute = AppComplianceRouteImport.update({
   path: '/compliance',
   getParentRoute: () => AppRoute,
 } as any)
+const AppJarvisIndexRoute = AppJarvisIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppJarvisRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -122,13 +128,14 @@ export interface FileRoutesByFullPath {
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
   '/inteligencia': typeof AppInteligenciaRoute
-  '/jarvis': typeof AppJarvisRoute
+  '/jarvis': typeof AppJarvisRouteWithChildren
   '/legal': typeof AppLegalRoute
   '/mapa': typeof AppMapaRoute
   '/regularizacao': typeof AppRegularizacaoRoute
   '/riscos': typeof AppRiscosRoute
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/settings': typeof AppSettingsRoute
+  '/jarvis/': typeof AppJarvisIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -139,7 +146,6 @@ export interface FileRoutesByTo {
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
   '/inteligencia': typeof AppInteligenciaRoute
-  '/jarvis': typeof AppJarvisRoute
   '/legal': typeof AppLegalRoute
   '/mapa': typeof AppMapaRoute
   '/regularizacao': typeof AppRegularizacaoRoute
@@ -147,6 +153,7 @@ export interface FileRoutesByTo {
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/settings': typeof AppSettingsRoute
   '/': typeof AppIndexRoute
+  '/jarvis': typeof AppJarvisIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -159,7 +166,7 @@ export interface FileRoutesById {
   '/_app/holdings': typeof AppHoldingsRoute
   '/_app/imoveis': typeof AppImoveisRoute
   '/_app/inteligencia': typeof AppInteligenciaRoute
-  '/_app/jarvis': typeof AppJarvisRoute
+  '/_app/jarvis': typeof AppJarvisRouteWithChildren
   '/_app/legal': typeof AppLegalRoute
   '/_app/mapa': typeof AppMapaRoute
   '/_app/regularizacao': typeof AppRegularizacaoRoute
@@ -167,6 +174,7 @@ export interface FileRoutesById {
   '/_app/saude-documental': typeof AppSaudeDocumentalRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/jarvis/': typeof AppJarvisIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -187,6 +195,7 @@ export interface FileRouteTypes {
     | '/riscos'
     | '/saude-documental'
     | '/settings'
+    | '/jarvis/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -197,7 +206,6 @@ export interface FileRouteTypes {
     | '/holdings'
     | '/imoveis'
     | '/inteligencia'
-    | '/jarvis'
     | '/legal'
     | '/mapa'
     | '/regularizacao'
@@ -205,6 +213,7 @@ export interface FileRouteTypes {
     | '/saude-documental'
     | '/settings'
     | '/'
+    | '/jarvis'
   id:
     | '__root__'
     | '/_app'
@@ -224,6 +233,7 @@ export interface FileRouteTypes {
     | '/_app/saude-documental'
     | '/_app/settings'
     | '/_app/'
+    | '/_app/jarvis/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -352,8 +362,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppComplianceRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/jarvis/': {
+      id: '/_app/jarvis/'
+      path: '/'
+      fullPath: '/jarvis/'
+      preLoaderRoute: typeof AppJarvisIndexRouteImport
+      parentRoute: typeof AppJarvisRoute
+    }
   }
 }
+
+interface AppJarvisRouteChildren {
+  AppJarvisIndexRoute: typeof AppJarvisIndexRoute
+}
+
+const AppJarvisRouteChildren: AppJarvisRouteChildren = {
+  AppJarvisIndexRoute: AppJarvisIndexRoute,
+}
+
+const AppJarvisRouteWithChildren = AppJarvisRoute._addFileChildren(
+  AppJarvisRouteChildren,
+)
 
 interface AppRouteChildren {
   AppComplianceRoute: typeof AppComplianceRoute
@@ -363,7 +392,7 @@ interface AppRouteChildren {
   AppHoldingsRoute: typeof AppHoldingsRoute
   AppImoveisRoute: typeof AppImoveisRoute
   AppInteligenciaRoute: typeof AppInteligenciaRoute
-  AppJarvisRoute: typeof AppJarvisRoute
+  AppJarvisRoute: typeof AppJarvisRouteWithChildren
   AppLegalRoute: typeof AppLegalRoute
   AppMapaRoute: typeof AppMapaRoute
   AppRegularizacaoRoute: typeof AppRegularizacaoRoute
@@ -381,7 +410,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppHoldingsRoute: AppHoldingsRoute,
   AppImoveisRoute: AppImoveisRoute,
   AppInteligenciaRoute: AppInteligenciaRoute,
-  AppJarvisRoute: AppJarvisRoute,
+  AppJarvisRoute: AppJarvisRouteWithChildren,
   AppLegalRoute: AppLegalRoute,
   AppMapaRoute: AppMapaRoute,
   AppRegularizacaoRoute: AppRegularizacaoRoute,
