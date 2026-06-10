@@ -12,7 +12,8 @@ import {
   CreditCard,
   Download,
   Filter,
-  Search
+  Search,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { 
@@ -24,10 +25,12 @@ import {
   Tooltip, 
   ResponsiveContainer
 } from "recharts";
+import { useTransactions, useAssets } from "@/hooks/usePatrimonio";
 
 export const Route = createFileRoute("/_app/financeiro")({
   component: FluxoFinanceiro,
 });
+
 
 const cashflowData = [
   { name: "Jan", entrada: 420, saida: 180 },
@@ -39,6 +42,21 @@ const cashflowData = [
 ];
 
 function FluxoFinanceiro() {
+  const { data: transactions, isLoading: transLoading } = useTransactions();
+  const { data: assets, isLoading: assetsLoading } = useAssets();
+
+  if (transLoading || assetsLoading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  const totalVgv = assets?.reduce((sum, a) => sum + (Number(a.value) || 0), 0) || 0;
+  const monthlyRevenue = transactions?.filter(t => t.type === 'income').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+  const monthlyExpense = transactions?.filter(t => t.type === 'expense').reduce((sum, t) => sum + Math.abs(Number(t.amount)), 0) || 0;
+
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
       {/* Header */}
@@ -59,18 +77,19 @@ function FluxoFinanceiro() {
         </div>
       </div>
 
+
       {/* Financial Summary */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
          <FinancialMetric 
            label="Patrimônio Líquido" 
-           val="R$ 482.5M" 
+           val={`R$ ${(totalVgv / 1000000).toFixed(1)}M`} 
            trend="+1.2%" 
            up 
            icon={Wallet} 
          />
          <FinancialMetric 
            label="Receita Operacional" 
-           val="R$ 1.8M" 
+           val={`R$ ${(monthlyRevenue / 1000).toFixed(0)}k`} 
            trend="+8.5%" 
            up 
            icon={ArrowUpRight} 
@@ -78,7 +97,7 @@ function FluxoFinanceiro() {
          />
          <FinancialMetric 
            label="Custos de Manutenção" 
-           val="R$ 420k" 
+           val={`R$ ${(monthlyExpense / 1000).toFixed(0)}k`} 
            trend="-2.1%" 
            icon={ArrowDownRight} 
            color="text-red-500" 
@@ -90,6 +109,7 @@ function FluxoFinanceiro() {
            color="text-orange-500" 
          />
       </div>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Cashflow Chart */}
@@ -163,42 +183,18 @@ function FluxoFinanceiro() {
             <Filter className="h-4 w-4 text-muted-foreground cursor-pointer hover:text-primary transition-colors" />
           </div>
           <div className="space-y-4">
-             <TransactionItem 
-               title="Recebimento Aluguel" 
-               target="Corporate SP" 
-               val="+R$ 45.000" 
-               type="in" 
-               icon={Building2}
-             />
-             <TransactionItem 
-               title="Dividendos Holding" 
-               target="Alencar S.A." 
-               val="+R$ 12.500" 
-               type="in" 
-               icon={Boxes}
-             />
-             <TransactionItem 
-               title="Manutenção Rural" 
-               target="Fazenda Santa Fé" 
-               val="-R$ 8.200" 
-               type="out" 
-               icon={FileText}
-             />
-             <TransactionItem 
-               title="Taxa Adm. Office" 
-               target="Gestão Patrium" 
-               val="-R$ 5.000" 
-               type="out" 
-               icon={CreditCard}
-             />
-             <TransactionItem 
-               title="IPTU 2026 - Lote 04" 
-               target="Urbano SP" 
-               val="-R$ 2.400" 
-               type="out" 
-               icon={FileText}
-             />
+             {transactions?.map((t) => (
+               <TransactionItem 
+                 key={t.id}
+                 title={t.title} 
+                 target={(t.entities as any)?.name || (t.assets as any)?.name} 
+                 val={`${t.type === 'income' ? '+' : '-'}R$ ${Math.abs(Number(t.amount)).toLocaleString()}`} 
+                 type={t.type === 'income' ? 'in' : 'out'} 
+                 icon={t.category === 'Aluguel' ? Building2 : t.category === 'Dividendos' ? Boxes : FileText}
+               />
+             ))}
           </div>
+
           <button className="w-full py-4 bg-white/5 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all">
             Ver Extrato Consolidado
           </button>

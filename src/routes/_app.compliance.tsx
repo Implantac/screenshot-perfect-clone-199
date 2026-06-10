@@ -1,12 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ShieldCheck, ShieldAlert, CheckCircle2, AlertCircle, FileText, ArrowRight, Activity } from "lucide-react";
+import { ShieldCheck, ShieldAlert, CheckCircle2, AlertCircle, FileText, ArrowRight, Activity, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEntities } from "@/hooks/usePatrimonio";
 
 export const Route = createFileRoute("/_app/compliance")({
   component: Compliance,
 });
 
+
 function Compliance() {
+  const { data: entities, isLoading } = useEntities();
+
+  if (isLoading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  const avgCompliance = entities && entities.length > 0 
+    ? entities.reduce((sum, ent) => sum + (Number(ent.compliance_score) || 0), 0) / entities.length 
+    : 0;
+
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -17,13 +33,14 @@ function Compliance() {
         <div className="bg-white/5 border border-white/5 p-4 rounded-2xl flex items-center gap-4">
            <div className="text-right">
               <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Global Score</p>
-              <p className="text-xl font-black text-primary">96.8 / 100</p>
+              <p className="text-xl font-black text-primary">{avgCompliance.toFixed(1)} / 100</p>
            </div>
            <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
               <ShieldCheck className="h-6 w-6" />
            </div>
         </div>
       </div>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
          <div className="lg:col-span-2 glass-card rounded-[2.5rem] p-8 space-y-8">
@@ -43,11 +60,11 @@ function Compliance() {
                Saúde por Entidade
             </h3>
             <div className="space-y-6">
-               <EntityProgress label="Holding Alencar" val={98} />
-               <EntityProgress label="Agroinvest" val={84} />
-               <EntityProgress label="SP Urbanismo" val={92} />
-               <EntityProgress label="Invest S.A." val={78} />
+               {entities?.map((ent) => (
+                 <EntityProgress key={ent.id} label={ent.name} val={Number(ent.compliance_score) || 0} />
+               ))}
             </div>
+
          </div>
       </div>
     </div>

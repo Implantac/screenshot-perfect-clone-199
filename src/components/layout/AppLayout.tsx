@@ -39,8 +39,9 @@ export function AppLayout({ children }: AppLayoutProps) {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
               <input 
                 type="text" 
-                placeholder="Pesquisar em todo o patrimônio... (Ctrl + K)" 
-                className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/50 transition-all"
+                placeholder="Pesquisar em todo o patrimônio... (Alt + S)" 
+                className="w-full bg-white/5 border border-white/10 rounded-2xl py-2.5 pl-11 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/50 transition-all placeholder:text-muted-foreground/30"
+
               />
             </div>
           </div>

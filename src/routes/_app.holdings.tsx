@@ -9,22 +9,31 @@ import {
   Building, 
   PieChart,
   ExternalLink,
-  Plus
+  Plus,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useEntities, useAssets } from "@/hooks/usePatrimonio";
 
 export const Route = createFileRoute("/_app/holdings")({
   component: HoldingsSocietario,
 });
 
-const holdings = [
-  { id: 1, name: "Holding Alencar S.A.", entities: 8, value: "R$ 142.5M", type: "Familiar", participation: "100%", health: 96 },
-  { id: 2, name: "Agroinvest Participações", entities: 4, value: "R$ 54.2M", type: "Investimento", participation: "75%", health: 82 },
-  { id: 3, name: "SP Urbanismo Ltda", entities: 2, value: "R$ 52.0M", type: "Imobiliária", participation: "100%", health: 92 },
-];
-
 function HoldingsSocietario() {
+  const { data: entities, isLoading: entitiesLoading } = useEntities();
+  const { data: assets, isLoading: assetsLoading } = useAssets();
+
+  if (entitiesLoading || assetsLoading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  const totalVgv = assets?.reduce((sum, a) => sum + (Number(a.value) || 0), 0) || 0;
+
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
       {/* Header */}
@@ -84,9 +93,10 @@ function HoldingsSocietario() {
             <div className="glass-card rounded-[2.5rem] p-8 space-y-6">
                <h3 className="text-lg font-bold">Snapshot Corporativo</h3>
                <div className="space-y-5">
-                  <CorporateMetric label="Empresas Controladas" val="14" icon={Building} />
+                  <CorporateMetric label="Empresas Controladas" val={entities?.length.toString() || "0"} icon={Building} />
                   <CorporateMetric label="Sócios Totais" val="12" icon={Users2} />
-                  <CorporateMetric label="VGV Sob Gestão" val="R$ 482.5M" icon={TrendingUp} />
+                  <CorporateMetric label="VGV Sob Gestão" val={`R$ ${(totalVgv / 1000000).toFixed(1)}M`} icon={TrendingUp} />
+
                </div>
             </div>
 
@@ -118,7 +128,7 @@ function HoldingsSocietario() {
       <div className="space-y-6">
          <h3 className="text-xl font-bold">Portfólio de Holdings</h3>
          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {holdings.map((h) => (
+            {entities?.map((h) => (
                <div key={h.id} className="glass-card rounded-[2.5rem] p-8 space-y-6 group hover:border-primary/20 transition-all cursor-pointer">
                   <div className="flex items-start justify-between">
                      <div className="h-14 w-14 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center group-hover:bg-primary/5 transition-all">
@@ -130,22 +140,23 @@ function HoldingsSocietario() {
                   </div>
                   <div>
                      <h4 className="text-xl font-black tracking-tight">{h.name}</h4>
-                     <p className="text-xs text-muted-foreground mt-1">{h.entities} Entidades controladas</p>
+                     <p className="text-xs text-muted-foreground mt-1">Participação Majoritária</p>
                   </div>
                   <div className="pt-6 border-t border-white/5 flex items-center justify-between">
                      <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Patrimônio</p>
-                        <p className="text-sm font-black text-foreground mt-0.5">{h.value}</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Compliance</p>
+                        <p className="text-sm font-black text-foreground mt-0.5">{h.compliance_score}%</p>
                      </div>
                      <div className="text-right">
                         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Controle</p>
-                        <p className="text-sm font-black text-primary mt-0.5">{h.participation}</p>
+                        <p className="text-sm font-black text-primary mt-0.5">100%</p>
                      </div>
                   </div>
                </div>
             ))}
          </div>
       </div>
+
     </div>
   );
 }

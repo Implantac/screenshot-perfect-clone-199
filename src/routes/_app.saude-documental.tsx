@@ -1,12 +1,32 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileSearch, Sparkles, Filter, Search, FileText, CheckCircle2, AlertTriangle, ArrowUpRight, CheckCircle } from "lucide-react";
+import { FileSearch, Sparkles, Filter, Search, FileText, CheckCircle2, AlertTriangle, ArrowUpRight, CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_app/saude-documental")({
   component: SaudeDocumental,
 });
 
+
 function SaudeDocumental() {
+  const { data: docs, isLoading } = useQuery({
+    queryKey: ["documents"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("documents").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  if (isLoading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -22,10 +42,12 @@ function SaudeDocumental() {
         </button>
       </div>
 
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-         <MetricCard label="Documentos Digitais" val="1.428" detail="98% OCR Concluído" />
+         <MetricCard label="Documentos Digitais" val={docs?.length.toString() || "0"} detail={`${docs?.filter(d => d.ocr_processed).length} OCR Concluído`} />
          <MetricCard label="Saúde Média" val="94.2%" detail="+1.2% este mês" color="text-emerald-500" />
-         <MetricCard label="Pendências IA" val="12" detail="Requerem revisão humana" color="text-orange-500" />
+         <MetricCard label="Pendências IA" val={docs?.filter(d => d.status === 'pendente' || d.status === 'critico').length.toString() || "0"} detail="Requerem revisão humana" color="text-orange-500" />
+
       </div>
 
       <div className="glass-card rounded-[2.5rem] p-8 space-y-8">
@@ -43,10 +65,20 @@ function SaudeDocumental() {
          </div>
 
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <DocCard title="Escritura Fazenda Santa Fé" type="Escritura" date="12/04/2026" status="Validado" />
-            <DocCard title="Matrícula #14.221 - Sede" type="Matrícula" date="02/05/2026" status="Inconsistência" hasError />
-            <DocCard title="Contrato Social - Holding" type="Contrato" date="10/01/2026" status="Validado" />
-            <DocCard title="Procuração Sócio Majoritário" type="Procuração" date="22/05/2026" status="Pendente" />
+            {docs?.map((doc) => (
+              <DocCard 
+                key={doc.id}
+                title={doc.title} 
+                type={doc.type || "Documento"} 
+                date={doc.created_at ? new Date(doc.created_at).toLocaleDateString() : "-"} 
+                status={doc.status === 'regular' ? 'Validado' : doc.status === 'pendente' ? 'Pendente' : 'Inconsistência'} 
+                hasError={doc.status === 'critico' || doc.status === 'alerta'} 
+              />
+            ))}
+            {(!docs || docs.length === 0) && (
+              <p className="col-span-2 text-center text-muted-foreground py-10">Nenhum documento encontrado.</p>
+            )}
+
          </div>
       </div>
     </div>

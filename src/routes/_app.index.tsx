@@ -11,7 +11,8 @@ import {
   PieChart,
   TrendingUp,
   FileSearch,
-  Users2
+  Users2,
+  Loader2
 } from "lucide-react";
 import { 
   AreaChart, 
@@ -24,6 +25,7 @@ import {
 } from "recharts";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useAssets, useRisks, useEntities } from "@/hooks/usePatrimonio";
 
 const complianceData = [
   { name: "Jan", score: 82 },
@@ -34,17 +36,30 @@ const complianceData = [
   { name: "Jun", score: 96 },
 ];
 
-const propertyDist = [
-  { name: "Urbano", value: 45, color: "var(--color-primary)" },
-  { name: "Rural", value: 35, color: "#10b981" },
-  { name: "Societário", value: 20, color: "#3b82f6" },
-];
-
 export const Route = createFileRoute("/_app/")({
   component: DashboardExecutivo,
 });
 
+
 function DashboardExecutivo() {
+  const { data: assets, isLoading: assetsLoading } = useAssets();
+  const { data: risks, isLoading: risksLoading } = useRisks();
+  const { data: entities, isLoading: entitiesLoading } = useEntities();
+
+  if (assetsLoading || risksLoading || entitiesLoading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  const totalValue = assets?.reduce((sum, asset) => sum + (Number(asset.value) || 0), 0) || 0;
+  const avgCompliance = entities && entities.length > 0 
+    ? entities.reduce((sum, ent) => sum + (Number(ent.compliance_score) || 0), 0) / entities.length 
+    : 0;
+
+
   return (
     <div className="space-y-10 animate-in fade-in duration-1000">
       {/* Executive Header */}
@@ -62,12 +77,14 @@ function DashboardExecutivo() {
         <div className="flex items-center gap-6">
           <div className="flex flex-col items-end">
              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Patrimônio Líquido</p>
-             <p className="text-3xl font-black text-foreground">R$ 482.5<span className="text-xs ml-1 opacity-50">M</span></p>
+             <p className="text-3xl font-black text-foreground">
+                R$ {(totalValue / 1000000).toFixed(1)}<span className="text-xs ml-1 opacity-50">M</span>
+             </p>
           </div>
           <div className="flex items-center gap-4 bg-white/5 p-4 rounded-[2rem] border border-white/5 backdrop-blur-md">
             <div className="text-right">
               <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Compliance Score</p>
-              <p className="text-2xl font-black text-primary">96.8<span className="text-xs ml-1 opacity-50">%</span></p>
+              <p className="text-2xl font-black text-primary">{avgCompliance.toFixed(1)}<span className="text-xs ml-1 opacity-50">%</span></p>
             </div>
             <div className="h-10 w-[1px] bg-white/10 mx-2" />
             <div className="h-14 w-14 rounded-full border-4 border-primary/20 border-t-primary flex items-center justify-center relative">
@@ -77,16 +94,20 @@ function DashboardExecutivo() {
         </div>
       </div>
 
+
       {/* Primary Health Indicators */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <HealthCard 
           title="Saúde Patrimonial" 
-          value="R$ 482.5M" 
+          value={`R$ ${(totalValue / 1000000).toFixed(1)}M`}
           status="Em Alta"
           color="primary"
           icon={Landmark}
           description="Valor total de ativos sob gestão"
-          metrics={[{ label: "Urbanos", val: "65%" }, { label: "Rurais", val: "35%" }]}
+          metrics={[
+            { label: "Urbanos", val: `${((assets?.filter(a => a.type === 'urbano').length || 0) / (assets?.length || 1) * 100).toFixed(0)}%` },
+            { label: "Rurais", val: `${((assets?.filter(a => a.type === 'rural').length || 0) / (assets?.length || 1) * 100).toFixed(0)}%` }
+          ]}
         />
         <HealthCard 
           title="Saúde Documental" 
@@ -107,6 +128,7 @@ function DashboardExecutivo() {
           metrics={[{ label: "SLA", val: "100%" }, { label: "Alertas", val: "0" }]}
         />
       </div>
+
 
       {/* Intelligence & Analytics Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -177,30 +199,18 @@ function DashboardExecutivo() {
               Pendências Críticas
             </h3>
             <div className="space-y-4">
-              <RiskItem 
-                title="Vencimento Certidão SEFAZ" 
-                target="Holding Alencar" 
-                days="2d" 
-                severity="critical"
-              />
-              <RiskItem 
-                title="Inconsistência de Matrícula" 
-                target="Fazenda Santa Fé" 
-                days="IA" 
-                severity="high"
-              />
-              <RiskItem 
-                title="Renovação AVCB" 
-                target="Sede Empresarial" 
-                days="12d" 
-                severity="medium"
-              />
-              <RiskItem 
-                title="Procuração Vencida" 
-                target="Sócio Majoritário" 
-                days="Exp" 
-                severity="critical"
-              />
+              {risks?.slice(0, 4).map((risk) => (
+                <RiskItem 
+                  key={risk.id}
+                  title={risk.title} 
+                  target={(risk.entities as any)?.name || (risk.assets as any)?.name} 
+                  days={risk.due_date ? new Date(risk.due_date).toLocaleDateString() : "IA"} 
+                  severity={risk.severity}
+                />
+              ))}
+              {(!risks || risks.length === 0) && (
+                <p className="text-xs text-muted-foreground text-center py-4">Nenhum risco crítico detectado.</p>
+              )}
             </div>
             <button className="w-full py-4 bg-white/5 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all">
               Central de Riscos
@@ -215,7 +225,7 @@ function DashboardExecutivo() {
              <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
                    <p className="text-[10px] uppercase font-bold text-muted-foreground">Holdings</p>
-                   <p className="text-xl font-black mt-1">04</p>
+                   <p className="text-xl font-black mt-1">{entities?.length.toString().padStart(2, '0')}</p>
                 </div>
                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
                    <p className="text-[10px] uppercase font-bold text-muted-foreground">Sócios</p>
@@ -234,6 +244,7 @@ function DashboardExecutivo() {
              </div>
           </div>
         </div>
+
       </div>
     </div>
   );

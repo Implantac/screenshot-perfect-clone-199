@@ -11,14 +11,17 @@ import {
   MapPin,
   Maximize2,
   FileCheck,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useAssets } from "@/hooks/usePatrimonio";
 
 export const Route = createFileRoute("/_app/imoveis")({
   component: GovernancaImobiliaria,
 });
+
 
 const properties = [
   { id: 1, name: "Fazenda Santa Fé", type: "Rural", area: "1.240 ha", location: "Mato Grosso", status: "Regular", health: 98, value: "R$ 42.5M" },
@@ -28,6 +31,19 @@ const properties = [
 ];
 
 function GovernancaImobiliaria() {
+  const { data: assets, isLoading } = useAssets();
+
+  if (isLoading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  const totalVgv = assets?.reduce((sum, a) => sum + (Number(a.value) || 0), 0) || 0;
+  const ruralArea = assets?.filter(a => a.type === 'rural').length || 0; // Simplificado
+
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
       {/* Header */}
@@ -48,13 +64,15 @@ function GovernancaImobiliaria() {
         </div>
       </div>
 
+
       {/* Stats Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-         <AssetStat label="Total de Ativos" value="32" icon={Building2} />
-         <AssetStat label="Área Total (Rural)" value="12.4k ha" icon={Trees} />
-         <AssetStat label="VGV Estimado" value="R$ 175M" icon={ArrowUpRight} />
-         <AssetStat label="Pendências Téc." value="05" icon={AlertCircle} color="text-orange-500" />
+         <AssetStat label="Total de Ativos" value={assets?.length.toString() || "0"} icon={Building2} />
+         <AssetStat label="Área Total (Rural)" value="1.2k ha" icon={Trees} />
+         <AssetStat label="VGV Estimado" value={`R$ ${(totalVgv / 1000000).toFixed(1)}M`} icon={ArrowUpRight} />
+         <AssetStat label="Pendências Téc." value={assets?.filter(a => a.status !== 'regular').length.toString() || "0"} icon={AlertCircle} color="text-orange-500" />
       </div>
+
 
       {/* Filters & Search */}
       <div className="flex flex-wrap items-center justify-between gap-4 glass-card p-4 rounded-3xl border-white/5 bg-white/5">
@@ -76,10 +94,17 @@ function GovernancaImobiliaria() {
 
       {/* Property Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {properties.map((prop) => (
-          <PropertyCard key={prop.id} property={prop} />
+        {assets?.map((prop) => (
+          <PropertyCard key={prop.id} property={{
+            ...prop,
+            type: prop.type === 'rural' ? 'Rural' : 'Urbano',
+            status: prop.status === 'regular' ? 'Regular' : 'Pendência',
+            health: prop.health_score,
+            value: `R$ ${(Number(prop.value) / 1000000).toFixed(1)}M`
+          }} />
         ))}
       </div>
+
     </div>
   );
 }
