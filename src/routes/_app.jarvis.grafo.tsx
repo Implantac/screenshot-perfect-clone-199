@@ -51,7 +51,7 @@ function JarvisGraphPage() {
         </div>
       </div>
 
-      <div className="glass-card rounded-[3.5rem] h-[800px] border-white/5 bg-[#080808] relative overflow-hidden flex items-center justify-center border-dashed border-2 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]">
+      <div className="glass-card rounded-2xl md:rounded-[3.5rem] h-[500px] md:h-[800px] border-white/5 bg-[#080808] relative overflow-hidden flex items-center justify-center border-dashed border-2 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary),0.08)_0,transparent_70%)]" />
         
         {/* SVG for connections with glow effect */}
@@ -133,7 +133,7 @@ function JarvisGraphPage() {
           </motion.div>
         ))}
 
-        <div className="absolute bottom-10 left-10 p-8 glass-card rounded-[2.5rem] border-white/5 bg-white/[0.02] space-y-5 shadow-2xl backdrop-blur-2xl">
+        <div className="absolute bottom-4 left-4 md:bottom-10 md:left-10 p-4 md:p-8 glass-card rounded-xl md:rounded-[2.5rem] border-white/5 bg-white/[0.02] space-y-3 md:space-y-5 shadow-2xl backdrop-blur-2xl max-w-[calc(100%-2rem)]">
           <p className="text-[11px] font-black uppercase tracking-[0.3em] text-primary/70 mb-4 italic">Diretório de Conexões</p>
           <div className="flex items-center gap-4">
             <div className="h-4 w-4 rounded-lg bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
@@ -149,12 +149,12 @@ function JarvisGraphPage() {
           </div>
         </div>
 
-        <div className="absolute top-10 right-10 flex flex-col gap-4">
-          <button className="h-14 w-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all shadow-xl shadow-primary/10 group">
-            <Zap className="h-6 w-6 text-primary group-hover:text-primary-foreground" />
+        <div className="absolute top-4 right-4 md:top-10 md:right-10 flex flex-col gap-2 md:gap-4">
+          <button className="h-10 w-10 md:h-14 md:w-14 rounded-xl md:rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all shadow-xl shadow-primary/10 group">
+            <Zap className="h-5 w-5 md:h-6 md:w-6 text-primary group-hover:text-primary-foreground" />
           </button>
-          <button className="h-14 w-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all shadow-xl">
-            <Search className="h-6 w-6 text-muted-foreground" />
+          <button className="h-10 w-10 md:h-14 md:w-14 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all shadow-xl">
+            <Search className="h-5 w-5 md:h-6 md:w-6 text-muted-foreground" />
           </button>
         </div>
       </div>

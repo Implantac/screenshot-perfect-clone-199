@@ -64,7 +64,7 @@ export function Sidebar() {
   };
 
   return (
-    <div className="flex h-full w-full flex-col bg-sidebar border-r border-sidebar-border relative z-20 shadow-2xl">
+    <div className="flex h-full w-full flex-col bg-sidebar border-r border-sidebar-border relative z-20 shadow-2xl overflow-hidden">
       {/* Brand */}
       <div className="flex flex-col justify-center px-6 py-10 lg:h-52 gap-6 group/logo cursor-pointer relative shrink-0">
         <div className="relative w-24 h-24 lg:w-28 lg:h-28 self-center">
