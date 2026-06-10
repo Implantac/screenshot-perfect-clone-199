@@ -82,7 +82,7 @@ function DashboardExecutivo() {
           </motion.div>
           <p className="text-muted-foreground text-xl font-medium max-w-2xl leading-relaxed opacity-80">
             Visão consolidada de <span className="text-foreground font-bold border-b-2 border-primary/40">Holdings, Patrimônio e Compliance</span>. 
-            IA ativa processando dados em tempo real.
+            <Link to="/jarvis" className="text-primary font-bold hover:underline ml-1">Jarvis AI</Link> processando dados proativamente.
           </p>
         </div>
         
