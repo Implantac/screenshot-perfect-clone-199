@@ -95,6 +95,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       {
+        rel: "icon",
+        href: "https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png",
+      },
+      {
         rel: "stylesheet",
         href: appCss,
       },
