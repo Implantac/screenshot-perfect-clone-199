@@ -52,13 +52,13 @@ function JarvisChatPage() {
   const handleSend = () => {
     if (!input.trim()) return;
     
-    const userMsg = { id: Date.now().toString(), role: "user", content: input };
+    const userMsg: Message = { id: Date.now().toString(), role: "user", content: input };
     setMessages(prev => [...prev, userMsg]);
     setInput("");
 
     // Simulate Jarvis response
     setTimeout(() => {
-      const jarvisMsg = { 
+      const jarvisMsg: Message = { 
         id: (Date.now() + 1).toString(), 
         role: "assistant", 
         content: "Processando análise via PATRIUM AI CORE... Identifiquei que sua dúvida se refere à estrutura societária. Com base nos documentos extraídos, o risco de sucessão é o fator de maior exposição atualmente."
