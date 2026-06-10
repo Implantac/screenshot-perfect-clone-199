@@ -70,46 +70,47 @@ export function Sidebar() {
   return (
     <div className="flex h-screen w-72 flex-col bg-sidebar border-r border-sidebar-border relative z-20 shadow-2xl">
       {/* Brand */}
-      <div className="flex h-44 flex-col justify-center px-6 gap-6 group/logo cursor-pointer relative">
-        <div className="relative w-24 h-24 self-center">
+      <div className="flex h-52 flex-col justify-center px-6 gap-6 group/logo cursor-pointer relative">
+        <div className="relative w-28 h-28 self-center">
           <motion.div
             animate={{ 
               rotateY: [0, 360]
             }}
             transition={{ 
-              duration: 20, 
+              duration: 12, 
               repeat: Infinity, 
               ease: "linear" 
             }}
             style={{ 
               transformStyle: "preserve-3d",
-              perspective: "1000px"
+              perspective: "1200px"
             }}
             className="w-full h-full relative flex items-center justify-center"
           >
-            {/* Front Face */}
-            <img 
-              src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
-              alt="Use Patrium" 
-              className="w-full h-full object-contain brightness-110 drop-shadow-[0_0_15px_rgba(var(--primary),0.3)]"
-              style={{ transform: "translateZ(2px)" }}
-            />
-            {/* Back Face (Exact duplicate) */}
-            <img 
-              src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
-              alt="" 
-              className="absolute inset-0 w-full h-full object-contain brightness-110"
-              style={{ transform: "rotateY(180deg) translateZ(2px)" }}
-            />
+            {/* 3D Solid Effect using multiple layers for thickness */}
+            {[...Array(8)].map((_, i) => (
+              <img 
+                key={i}
+                src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
+                alt="" 
+                className="absolute inset-0 w-full h-full object-contain"
+                style={{ 
+                  transform: `translateZ(${i - 4}px)`,
+                  filter: i === 7 ? 'brightness(1.1) drop-shadow(0 0 10px rgba(var(--primary),0.2))' : 'brightness(0.7)',
+                  opacity: i === 0 || i === 7 ? 1 : 0.8
+                }}
+              />
+            ))}
           </motion.div>
           
-          {/* Subtle atmospheric glow */}
-          <div className="absolute inset-0 bg-primary/5 blur-[40px] rounded-full -z-10 opacity-60" />
+          {/* Subtle atmospheric center glow */}
+          <div className="absolute inset-4 bg-primary/5 blur-[50px] rounded-full -z-10 opacity-60 group-hover/logo:opacity-100 transition-opacity duration-1000" />
         </div>
-        <h1 className="text-xl font-black tracking-[0.35em] text-center text-foreground leading-none uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-white via-white/90 to-white/50 group-hover/logo:tracking-[0.45em] transition-all duration-1000 ease-out">
+        <h1 className="text-xl font-black tracking-[0.4em] text-center text-foreground leading-none uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-white via-white/90 to-white/40 group-hover/logo:tracking-[0.5em] transition-all duration-1000 ease-out">
           USE PATRIUM
         </h1>
       </div>
+
 
 
 
