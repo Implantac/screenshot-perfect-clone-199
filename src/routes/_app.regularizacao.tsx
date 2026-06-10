@@ -64,7 +64,7 @@ function Regularizacao() {
   );
 }
 
-function MetricBox({ label, val, color }: any) {
+function MetricBox({ label, val, color }: { label: string; val: string; color?: string }) {
    return (
       <div className="glass-card p-6 rounded-[2rem] text-center border-transparent hover:border-white/5 transition-all">
          <p className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em]">{label}</p>

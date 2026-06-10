@@ -80,7 +80,7 @@ function Fornecedores() {
   );
 }
 
-function VendorRow({ name, category, score, status, ok, alert }: any) {
+function VendorRow({ name, category, score, status, ok, alert }: { name: string; category: string; score: number; status: string; ok?: boolean; alert?: boolean }) {
    return (
       <div className="flex items-center justify-between p-7 hover:bg-white/[0.03] transition-all group cursor-pointer border-l-4 border-l-transparent hover:border-l-primary">
          <div className="flex items-center gap-6">

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { FileSearch, Sparkles, Filter, Search, FileText, CheckCircle2, AlertTriangle, ArrowUpRight } from "lucide-react";
+import { FileSearch, Sparkles, Filter, Search, FileText, CheckCircle2, AlertTriangle, ArrowUpRight, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/saude-documental")({
@@ -53,7 +53,7 @@ function SaudeDocumental() {
   );
 }
 
-function MetricCard({ label, val, detail, color = "text-foreground" }: any) {
+function MetricCard({ label, val, detail, color = "text-foreground" }: { label: string; val: string; detail: string; color?: string }) {
    return (
       <div className="glass-card p-8 rounded-[2rem] space-y-2">
          <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{label}</p>
@@ -68,7 +68,7 @@ function DocCard({ title, type, date, status, hasError }: any) {
       <div className="p-5 rounded-3xl bg-white/5 border border-white/5 flex items-center justify-between hover:border-white/20 transition-all group cursor-pointer">
          <div className="flex items-center gap-4">
             <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center border", hasError ? "bg-red-500/10 border-red-500/20 text-red-500" : "bg-white/5 border-white/5 text-muted-foreground group-hover:text-primary")}>
-               <FileText className="h-6 w-6" />
+               {hasError ? <AlertTriangle className="h-6 w-6" /> : <FileText className="h-6 w-6" />}
             </div>
             <div>
                <p className="text-sm font-bold truncate group-hover:text-primary transition-colors">{title}</p>

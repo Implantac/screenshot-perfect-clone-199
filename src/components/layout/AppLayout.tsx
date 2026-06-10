@@ -10,6 +10,22 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   const [isAiOpen, setIsAiOpen] = useState(false);
+  const [chatInput, setChatInput] = useState("");
+  const [messages, setMessages] = useState([
+    { text: "Olá, Gestor. Como posso auxiliar em sua estratégia patrimonial hoje?", isAi: true }
+  ]);
+
+  const handleSendMessage = () => {
+    if (!chatInput.trim()) return;
+    const userMsg = chatInput;
+    setMessages(prev => [...prev, { text: userMsg, isAi: false }]);
+    setChatInput("");
+    
+    // Simulate AI response
+    setTimeout(() => {
+      setMessages(prev => [...prev, { text: "Analisando sua solicitação com base nos dados do patrimônio... Em que mais posso ajudar?", isAi: true }]);
+    }, 1000);
+  };
 
   return (
     <div className="flex h-screen bg-background overflow-hidden font-sans">
@@ -118,9 +134,9 @@ export function AppLayout({ children }: AppLayoutProps) {
                   </div>
 
                   <div className="space-y-6">
-                    <AiBubble isAi text="Olá, Gestor. Como posso auxiliar em sua estratégia patrimonial hoje?" />
-                    <AiBubble text="Qual o impacto tributário se eu transferir o Edifício Corporate para a Holding Alencar?" />
-                    <AiBubble isAi text="Analisando... A transferência via integralização de capital pode gerar ITBI, a menos que a holding não tenha atividade imobiliária preponderante. Deseja que eu verifique o CNAE das suas holdings?" />
+                    {messages.map((msg, i) => (
+                      <AiBubble key={i} isAi={msg.isAi} text={msg.text} />
+                    ))}
                   </div>
                 </div>
 
@@ -128,10 +144,16 @@ export function AppLayout({ children }: AppLayoutProps) {
                   <div className="relative">
                     <input 
                       type="text" 
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                       placeholder="Descreva sua dúvida estratégica..." 
                       className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-5 pr-14 text-sm focus:ring-primary/50"
                     />
-                    <button className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 bg-primary text-primary-foreground rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+                    <button 
+                      onClick={handleSendMessage}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 bg-primary text-primary-foreground rounded-xl flex items-center justify-center shadow-lg shadow-primary/20"
+                    >
                       <Send className="h-5 w-5" />
                     </button>
                   </div>

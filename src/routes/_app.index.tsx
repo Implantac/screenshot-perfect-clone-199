@@ -20,9 +20,7 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer,
-  BarChart,
-  Bar
+  ResponsiveContainer
 } from "recharts";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -242,7 +240,7 @@ function DashboardExecutivo() {
 }
 
 function HealthCard({ title, value, status, color, icon: Icon, description, metrics }: any) {
-  const colors: any = {
+  const colors: Record<string, string> = {
     primary: "text-primary bg-primary/10 border-primary/20",
     emerald: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
     blue: "text-blue-500 bg-blue-500/10 border-blue-500/20",
@@ -251,10 +249,10 @@ function HealthCard({ title, value, status, color, icon: Icon, description, metr
   return (
     <div className="glass-card rounded-[2.5rem] p-8 space-y-6 group hover:border-white/20 transition-all border border-transparent">
       <div className="flex items-start justify-between">
-        <div className={cn("p-4 rounded-2xl transition-transform group-hover:scale-110 duration-500", colors[color])}>
+        <div className={cn("p-4 rounded-2xl transition-transform group-hover:scale-110 duration-500", colors[color] || colors.primary)}>
           <Icon className="h-8 w-8" />
         </div>
-        <div className={cn("px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest", colors[color])}>
+        <div className={cn("px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest", colors[color] || colors.primary)}>
           {status}
         </div>
       </div>
@@ -266,7 +264,7 @@ function HealthCard({ title, value, status, color, icon: Icon, description, metr
       </div>
 
       <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
-        {metrics.map((m: any) => (
+        {metrics?.map((m: any) => (
           <div key={m.label}>
             <p className="text-[10px] font-black uppercase text-muted-foreground/40">{m.label}</p>
             <p className="text-sm font-bold text-foreground mt-0.5">{m.val}</p>
@@ -278,7 +276,7 @@ function HealthCard({ title, value, status, color, icon: Icon, description, metr
 }
 
 function RiskItem({ title, target, days, severity }: any) {
-  const sev: any = {
+  const sev: Record<string, string> = {
     critical: "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]",
     high: "bg-orange-500",
     medium: "bg-blue-500",

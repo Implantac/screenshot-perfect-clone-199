@@ -119,7 +119,7 @@ function MapaGlobal() {
   );
 }
 
-function MapMarker({ top, left, label, type, active }: any) {
+function MapMarker({ top, left, label, type, active }: { top: string; left: string; label: string; type: 'rural' | 'urbano'; active?: boolean }) {
   return (
     <motion.div 
       initial={{ scale: 0, opacity: 0 }}

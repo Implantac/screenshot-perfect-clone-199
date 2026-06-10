@@ -107,7 +107,7 @@ function FamilyOffice() {
   );
 }
 
-function SuccessionStatus({ label, val, icon: Icon }: any) {
+function SuccessionStatus({ label, val, icon: Icon }: { label: string; val: string; icon: any }) {
   return (
     <div className="space-y-2">
        <div className="flex items-center gap-2 text-muted-foreground mb-1">
