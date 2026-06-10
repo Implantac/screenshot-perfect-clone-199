@@ -27,7 +27,7 @@ function JarvisIntelligenceCenter() {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10">
       
       {/* Global Scores - Command Center Style */}
-      <div className="lg:col-span-8 space-y-8">
+      <div className="lg:col-span-8 space-y-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <ScoreGauge label="Patrimonial" value={health?.patrimonial_score || 96} color="primary" />
           <ScoreGauge label="Documental" value={health?.documental_score || 88} color="blue" />
