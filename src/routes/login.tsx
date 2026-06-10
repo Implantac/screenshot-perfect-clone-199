@@ -180,13 +180,13 @@ function LoginPage() {
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[150px] -z-10 pointer-events-none translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none -translate-x-1/2 translate-y-1/2" />
       
-      <div className="w-full max-w-[450px] space-y-8">
-        <div className="text-center space-y-16 group/main cursor-default">
+      <div className="w-full max-w-[400px] space-y-8 relative z-10">
+        <div className="text-center space-y-12 group/main cursor-default">
           <motion.div 
             initial={{ opacity: 0, scale: 0.8, filter: "blur(20px)" }}
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
             transition={{ duration: 1.2, ease: "easeOut" }}
-            className="inline-flex items-center justify-center mb-4"
+            className="inline-flex items-center justify-center mb-2"
           >
             <motion.div
               animate={{ 
@@ -201,7 +201,7 @@ function LoginPage() {
                 transformStyle: "preserve-3d",
                 perspective: "2000px"
               }}
-              className="relative w-64 h-64 flex items-center justify-center"
+              className="relative w-32 h-32 md:w-40 md:h-40 flex items-center justify-center"
             >
               {[...Array(12)].map((_, i) => (
                 <img 
@@ -211,32 +211,32 @@ function LoginPage() {
                   className="absolute inset-0 w-full h-full object-contain"
                   style={{ 
                     transform: `translateZ(${i - 6}px)`,
-                    filter: i === 11 ? 'brightness(1.15) drop-shadow(0 20px 40px rgba(0,0,0,0.5))' : 'brightness(0.65)',
+                    filter: i === 11 ? 'brightness(1.15) drop-shadow(0 15px 30px rgba(0,0,0,0.5))' : 'brightness(0.65)',
                     opacity: i === 0 || i === 11 ? 1 : 0.9
                   }}
                 />
               ))}
-              <div className="absolute inset-[-40%] bg-primary/15 blur-[120px] rounded-full -z-10" />
+              <div className="absolute inset-[-40%] bg-primary/15 blur-[80px] rounded-full -z-10" />
             </motion.div>
           </motion.div>
 
           <div className="relative perspective-2000 group/text flex flex-col items-center">
             <div className="relative z-10 flex flex-col leading-[1.0]">
               <motion.h1 
-                initial={{ opacity: 0, x: -30, filter: "blur(10px)" }}
+                initial={{ opacity: 0, x: -20, filter: "blur(10px)" }}
                 animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                 transition={{ delay: 1.8, duration: 1.2, ease: "easeOut" }}
                 style={{ transformStyle: "preserve-3d" }}
-                className="text-4xl font-black tracking-[0.2em] uppercase bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_10px_30px_rgba(122,83,30,0.4)]"
+                className="text-2xl md:text-3xl font-black tracking-[0.2em] uppercase bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_8px_20px_rgba(122,83,30,0.4)]"
               >
                 USE
               </motion.h1>
               <motion.h1 
-                initial={{ opacity: 0, x: 30, filter: "blur(10px)" }}
+                initial={{ opacity: 0, x: 20, filter: "blur(10px)" }}
                 animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                 transition={{ delay: 3.5, duration: 1.2, ease: "easeOut" }}
                 style={{ transformStyle: "preserve-3d" }}
-                className="text-4xl font-black tracking-[0.2em] uppercase bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_10px_30px_rgba(122,83,30,0.4)]"
+                className="text-2xl md:text-3xl font-black tracking-[0.2em] uppercase bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_8px_20px_rgba(122,83,30,0.4)]"
               >
                 PATRIUM
               </motion.h1>
@@ -245,12 +245,12 @@ function LoginPage() {
             <div className="absolute inset-0 pointer-events-none select-none flex flex-col leading-[1.0]">
               <motion.span 
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8, duration: 1.2 }}
-                className="text-4xl font-black tracking-[0.2em] uppercase text-[#63421a] blur-[1px]" 
+                className="text-2xl md:text-3xl font-black tracking-[0.2em] uppercase text-[#63421a] blur-[1px]" 
                 style={{ transform: "translateZ(-8px) translateY(3px)" }}
               >USE</motion.span>
               <motion.span 
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3.5, duration: 1.2 }}
-                className="text-4xl font-black tracking-[0.2em] uppercase text-[#63421a] blur-[1px]" 
+                className="text-2xl md:text-3xl font-black tracking-[0.2em] uppercase text-[#63421a] blur-[1px]" 
                 style={{ transform: "translateZ(-8px) translateY(3px)" }}
               >PATRIUM</motion.span>
             </div>
