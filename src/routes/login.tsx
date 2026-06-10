@@ -111,7 +111,7 @@ function LoginPage() {
               USE PATRIUM
             </h1>
             <h1 
-              className="absolute inset-0 text-4xl font-black tracking-[0.4em] uppercase text-[#3d2910] blur-[4px] opacity-40 pointer-events-none select-none"  gossima 
+              className="absolute inset-0 text-4xl font-black tracking-[0.4em] uppercase text-[#3d2910] blur-[4px] opacity-40 pointer-events-none select-none" 
               style={{ transform: "translateZ(-20px) translateY(8px)" }}
 
 
