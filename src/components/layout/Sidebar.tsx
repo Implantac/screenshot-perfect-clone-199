@@ -1,4 +1,6 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
+
 import { 
   LayoutDashboard, 
   ShieldAlert, 
@@ -16,8 +18,10 @@ import {
   Scale,
   Map as MapIcon,
   PieChart,
-  Network
+  Network,
+  LogOut
 } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
@@ -54,6 +58,13 @@ const navGroups = [
 
 export function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/login" });
+  };
+
 
   return (
     <div className="flex h-screen w-72 flex-col bg-sidebar border-r border-sidebar-border relative z-20 shadow-2xl">
@@ -111,14 +122,24 @@ export function Sidebar() {
       </div>
 
       {/* User / Settings Footer */}
-      <div className="p-4 border-t border-sidebar-border space-y-3">
-        <Link
-          to="/settings"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-white/5 hover:text-foreground transition-all"
-        >
-          <Settings className="h-4 w-4" />
-          Configurações
-        </Link>
+      <div className="p-4 border-t border-sidebar-border space-y-2">
+        <div className="flex gap-2">
+          <Link
+            to="/settings"
+            className="flex-1 flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:bg-white/5 hover:text-foreground transition-all"
+          >
+            <Settings className="h-4 w-4" />
+            Configurações
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="p-2.5 rounded-xl text-muted-foreground hover:bg-red-500/10 hover:text-red-500 transition-all border border-transparent hover:border-red-500/10"
+            title="Sair"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
+        </div>
+
         <div className="flex items-center gap-4 px-4 py-4 rounded-3xl bg-white/[0.02] border border-white/5 group hover:bg-white/5 transition-colors cursor-pointer">
           <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden border border-primary/20 group-hover:scale-105 transition-transform">
             <User className="h-5 w-5 text-primary" />
