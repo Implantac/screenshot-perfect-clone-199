@@ -131,7 +131,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                         Sugestão do Dia
                      </p>
                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        Detectamos uma variação positiva de mercado para ativos rurais no Centro-Oeste. Sua Fazenda Santa Fé valorizou aproximadamente <span className="text-primary font-bold">R$ 2.4M</span> no último trimestre.
+                        Detectamos uma variação positiva de mercado para ativos rurais no Centro-Oeste. Sua Fazenda Santa Fé valorizou aproximadamente <span className="text-primary font-bold">R$ 2.4M</span> no último trimestre. Recomendo atualização do dossiê de mercado.
                      </p>
                      <button className="w-full py-3 bg-primary/10 text-primary rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-primary/20 transition-all">
                         Ver Dossiê de Mercado
