@@ -90,26 +90,34 @@ function LoginPage() {
               <div className="absolute inset-[-40%] bg-primary/15 blur-[120px] rounded-full -z-10" />
             </motion.div>
           </div>
-          <div className="relative [perspective:1500px] group/text">
+          <div className="relative perspective-2000 group/text">
             <motion.h1 
               animate={{ 
-                rotateX: [-5, 5, -5],
-                rotateY: [-10, 10, -10]
+                rotateX: [-2, 2, -2],
+                rotateY: [-5, 5, -5],
+                filter: ["brightness(1) contrast(1)", "brightness(1.1) contrast(1.05)", "brightness(1) contrast(1)"]
               }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
               style={{ transformStyle: "preserve-3d" }}
-              className="text-6xl font-black tracking-[0.35em] uppercase animate-in slide-in-from-bottom-16 duration-1000 delay-200 bg-clip-text text-transparent bg-gradient-to-b from-[#e5b364] via-[#c4924c] to-[#a37233] drop-shadow-[0_20px_40px_rgba(196,146,76,0.3)] relative z-10"
+              className="text-7xl font-black tracking-[0.5em] uppercase animate-in slide-in-from-bottom-20 duration-1000 delay-200 bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] relative z-10 drop-shadow-[0_10px_30px_rgba(122,83,30,0.4)]"
             >
               USE PATRIUM
             </motion.h1>
-            {/* 3D Depth Shadows for large text */}
-            <h1 className="absolute inset-0 text-6xl font-black tracking-[0.35em] uppercase text-[#8a5d25] blur-[2px] opacity-40 pointer-events-none select-none" style={{ transform: "translateZ(-10px) translateY(4px)" }}>
+            {/* Multi-layered High-End 3D Shadows */}
+            <h1 
+              className="absolute inset-0 text-7xl font-black tracking-[0.5em] uppercase text-[#63421a] blur-[1px] pointer-events-none select-none" 
+              style={{ transform: "translateZ(-8px) translateY(3px)" }}
+            >
               USE PATRIUM
             </h1>
-            <h1 className="absolute inset-0 text-6xl font-black tracking-[0.35em] uppercase text-[#63421a] blur-[4px] opacity-20 pointer-events-none select-none" style={{ transform: "translateZ(-20px) translateY(8px)" }}>
+            <h1 
+              className="absolute inset-0 text-7xl font-black tracking-[0.5em] uppercase text-[#3d2910] blur-[4px] opacity-40 pointer-events-none select-none" 
+              style={{ transform: "translateZ(-20px) translateY(8px)" }}
+            >
               USE PATRIUM
             </h1>
           </div>
+
 
 
 
