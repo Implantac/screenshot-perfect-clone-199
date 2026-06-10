@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/_app'
-import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 import { Route as AppSaudeDocumentalRouteImport } from './routes/_app.saude-documental'
 import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
@@ -25,6 +25,7 @@ import { Route as AppHoldingsRouteImport } from './routes/_app.holdings'
 import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
 import { Route as AppFinanceiroRouteImport } from './routes/_app.financeiro'
 import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
+import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
 import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
 import { Route as AppJarvisIndexRouteImport } from './routes/_app.jarvis.index'
 import { Route as AppJarvisInsightsRouteImport } from './routes/_app.jarvis.insights'
@@ -43,10 +44,10 @@ const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppIndexRoute = AppIndexRouteImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AppRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
@@ -113,6 +114,11 @@ const AppFamilyOfficeRoute = AppFamilyOfficeRouteImport.update({
   path: '/family-office',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDashboardRoute = AppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppComplianceRoute = AppComplianceRouteImport.update({
   id: '/compliance',
   path: '/compliance',
@@ -155,9 +161,10 @@ const AppJarvisAcoesRoute = AppJarvisAcoesRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AppIndexRoute
+  '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/compliance': typeof AppComplianceRoute
+  '/dashboard': typeof AppDashboardRoute
   '/family-office': typeof AppFamilyOfficeRoute
   '/financeiro': typeof AppFinanceiroRoute
   '/fornecedores': typeof AppFornecedoresRoute
@@ -180,8 +187,10 @@ export interface FileRoutesByFullPath {
   '/jarvis/': typeof AppJarvisIndexRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/compliance': typeof AppComplianceRoute
+  '/dashboard': typeof AppDashboardRoute
   '/family-office': typeof AppFamilyOfficeRoute
   '/financeiro': typeof AppFinanceiroRoute
   '/fornecedores': typeof AppFornecedoresRoute
@@ -194,7 +203,6 @@ export interface FileRoutesByTo {
   '/riscos': typeof AppRiscosRoute
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/settings': typeof AppSettingsRoute
-  '/': typeof AppIndexRoute
   '/jarvis/acoes': typeof AppJarvisAcoesRoute
   '/jarvis/alertas': typeof AppJarvisAlertasRoute
   '/jarvis/chat': typeof AppJarvisChatRoute
@@ -205,9 +213,11 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/_app/compliance': typeof AppComplianceRoute
+  '/_app/dashboard': typeof AppDashboardRoute
   '/_app/family-office': typeof AppFamilyOfficeRoute
   '/_app/financeiro': typeof AppFinanceiroRoute
   '/_app/fornecedores': typeof AppFornecedoresRoute
@@ -221,7 +231,6 @@ export interface FileRoutesById {
   '/_app/riscos': typeof AppRiscosRoute
   '/_app/saude-documental': typeof AppSaudeDocumentalRoute
   '/_app/settings': typeof AppSettingsRoute
-  '/_app/': typeof AppIndexRoute
   '/_app/jarvis/acoes': typeof AppJarvisAcoesRoute
   '/_app/jarvis/alertas': typeof AppJarvisAlertasRoute
   '/_app/jarvis/chat': typeof AppJarvisChatRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/compliance'
+    | '/dashboard'
     | '/family-office'
     | '/financeiro'
     | '/fornecedores'
@@ -258,8 +268,10 @@ export interface FileRouteTypes {
     | '/jarvis/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/login'
     | '/compliance'
+    | '/dashboard'
     | '/family-office'
     | '/financeiro'
     | '/fornecedores'
@@ -272,7 +284,6 @@ export interface FileRouteTypes {
     | '/riscos'
     | '/saude-documental'
     | '/settings'
-    | '/'
     | '/jarvis/acoes'
     | '/jarvis/alertas'
     | '/jarvis/chat'
@@ -282,9 +293,11 @@ export interface FileRouteTypes {
     | '/jarvis'
   id:
     | '__root__'
+    | '/'
     | '/_app'
     | '/login'
     | '/_app/compliance'
+    | '/_app/dashboard'
     | '/_app/family-office'
     | '/_app/financeiro'
     | '/_app/fornecedores'
@@ -298,7 +311,6 @@ export interface FileRouteTypes {
     | '/_app/riscos'
     | '/_app/saude-documental'
     | '/_app/settings'
-    | '/_app/'
     | '/_app/jarvis/acoes'
     | '/_app/jarvis/alertas'
     | '/_app/jarvis/chat'
@@ -309,6 +321,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
 }
@@ -329,12 +342,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/': {
-      id: '/_app/'
+    '/': {
+      id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof AppIndexRouteImport
-      parentRoute: typeof AppRoute
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_app/settings': {
       id: '/_app/settings'
@@ -427,6 +440,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFamilyOfficeRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/dashboard': {
+      id: '/_app/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/compliance': {
       id: '/_app/compliance'
       path: '/compliance'
@@ -512,6 +532,7 @@ const AppJarvisRouteWithChildren = AppJarvisRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppComplianceRoute: typeof AppComplianceRoute
+  AppDashboardRoute: typeof AppDashboardRoute
   AppFamilyOfficeRoute: typeof AppFamilyOfficeRoute
   AppFinanceiroRoute: typeof AppFinanceiroRoute
   AppFornecedoresRoute: typeof AppFornecedoresRoute
@@ -525,11 +546,11 @@ interface AppRouteChildren {
   AppRiscosRoute: typeof AppRiscosRoute
   AppSaudeDocumentalRoute: typeof AppSaudeDocumentalRoute
   AppSettingsRoute: typeof AppSettingsRoute
-  AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppComplianceRoute: AppComplianceRoute,
+  AppDashboardRoute: AppDashboardRoute,
   AppFamilyOfficeRoute: AppFamilyOfficeRoute,
   AppFinanceiroRoute: AppFinanceiroRoute,
   AppFornecedoresRoute: AppFornecedoresRoute,
@@ -543,12 +564,12 @@ const AppRouteChildren: AppRouteChildren = {
   AppRiscosRoute: AppRiscosRoute,
   AppSaudeDocumentalRoute: AppSaudeDocumentalRoute,
   AppSettingsRoute: AppSettingsRoute,
-  AppIndexRoute: AppIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
 }
