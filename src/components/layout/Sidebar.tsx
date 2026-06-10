@@ -28,7 +28,7 @@ const navGroups = [
     label: "Inteligência",
     items: [
       { label: "Centro de Comando", icon: LayoutDashboard, to: "/dashboard" },
-      { label: "Jarvis AI", icon: Sparkles, to: "/jarvis" },
+      { label: "Jarvis (Diretor Digital)", icon: Sparkles, to: "/jarvis" },
       { label: "Central de Riscos", icon: ShieldAlert, to: "/riscos" },
       { label: "Saúde Documental", icon: FileSearch, to: "/saude-documental" },
     ]
