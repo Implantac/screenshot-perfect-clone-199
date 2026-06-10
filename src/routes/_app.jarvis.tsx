@@ -6,7 +6,8 @@ import {
   ClipboardList, 
   MessageSquare, 
   History,
-  Activity
+  Activity,
+  Network
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
