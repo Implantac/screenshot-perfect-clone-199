@@ -128,7 +128,7 @@ function HoldingsSocietario() {
       <div className="space-y-6">
          <h3 className="text-xl font-bold">Portfólio de Holdings</h3>
          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {holdings.map((h) => (
+            {entities?.map((h) => (
                <div key={h.id} className="glass-card rounded-[2.5rem] p-8 space-y-6 group hover:border-primary/20 transition-all cursor-pointer">
                   <div className="flex items-start justify-between">
                      <div className="h-14 w-14 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center group-hover:bg-primary/5 transition-all">
@@ -140,22 +140,23 @@ function HoldingsSocietario() {
                   </div>
                   <div>
                      <h4 className="text-xl font-black tracking-tight">{h.name}</h4>
-                     <p className="text-xs text-muted-foreground mt-1">{h.entities} Entidades controladas</p>
+                     <p className="text-xs text-muted-foreground mt-1">Participação Majoritária</p>
                   </div>
                   <div className="pt-6 border-t border-white/5 flex items-center justify-between">
                      <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Patrimônio</p>
-                        <p className="text-sm font-black text-foreground mt-0.5">{h.value}</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Compliance</p>
+                        <p className="text-sm font-black text-foreground mt-0.5">{h.compliance_score}%</p>
                      </div>
                      <div className="text-right">
                         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Controle</p>
-                        <p className="text-sm font-black text-primary mt-0.5">{h.participation}</p>
+                        <p className="text-sm font-black text-primary mt-0.5">100%</p>
                      </div>
                   </div>
                </div>
             ))}
          </div>
       </div>
+
     </div>
   );
 }
