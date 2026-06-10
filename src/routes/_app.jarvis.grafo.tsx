@@ -51,25 +51,48 @@ function JarvisGraphPage() {
         </div>
       </div>
 
-      <div className="glass-card rounded-[3.5rem] h-[700px] border-white/5 bg-[#0a0a0a] relative overflow-hidden flex items-center justify-center border-dashed border-2">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary),0.05)_0,transparent_70%)]" />
+      <div className="glass-card rounded-[3.5rem] h-[800px] border-white/5 bg-[#080808] relative overflow-hidden flex items-center justify-center border-dashed border-2 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary),0.08)_0,transparent_70%)]" />
         
-        {/* SVG for connections */}
+        {/* SVG for connections with glow effect */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none">
+          <defs>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
           {edges.map((edge, i) => {
             const fromNode = nodes.find(n => n.id === edge.from)!;
             const toNode = nodes.find(n => n.id === edge.to)!;
             return (
-              <motion.line
-                key={i}
-                x1={fromNode.x} y1={fromNode.y}
-                x2={toNode.x} y2={toNode.y}
-                stroke="rgba(var(--primary), 0.2)"
-                strokeWidth="1.5"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ duration: 2, delay: i * 0.3 }}
-              />
+              <g key={i}>
+                <motion.line
+                  x1={fromNode.x} y1={fromNode.y}
+                  x2={toNode.x} y2={toNode.y}
+                  stroke="rgba(var(--primary), 0.3)"
+                  strokeWidth="2"
+                  filter="url(#glow)"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: 1, opacity: 1 }}
+                  transition={{ duration: 2, delay: i * 0.3 }}
+                />
+                <motion.circle
+                  r="2"
+                  fill="var(--color-primary)"
+                  animate={{ 
+                    cx: [fromNode.x, toNode.x],
+                    cy: [fromNode.y, toNode.y],
+                    opacity: [0, 1, 0]
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "linear",
+                    delay: i * 0.5
+                  }}
+                />
+              </g>
             );
           })}
         </svg>
