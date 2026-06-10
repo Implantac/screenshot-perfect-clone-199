@@ -23,6 +23,52 @@ function LoginPage() {
         navigate({ to: "/" });
       }
     });
+
+    // Netflix-style cinematic audio sequence
+    const playIntroSound = async () => {
+      try {
+        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        
+        const playOscillator = (freq: number, type: OscillatorType, start: number, duration: number, vol: number) => {
+          const osc = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, start);
+          
+          gain.gain.setValueAtTime(0, start);
+          gain.gain.linearRampToValueAtTime(vol, start + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
+          
+          osc.connect(gain);
+          gain.connect(audioContext.destination);
+          
+          osc.start(start);
+          osc.stop(start + duration);
+        };
+
+        // Sequence of tech/cinematic tones
+        const now = audioContext.currentTime;
+        
+        // Initial deep sub bloom (Netflix "Ta-dum" low end)
+        playOscillator(40, 'sine', now, 2, 0.4);
+        playOscillator(80, 'triangle', now + 0.1, 1.5, 0.2);
+        
+        // Tech high-frequency "scan/ping"
+        playOscillator(800, 'sine', now + 0.5, 0.8, 0.1);
+        playOscillator(1200, 'sine', now + 0.8, 0.6, 0.05);
+        
+        // Final harmonic resolution
+        playOscillator(220, 'sine', now + 1.2, 2.5, 0.3);
+        playOscillator(440, 'sine', now + 1.2, 2.0, 0.15);
+      } catch (e) {
+        console.warn("Audio context failed to start:", e);
+      }
+    };
+
+    // Trigger audio on first interaction or slightly after load if allowed
+    const timer = setTimeout(playIntroSound, 500);
+    return () => clearTimeout(timer);
   }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
