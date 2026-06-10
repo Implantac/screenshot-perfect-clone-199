@@ -55,28 +55,30 @@ function DashboardExecutivo() {
     : 0;
 
   return (
-    <div className="space-y-8 lg:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 max-w-[1800px] mx-auto overflow-x-hidden w-full">
+    <div className="space-y-12 lg:space-y-20 animate-in fade-in slide-in-from-bottom-8 duration-1000 max-w-[1800px] mx-auto overflow-x-hidden w-full relative">
+      <div className="fixed inset-0 noise-overlay opacity-[0.02] pointer-events-none" />
+      
       {/* Executive Header */}
-      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 lg:gap-10 pb-8 border-b border-white/[0.05]">
-        <div className="space-y-4 lg:space-y-6">
+      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10 lg:gap-14 pb-12 border-b border-white/[0.05] executive-grid">
+        <div className="space-y-6 lg:space-y-10 relative z-10">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-4 lg:gap-5"
+            className="flex items-center gap-6 lg:gap-8"
           >
-            <div className="h-12 w-12 lg:h-14 lg:w-14 rounded-xl lg:rounded-[1.25rem] bg-primary/10 flex items-center justify-center border border-primary/20 shadow-[0_0_30px_rgba(var(--primary),0.1)] group hover:scale-105 transition-transform duration-500 shrink-0">
-              <Building2 className="h-6 w-6 lg:h-7 lg:w-7 text-primary" />
+            <div className="h-16 w-16 lg:h-20 lg:w-20 rounded-2xl lg:rounded-[2rem] bg-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group hover:scale-110 transition-all duration-700 shrink-0 backdrop-blur-xl">
+              <Building2 className="h-8 w-8 lg:h-10 lg:w-10 text-primary drop-shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
             </div>
-            <div className="space-y-1">
-              <p className="text-[9px] lg:text-[11px] font-black uppercase tracking-[0.4em] text-primary/70 leading-none">Sistema de Governança</p>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-foreground uppercase italic leading-[0.9]">
-                Comando <span className="text-primary">Estratégico</span>
+            <div className="space-y-2">
+              <p className="text-[10px] lg:text-[12px] font-black uppercase tracking-[0.5em] text-primary/70 leading-none italic">Institutional Command Center</p>
+              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[5.5rem] font-black tracking-tighter text-foreground uppercase italic leading-[0.85]">
+                DASHBOARD <span className="text-primary drop-shadow-[0_0_40px_rgba(212,163,85,0.2)]">ESTRATÉGICO</span>
               </h2>
             </div>
           </motion.div>
-          <p className="text-muted-foreground text-base lg:text-xl font-medium max-w-2xl leading-relaxed opacity-80">
-            Visão consolidada de <span className="text-foreground font-bold border-b-2 border-primary/40">Holdings, Patrimônio e Compliance</span>. 
-            <Link to="/jarvis" className="text-primary font-bold hover:underline ml-1">Jarvis AI</Link> processando dados proativamente.
+          <p className="text-muted-foreground text-lg lg:text-2xl font-medium max-w-3xl leading-relaxed italic opacity-80">
+            Monitoramento de alta fidelidade para <span className="text-foreground font-black border-b-2 border-primary/40">Holdings, Ativos e Compliance</span>. 
+            <Link to="/jarvis" className="text-primary font-black hover:text-white transition-colors ml-1 uppercase tracking-widest text-xs">Jarvis AI Protocols Active</Link>.
           </p>
         </div>
         
