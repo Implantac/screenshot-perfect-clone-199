@@ -155,22 +155,35 @@ function LoginPage() {
     return () => clearTimeout(timer);
   }, [navigate]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
-      toast.success("Bem-vindo ao Use Patrium");
-      navigate({ to: "/" });
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: email.split("@")[0],
+            }
+          }
+        });
+        if (error) throw error;
+        toast.success("Conta criada com sucesso! Verifique seu e-mail ou faça login.");
+        setIsSignUp(false);
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        toast.success("Bem-vindo ao Use Patrium");
+        navigate({ to: "/dashboard" });
+      }
     } catch (error: any) {
-      toast.error(error.message || "Erro ao realizar login");
+      toast.error(error.message || "Erro ao realizar autenticação");
     } finally {
       setLoading(false);
     }
