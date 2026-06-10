@@ -108,8 +108,8 @@ function JarvisIntelligenceCenter() {
               <Zap className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Digital Twin</p>
-              <p className="text-sm font-bold">Visualização 360° do Ativo</p>
+              <p className="text-sm font-bold tracking-tight">Digital Twin</p>
+              <p className="text-[10px] text-muted-foreground font-medium">Visualização 360° do Ativo</p>
             </div>
             <ArrowRight className="h-5 w-5 ml-auto text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
           </div>
