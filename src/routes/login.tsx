@@ -329,11 +329,21 @@ function LoginPage() {
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <>
-                  Entrar no Sistema
+                  {isSignUp ? "Criar Minha Conta" : "Entrar no Sistema"}
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </>
               )}
             </button>
+
+            <div className="text-center">
+              <button 
+                type="button" 
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
+              >
+                {isSignUp ? "Já tenho uma conta? Entrar" : "Ainda não tem conta? Cadastrar"}
+              </button>
+            </div>
           </form>
 
           <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
