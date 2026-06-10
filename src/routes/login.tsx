@@ -150,7 +150,7 @@ function LoginPage() {
       playWhoosh(now + 5.3);
     };
 
-    const timer = setTimeout(playCinematicIntro, 500);
+    const timer = setTimeout(playCinematicIntro, 50);
     return () => clearTimeout(timer);
   }, [navigate]);
 
