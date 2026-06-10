@@ -4,11 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_app")({
   beforeLoad: async ({ location }) => {
+    // Para protótipo e desenvolvimento ágil, desabilitamos o redirecionamento forçado por enquanto
+    // mas mantemos a verificação de sessão para uso futuro.
     const { data: { session } } = await supabase.auth.getSession();
     
-    // Safety check for session
     if (!session && location.pathname !== '/login') {
-      console.warn("Session check in place. Logic ready for redirect once /login route is implemented.");
+      console.info("Simulando ambiente autenticado para desenvolvimento.");
     }
   },
   component: () => (
@@ -17,3 +18,4 @@ export const Route = createFileRoute("/_app")({
     </AppLayout>
   ),
 });
+
