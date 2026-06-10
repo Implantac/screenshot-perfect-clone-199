@@ -123,11 +123,12 @@ function ScoreGauge({ label, value, color }: any) {
   };
 
   return (
-    <div className="glass-card rounded-[2.5rem] p-8 text-center border-white/[0.05] bg-white/[0.01] flex flex-col items-center hover:scale-105 transition-transform duration-700 shadow-2xl backdrop-blur-3xl">
-      <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/50 mb-6 italic">{label}</p>
-      <div className={cn("inline-flex items-center justify-center h-24 w-24 lg:h-32 lg:w-32 rounded-full border-[6px] relative", colors[color])}>
-        <span className="text-2xl lg:text-3xl font-black italic tabular-nums">{value}<span className="text-[10px] opacity-30 ml-1">%</span></span>
-        <svg className="absolute -inset-1.5 h-[108px] w-[108px] lg:h-[140px] lg:w-[140px] rotate-[-90deg] drop-shadow-[0_0_10px_rgba(var(--primary),0.2)]">
+    <div className="glass-card rounded-[2.5rem] p-8 text-center border-white/[0.05] bg-white/[0.01] flex flex-col items-center hover:scale-105 transition-all duration-700 shadow-2xl backdrop-blur-3xl group/gauge relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent opacity-0 group-hover/gauge:opacity-100 transition-opacity" />
+      <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/50 mb-6 italic relative z-10">{label}</p>
+      <div className={cn("inline-flex items-center justify-center h-24 w-24 lg:h-32 lg:w-32 rounded-full border-[6px] relative z-10", colors[color])}>
+        <span className="text-2xl lg:text-3xl font-black italic tabular-nums drop-shadow-lg">{value}<span className="text-[10px] opacity-30 ml-1">%</span></span>
+        <svg className="absolute -inset-1.5 h-[108px] w-[108px] lg:h-[140px] lg:w-[140px] rotate-[-90deg] drop-shadow-[0_0_15px_rgba(var(--primary),0.3)]">
           <circle 
             cx="54" cy="54" r="48" 
             fill="transparent" 
@@ -135,7 +136,7 @@ function ScoreGauge({ label, value, color }: any) {
             strokeWidth="6" 
             strokeDasharray={`${value * 3.01} 301`}
             strokeLinecap="round"
-            className="lg:hidden"
+            className="lg:hidden transition-all duration-1000"
           />
           <circle 
             cx="70" cy="70" r="62" 
@@ -144,7 +145,7 @@ function ScoreGauge({ label, value, color }: any) {
             strokeWidth="6" 
             strokeDasharray={`${value * 3.89} 389`}
             strokeLinecap="round"
-            className="hidden lg:block"
+            className="hidden lg:block transition-all duration-1000"
           />
         </svg>
       </div>
