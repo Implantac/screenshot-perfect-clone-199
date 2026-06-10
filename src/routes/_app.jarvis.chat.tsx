@@ -121,12 +121,12 @@ function JarvisChatPage() {
                   </div>
                   
                   {msg.suggestions && (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 pt-2">
                       {msg.suggestions.map((s) => (
                         <button 
                           key={s}
                           onClick={() => setInput(s)}
-                          className="px-3 py-1.5 lg:px-4 lg:py-2 rounded-full bg-white/5 border border-white/10 text-[9px] lg:text-[10px] font-bold text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all truncate max-w-[200px]"
+                          className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-muted-foreground hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all shadow-sm hover:shadow-primary/5 active:scale-95 truncate max-w-[280px]"
                         >
                           {s}
                         </button>

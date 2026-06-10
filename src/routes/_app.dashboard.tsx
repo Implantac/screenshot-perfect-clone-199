@@ -83,13 +83,14 @@ function DashboardExecutivo() {
         </div>
         
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-8 xl:gap-14 relative z-10">
-          <div className="p-10 lg:p-12 glass-card rounded-[3rem] lg:rounded-[4rem] flex flex-col items-center sm:items-end min-w-0 sm:min-w-[280px] border-primary/20 bg-primary/[0.02] shadow-2xl">
-             <p className="text-[10px] lg:text-[12px] uppercase tracking-[0.4em] text-primary font-black mb-4 italic opacity-80">Portfolio Value (AUM)</p>
-             <p className="text-4xl lg:text-7xl font-black text-foreground tabular-nums tracking-tighter italic">
+          <div className="p-10 lg:p-12 glass-card rounded-[3rem] lg:rounded-[4rem] flex flex-col items-center sm:items-end min-w-0 sm:min-w-[280px] border-primary/20 bg-primary/[0.02] shadow-2xl relative overflow-hidden group/aum">
+             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover/aum:opacity-100 transition-opacity duration-700" />
+             <p className="text-[10px] lg:text-[12px] uppercase tracking-[0.4em] text-primary font-black mb-4 italic opacity-80 relative z-10">Portfolio Value (AUM)</p>
+             <p className="text-4xl lg:text-7xl font-black text-foreground tabular-nums tracking-tighter italic relative z-10 drop-shadow-2xl">
                 R$ {(totalValue / 1000000).toFixed(1)}<span className="text-lg lg:text-2xl ml-1 text-primary">M</span>
              </p>
-             <div className="flex items-center gap-2 text-[10px] lg:text-xs text-emerald-500 font-black mt-4 bg-emerald-500/10 px-4 py-1.5 rounded-full border border-emerald-500/20">
-                <ArrowUpRight className="h-4 w-4" /> +12.4% <span className="opacity-60 font-bold ml-1 uppercase tracking-widest">Growth</span>
+             <div className="flex items-center gap-2 text-[10px] lg:text-xs text-emerald-500 font-black mt-4 bg-emerald-500/10 px-4 py-1.5 rounded-full border border-emerald-500/20 relative z-10 shadow-lg shadow-emerald-500/5">
+                <ArrowUpRight className="h-4 w-4 animate-bounce-subtle" /> +12.4% <span className="opacity-60 font-bold ml-1 uppercase tracking-widest">Growth</span>
              </div>
           </div>
 
