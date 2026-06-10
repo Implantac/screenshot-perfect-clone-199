@@ -24,42 +24,132 @@ function LoginPage() {
       }
     });
 
-    // Netflix-style cinematic audio sequence
-    const playIntroSound = async () => {
+    // High-End Cinematic Sound Identity (inspired by Netflix/Tech-Luxury)
+    const playCinematicIntro = () => {
       try {
-        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const AudioContextClass = (window as any).AudioContext || (window as any).webkitAudioContext;
+        if (!AudioContextClass) return;
         
-        const playOscillator = (freq: number, type: OscillatorType, start: number, duration: number, vol: number) => {
-          const osc = audioContext.createOscillator();
-          const gain = audioContext.createGain();
-          
-          osc.type = type;
-          osc.frequency.setValueAtTime(freq, start);
-          
-          gain.gain.setValueAtTime(0, start);
-          gain.gain.linearRampToValueAtTime(vol, start + 0.05);
-          gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
-          
-          osc.connect(gain);
-          gain.connect(audioContext.destination);
-          
-          osc.start(start);
-          osc.stop(start + duration);
-        };
-
-        const now = audioContext.currentTime;
-        playOscillator(40, 'sine', now, 2, 0.4);
-        playOscillator(80, 'triangle', now + 0.1, 1.5, 0.2);
-        playOscillator(800, 'sine', now + 0.5, 0.8, 0.1);
-        playOscillator(1200, 'sine', now + 0.8, 0.6, 0.05);
-        playOscillator(220, 'sine', now + 1.2, 2.5, 0.3);
-        playOscillator(440, 'sine', now + 1.2, 2.0, 0.15);
+        const audioCtx = new AudioContextClass();
+        
+        // Handle browser autoplay restrictions
+        if (audioCtx.state === 'suspended') {
+          const resumeOnInteraction = () => {
+            audioCtx.resume();
+            document.removeEventListener('click', resumeOnInteraction);
+            document.removeEventListener('keydown', resumeOnInteraction);
+            // Re-trigger sound if it was blocked
+            runSequence(audioCtx);
+          };
+          document.addEventListener('click', resumeOnInteraction);
+          document.addEventListener('keydown', resumeOnInteraction);
+        } else {
+          runSequence(audioCtx);
+        }
       } catch (e) {
-        console.warn("Audio context failed to start:", e);
+        console.warn("Cinematic audio failed:", e);
       }
     };
 
-    const timer = setTimeout(playIntroSound, 500);
+    const runSequence = (ctx: AudioContext) => {
+      const now = ctx.currentTime;
+
+      // Helper for clean gain envelopes
+      const createEnv = (start: number, duration: number, maxVol: number) => {
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(maxVol, start + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
+        gain.connect(ctx.destination);
+        return gain;
+      };
+
+      // 1. THE "TUDUM" BASS (Logo Surge - 0.5s)
+      const playBassThump = (time: number, freq: number, vol: number) => {
+        const osc = ctx.createOscillator();
+        const gain = createEnv(time, 0.6, vol);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, time);
+        osc.frequency.exponentialRampToValueAtTime(20, time + 0.6);
+        osc.connect(gain);
+        osc.start(time);
+        osc.stop(time + 0.6);
+      };
+      
+      playBassThump(now + 0.5, 60, 0.6);
+      playBassThump(now + 0.65, 45, 0.8); // Double impact
+
+      // 2. TECH RESONANCE (USE - 1.0s)
+      const playResonance = (time: number, freq: number) => {
+        const osc = ctx.createOscillator();
+        const filter = ctx.createBiquadFilter();
+        const gain = createEnv(time, 1.2, 0.15);
+        
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, time);
+        
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(freq * 2, time);
+        filter.frequency.exponentialRampToValueAtTime(freq * 0.5, time + 1.2);
+        filter.Q.setValueAtTime(10, time);
+        
+        osc.connect(filter);
+        filter.connect(gain);
+        osc.start(time);
+        osc.stop(time + 1.2);
+      };
+      playResonance(now + 1.0, 440);
+
+      // 3. PREMIUM HARMONIC SWELL (PATRIUM - 1.6s)
+      const playSwell = (time: number, freqs: number[]) => {
+        freqs.forEach(f => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(0, time);
+          gain.gain.linearRampToValueAtTime(0.08, time + 0.8);
+          gain.gain.exponentialRampToValueAtTime(0.001, time + 2.5);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, time);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(time);
+          osc.stop(time + 2.5);
+        });
+      };
+      playSwell(now + 1.6, [110, 165, 220, 330]); // A minor 7 rich chord
+
+      // 4. SYSTEM INITIALIZATION WHOOSH (Form - 2.5s)
+      const playWhoosh = (time: number) => {
+        const bufferSize = ctx.sampleRate * 2;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+        
+        const filter = ctx.createBiquadFilter();
+        const gain = ctx.createGain();
+        
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(200, time);
+        filter.frequency.exponentialRampToValueAtTime(3000, time + 0.4);
+        filter.frequency.exponentialRampToValueAtTime(100, time + 1.5);
+        
+        gain.gain.setValueAtTime(0, time);
+        gain.gain.linearRampToValueAtTime(0.04, time + 0.4);
+        gain.gain.linearRampToValueAtTime(0, time + 1.5);
+        
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        noise.start(time);
+        noise.stop(time + 1.5);
+      };
+      playWhoosh(now + 2.5);
+    };
+
+    const timer = setTimeout(playCinematicIntro, 300);
     return () => clearTimeout(timer);
   }, [navigate]);
 
