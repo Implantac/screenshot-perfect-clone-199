@@ -84,7 +84,7 @@ function JarvisIntelligenceCenter() {
           </h3>
           
           <div className="space-y-6">
-            {actions?.slice(0, 4).map((action, idx) => (
+            {actions?.slice(0, 5).map((action, idx) => (
               <ActionItem key={action.id || idx} action={action} />
             )) || (
               <>
