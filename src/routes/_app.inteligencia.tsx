@@ -16,7 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
-export const Route = createFileRoute("/_app/inteligencia" as any)({
+export const Route = createFileRoute("/_app/inteligencia")({
   component: InteligenciaIA,
 });
 
