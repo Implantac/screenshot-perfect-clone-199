@@ -163,9 +163,9 @@ function JarvisGraphPage() {
 }
 
 function NodeIcon({ type }: { type: string }) {
-  if (type === 'holding') return <Boxes className="h-8 w-8 text-primary" />;
-  if (type === 'company') return <Building2 className="h-8 w-8 text-blue-500" />;
-  if (type === 'person') return <User className="h-8 w-8 text-amber-500" />;
-  if (type === 'asset') return <Building2 className="h-8 w-8 text-emerald-500" />;
-  return <FileText className="h-8 w-8 text-muted-foreground" />;
+  if (type === 'holding') return <Boxes className="h-10 w-10 text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]" />;
+  if (type === 'company') return <Building2 className="h-10 w-10 text-blue-500" />;
+  if (type === 'person') return <User className="h-10 w-10 text-amber-500" />;
+  if (type === 'asset') return <Building2 className="h-10 w-10 text-emerald-500" />;
+  return <FileText className="h-10 w-10 text-muted-foreground" />;
 }
