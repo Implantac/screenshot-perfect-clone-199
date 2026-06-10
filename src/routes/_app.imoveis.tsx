@@ -35,7 +35,7 @@ function GovernancaImobiliaria() {
   const totalVgv = assets?.reduce((sum, a) => sum + (Number(a.value) || 0), 0) || 0;
 
   return (
-    <div className="space-y-8 lg:space-y-10 animate-in fade-in duration-700 overflow-x-hidden">
+    <div className="space-y-8 lg:space-y-10 animate-in fade-in duration-700 overflow-x-hidden max-w-[1800px] mx-auto w-full">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>

@@ -55,7 +55,7 @@ function DashboardExecutivo() {
     : 0;
 
   return (
-    <div className="space-y-8 lg:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 max-w-[1600px] mx-auto overflow-x-hidden">
+    <div className="space-y-8 lg:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 max-w-[1800px] mx-auto overflow-x-hidden w-full">
       {/* Executive Header */}
       <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 lg:gap-10 pb-8 border-b border-white/[0.05]">
         <div className="space-y-4 lg:space-y-6">
@@ -158,7 +158,7 @@ function DashboardExecutivo() {
             <button className="px-6 lg:px-8 py-2.5 lg:py-3 bg-primary/10 border border-primary/20 rounded-full text-[10px] lg:text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary text-white transition-all shadow-xl shadow-primary/10 active:scale-95 w-full sm:w-auto">Gerar Relatório IA</button>
           </div>
           
-          <div className="h-[300px] sm:h-[450px] w-full relative z-10 pt-6">
+          <div className="h-[300px] md:h-[450px] xl:h-[550px] w-full relative z-10 pt-6">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={complianceData}>
                 <defs>

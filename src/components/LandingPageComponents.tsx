@@ -92,8 +92,8 @@ export function ComparisonTable() {
   ];
 
   return (
-    <div className="overflow-x-auto rounded-[2rem] border border-white/5 bg-white/[0.01]">
-      <table className="w-full text-left border-collapse">
+    <div className="overflow-x-auto rounded-[2rem] border border-white/5 bg-white/[0.01] w-full scrollbar-thin scrollbar-thumb-primary/20">
+      <table className="w-full text-left border-collapse min-w-[600px]">
         <thead>
           <tr className="border-b border-white/5">
             <th className="p-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Funcionalidade</th>
