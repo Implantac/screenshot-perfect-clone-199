@@ -58,7 +58,7 @@ function LoginPage() {
       const createEnv = (start: number, duration: number, maxVol: number) => {
         const gain = ctx.createGain();
         gain.gain.setValueAtTime(0, start);
-        gain.gain.linearRampToValueAtTime(maxVol, start + 0.1);
+        gain.gain.linearRampToValueAtTime(maxVol, start + 0.2);
         gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
         gain.connect(ctx.destination);
         return gain;
@@ -67,38 +67,38 @@ function LoginPage() {
       // 1. THE "TUDUM" BASS (Logo Surge - Sustained)
       const playBassThump = (time: number, freq: number, vol: number) => {
         const osc = ctx.createOscillator();
-        const gain = createEnv(time, 1.2, vol);
+        const gain = createEnv(time, 2.5, vol);
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, time);
-        osc.frequency.exponentialRampToValueAtTime(20, time + 1.2);
+        osc.frequency.exponentialRampToValueAtTime(20, time + 2.5);
         osc.connect(gain);
         osc.start(time);
-        osc.stop(time + 1.2);
+        osc.stop(time + 2.5);
       };
       
-      playBassThump(now + 0.2, 60, 0.6);
-      playBassThump(now + 0.35, 45, 0.8);
+      playBassThump(now + 0.2, 60, 0.7);
+      playBassThump(now + 0.5, 40, 0.9);
 
       // 2. TECH RESONANCE (USE - Extended)
       const playResonance = (time: number, freq: number) => {
         const osc = ctx.createOscillator();
         const filter = ctx.createBiquadFilter();
-        const gain = createEnv(time, 2.5, 0.15);
+        const gain = createEnv(time, 4.0, 0.15);
         
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(freq, time);
         
         filter.type = 'lowpass';
         filter.frequency.setValueAtTime(freq * 2, time);
-        filter.frequency.exponentialRampToValueAtTime(freq * 0.5, time + 2.5);
-        filter.Q.setValueAtTime(10, time);
+        filter.frequency.exponentialRampToValueAtTime(freq * 0.4, time + 4.0);
+        filter.Q.setValueAtTime(12, time);
         
         osc.connect(filter);
         filter.connect(gain);
         osc.start(time);
-        osc.stop(time + 2.5);
+        osc.stop(time + 4.0);
       };
-      playResonance(now + 1.2, 440);
+      playResonance(now + 1.8, 440);
 
       // 3. PREMIUM HARMONIC SWELL (PATRIUM - Cinematic Fade)
       const playSwell = (time: number, freqs: number[]) => {
@@ -106,21 +106,22 @@ function LoginPage() {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           gain.gain.setValueAtTime(0, time);
-          gain.gain.linearRampToValueAtTime(0.08, time + 1.2);
-          gain.gain.exponentialRampToValueAtTime(0.001, time + 4.5);
+          gain.gain.linearRampToValueAtTime(0.1, time + 2.0);
+          gain.gain.exponentialRampToValueAtTime(0.001, time + 7.0);
           osc.type = 'sine';
           osc.frequency.setValueAtTime(f, time);
           osc.connect(gain);
           gain.connect(ctx.destination);
           osc.start(time);
-          osc.stop(time + 4.5);
+          osc.stop(time + 7.0);
         });
       };
-      playSwell(now + 2.0, [110, 165, 220, 330]);
+      playSwell(now + 3.5, [110, 165, 220, 330, 440]);
 
-      // 4. SYSTEM INITIALIZATION WHOOSH (Form - 3.2s)
+      // 4. SYSTEM INITIALIZATION WHOOSH (Form - 5.5s)
       const playWhoosh = (time: number) => {
-        const bufferSize = ctx.sampleRate * 2;
+        const duration = 2.5;
+        const bufferSize = ctx.sampleRate * duration;
         const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
@@ -132,21 +133,21 @@ function LoginPage() {
         const gain = ctx.createGain();
         
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(200, time);
-        filter.frequency.exponentialRampToValueAtTime(3000, time + 0.4);
-        filter.frequency.exponentialRampToValueAtTime(100, time + 1.5);
+        filter.frequency.setValueAtTime(100, time);
+        filter.frequency.exponentialRampToValueAtTime(4000, time + 0.8);
+        filter.frequency.exponentialRampToValueAtTime(50, time + duration);
         
         gain.gain.setValueAtTime(0, time);
-        gain.gain.linearRampToValueAtTime(0.04, time + 0.4);
-        gain.gain.linearRampToValueAtTime(0, time + 1.5);
+        gain.gain.linearRampToValueAtTime(0.06, time + 0.8);
+        gain.gain.linearRampToValueAtTime(0, time + duration);
         
         noise.connect(filter);
         filter.connect(gain);
         gain.connect(ctx.destination);
         noise.start(time);
-        noise.stop(time + 1.5);
+        noise.stop(time + duration);
       };
-      playWhoosh(now + 3.2);
+      playWhoosh(now + 5.5);
     };
 
     const timer = setTimeout(playCinematicIntro, 200);
