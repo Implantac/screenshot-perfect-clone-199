@@ -18,6 +18,7 @@ import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
 import { Route as AppRegularizacaoRouteImport } from './routes/_app.regularizacao'
 import { Route as AppMapaRouteImport } from './routes/_app.mapa'
 import { Route as AppLegalRouteImport } from './routes/_app.legal'
+import { Route as AppJarvisRouteImport } from './routes/_app.jarvis'
 import { Route as AppInteligenciaRouteImport } from './routes/_app.inteligencia'
 import { Route as AppImoveisRouteImport } from './routes/_app.imoveis'
 import { Route as AppHoldingsRouteImport } from './routes/_app.holdings'
@@ -70,6 +71,11 @@ const AppLegalRoute = AppLegalRouteImport.update({
   path: '/legal',
   getParentRoute: () => AppRoute,
 } as any)
+const AppJarvisRoute = AppJarvisRouteImport.update({
+  id: '/jarvis',
+  path: '/jarvis',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppInteligenciaRoute = AppInteligenciaRouteImport.update({
   id: '/inteligencia',
   path: '/inteligencia',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
   '/inteligencia': typeof AppInteligenciaRoute
+  '/jarvis': typeof AppJarvisRoute
   '/legal': typeof AppLegalRoute
   '/mapa': typeof AppMapaRoute
   '/regularizacao': typeof AppRegularizacaoRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
   '/inteligencia': typeof AppInteligenciaRoute
+  '/jarvis': typeof AppJarvisRoute
   '/legal': typeof AppLegalRoute
   '/mapa': typeof AppMapaRoute
   '/regularizacao': typeof AppRegularizacaoRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/_app/holdings': typeof AppHoldingsRoute
   '/_app/imoveis': typeof AppImoveisRoute
   '/_app/inteligencia': typeof AppInteligenciaRoute
+  '/_app/jarvis': typeof AppJarvisRoute
   '/_app/legal': typeof AppLegalRoute
   '/_app/mapa': typeof AppMapaRoute
   '/_app/regularizacao': typeof AppRegularizacaoRoute
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/holdings'
     | '/imoveis'
     | '/inteligencia'
+    | '/jarvis'
     | '/legal'
     | '/mapa'
     | '/regularizacao'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/holdings'
     | '/imoveis'
     | '/inteligencia'
+    | '/jarvis'
     | '/legal'
     | '/mapa'
     | '/regularizacao'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/_app/holdings'
     | '/_app/imoveis'
     | '/_app/inteligencia'
+    | '/_app/jarvis'
     | '/_app/legal'
     | '/_app/mapa'
     | '/_app/regularizacao'
@@ -284,6 +296,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLegalRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/jarvis': {
+      id: '/_app/jarvis'
+      path: '/jarvis'
+      fullPath: '/jarvis'
+      preLoaderRoute: typeof AppJarvisRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/inteligencia': {
       id: '/_app/inteligencia'
       path: '/inteligencia'
@@ -344,6 +363,7 @@ interface AppRouteChildren {
   AppHoldingsRoute: typeof AppHoldingsRoute
   AppImoveisRoute: typeof AppImoveisRoute
   AppInteligenciaRoute: typeof AppInteligenciaRoute
+  AppJarvisRoute: typeof AppJarvisRoute
   AppLegalRoute: typeof AppLegalRoute
   AppMapaRoute: typeof AppMapaRoute
   AppRegularizacaoRoute: typeof AppRegularizacaoRoute
@@ -361,6 +381,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppHoldingsRoute: AppHoldingsRoute,
   AppImoveisRoute: AppImoveisRoute,
   AppInteligenciaRoute: AppInteligenciaRoute,
+  AppJarvisRoute: AppJarvisRoute,
   AppLegalRoute: AppLegalRoute,
   AppMapaRoute: AppMapaRoute,
   AppRegularizacaoRoute: AppRegularizacaoRoute,
@@ -379,3 +400,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
