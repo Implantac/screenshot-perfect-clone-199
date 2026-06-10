@@ -51,25 +51,48 @@ function JarvisGraphPage() {
         </div>
       </div>
 
-      <div className="glass-card rounded-[3.5rem] h-[700px] border-white/5 bg-[#0a0a0a] relative overflow-hidden flex items-center justify-center border-dashed border-2">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary),0.05)_0,transparent_70%)]" />
+      <div className="glass-card rounded-[3.5rem] h-[800px] border-white/5 bg-[#080808] relative overflow-hidden flex items-center justify-center border-dashed border-2 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary),0.08)_0,transparent_70%)]" />
         
-        {/* SVG for connections */}
+        {/* SVG for connections with glow effect */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none">
+          <defs>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
           {edges.map((edge, i) => {
             const fromNode = nodes.find(n => n.id === edge.from)!;
             const toNode = nodes.find(n => n.id === edge.to)!;
             return (
-              <motion.line
-                key={i}
-                x1={fromNode.x} y1={fromNode.y}
-                x2={toNode.x} y2={toNode.y}
-                stroke="rgba(var(--primary), 0.2)"
-                strokeWidth="1.5"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ duration: 2, delay: i * 0.3 }}
-              />
+              <g key={i}>
+                <motion.line
+                  x1={fromNode.x} y1={fromNode.y}
+                  x2={toNode.x} y2={toNode.y}
+                  stroke="rgba(var(--primary), 0.3)"
+                  strokeWidth="2"
+                  filter="url(#glow)"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: 1, opacity: 1 }}
+                  transition={{ duration: 2, delay: i * 0.3 }}
+                />
+                <motion.circle
+                  r="2"
+                  fill="var(--color-primary)"
+                  animate={{ 
+                    cx: [fromNode.x, toNode.x],
+                    cy: [fromNode.y, toNode.y],
+                    opacity: [0, 1, 0]
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "linear",
+                    delay: i * 0.5
+                  }}
+                />
+              </g>
             );
           })}
         </svg>
@@ -85,43 +108,53 @@ function JarvisGraphPage() {
             style={{ left: node.x, top: node.y, transform: "translate(-50%, -50%)" }}
           >
             <div className={cn(
-              "h-20 w-20 rounded-2xl flex flex-col items-center justify-center border transition-all duration-500 relative bg-black/40 backdrop-blur-md",
-              node.type === 'holding' ? 'border-primary shadow-[0_0_30px_rgba(var(--primary),0.2)]' :
-              node.type === 'company' ? 'border-blue-500/50' :
-              node.type === 'person' ? 'border-amber-500/50' :
+              "h-24 w-24 rounded-[2rem] flex flex-col items-center justify-center border transition-all duration-700 relative bg-black/60 backdrop-blur-xl group-hover:scale-110",
+              node.type === 'holding' ? 'border-primary/50 shadow-[0_0_40px_rgba(var(--primary),0.2)]' :
+              node.type === 'company' ? 'border-blue-500/40 shadow-[0_0_30px_rgba(59,130,246,0.15)]' :
+              node.type === 'person' ? 'border-amber-500/40 shadow-[0_0_30px_rgba(245,158,11,0.15)]' :
               'border-white/10'
             )}>
               <NodeIcon type={node.type} />
-              <div className="absolute -bottom-10 whitespace-nowrap">
-                <p className="text-[10px] font-black uppercase tracking-widest text-foreground group-hover:text-primary transition-colors">{node.label}</p>
-                <p className="text-[8px] text-center text-muted-foreground uppercase">{node.type}</p>
+              <div className="absolute -bottom-14 whitespace-nowrap text-center">
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-foreground group-hover:text-primary transition-colors italic">{node.label}</p>
+                <p className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">{node.type}</p>
               </div>
+              
+              {/* Pulse effect for nodes */}
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.1, 0.3] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className={cn(
+                  "absolute inset-0 rounded-[2rem] -z-10",
+                  node.type === 'holding' ? 'bg-primary/20' : 'bg-white/5'
+                )}
+              />
             </div>
           </motion.div>
         ))}
 
-        <div className="absolute bottom-10 left-10 p-6 glass-card rounded-3xl border-white/5 bg-white/[0.02] space-y-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Legenda do Grafo</p>
-          <div className="flex items-center gap-3">
-            <div className="h-3 w-3 rounded-full bg-primary" />
-            <span className="text-[10px] font-bold text-foreground">Holdings</span>
+        <div className="absolute bottom-10 left-10 p-8 glass-card rounded-[2.5rem] border-white/5 bg-white/[0.02] space-y-5 shadow-2xl backdrop-blur-2xl">
+          <p className="text-[11px] font-black uppercase tracking-[0.3em] text-primary/70 mb-4 italic">Diretório de Conexões</p>
+          <div className="flex items-center gap-4">
+            <div className="h-4 w-4 rounded-lg bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
+            <span className="text-xs font-black uppercase tracking-widest text-foreground/80">Holdings</span>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="h-3 w-3 rounded-full bg-blue-500" />
-            <span className="text-[10px] font-bold text-foreground">Empresas</span>
+          <div className="flex items-center gap-4">
+            <div className="h-4 w-4 rounded-lg bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+            <span className="text-xs font-black uppercase tracking-widest text-foreground/80">Empresas</span>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="h-3 w-3 rounded-full bg-amber-500" />
-            <span className="text-[10px] font-bold text-foreground">Sócios</span>
+          <div className="flex items-center gap-4">
+            <div className="h-4 w-4 rounded-lg bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+            <span className="text-xs font-black uppercase tracking-widest text-foreground/80">Sócios</span>
           </div>
         </div>
 
-        <div className="absolute top-10 right-10 flex flex-col gap-3">
-          <button className="h-12 w-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all">
-            <Zap className="h-5 w-5 text-primary" />
+        <div className="absolute top-10 right-10 flex flex-col gap-4">
+          <button className="h-14 w-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all shadow-xl shadow-primary/10 group">
+            <Zap className="h-6 w-6 text-primary group-hover:text-primary-foreground" />
           </button>
-          <button className="h-12 w-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all">
-            <Search className="h-5 w-5 text-muted-foreground" />
+          <button className="h-14 w-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all shadow-xl">
+            <Search className="h-6 w-6 text-muted-foreground" />
           </button>
         </div>
       </div>
@@ -130,9 +163,9 @@ function JarvisGraphPage() {
 }
 
 function NodeIcon({ type }: { type: string }) {
-  if (type === 'holding') return <Boxes className="h-8 w-8 text-primary" />;
-  if (type === 'company') return <Building2 className="h-8 w-8 text-blue-500" />;
-  if (type === 'person') return <User className="h-8 w-8 text-amber-500" />;
-  if (type === 'asset') return <Building2 className="h-8 w-8 text-emerald-500" />;
-  return <FileText className="h-8 w-8 text-muted-foreground" />;
+  if (type === 'holding') return <Boxes className="h-10 w-10 text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]" />;
+  if (type === 'company') return <Building2 className="h-10 w-10 text-blue-500" />;
+  if (type === 'person') return <User className="h-10 w-10 text-amber-500" />;
+  if (type === 'asset') return <Building2 className="h-10 w-10 text-emerald-500" />;
+  return <FileText className="h-10 w-10 text-muted-foreground" />;
 }
