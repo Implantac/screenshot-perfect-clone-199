@@ -31,40 +31,77 @@ function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-primary/30 font-sans overflow-x-hidden w-full relative">
-      <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-4 md:py-6 flex items-center justify-between bg-[#050505]/80 backdrop-blur-xl border-b border-white/5">
-        <div className="flex items-center gap-2">
-          <img src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" alt="Logo" className="h-6 md:h-8" />
-          <span className="font-black tracking-widest text-base md:text-lg uppercase italic truncate">USE PATRIUM</span>
+    <div className="min-h-screen bg-background text-white selection:bg-primary/30 font-sans overflow-x-hidden w-full relative">
+      <div className="fixed inset-0 noise-overlay z-[100]" />
+      
+      <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-12 py-6 md:py-8 flex items-center justify-between bg-background/60 backdrop-blur-2xl border-b border-white/[0.03]">
+        <div className="flex items-center gap-3">
+          <img src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" alt="Logo" className="h-7 md:h-10" />
+          <div className="flex flex-col">
+            <span className="font-black tracking-[0.3em] text-sm md:text-base uppercase italic leading-none">USE PATRIUM</span>
+            <span className="text-[8px] font-bold tracking-[0.5em] uppercase text-primary/80 mt-1">Strategic Intelligence</span>
+          </div>
         </div>
         
-        <div className="hidden md:flex items-center gap-6">
-          <a href="/login" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-white transition-colors">Acessar Sistema</a>
-          <Button className="rounded-full px-8 bg-white text-black font-black uppercase tracking-widest text-[10px] hover:bg-white/90">Solicitar Demo</Button>
+        <div className="hidden md:flex items-center gap-10">
+          <div className="flex items-center gap-8">
+            {["Soluções", "Tecnologia", "Análise", "Empresa"].map((item) => (
+              <a key={item} href="#" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-white transition-colors">{item}</a>
+            ))}
+          </div>
+          <div className="h-6 w-px bg-white/10" />
+          <div className="flex items-center gap-6">
+            <a href="/login" className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 hover:text-white transition-colors">Acessar</a>
+            <Button className="rounded-full px-10 h-12 bg-white text-black font-black uppercase tracking-widest text-[10px] hover:bg-white/90 border-none">Solicitar Demonstração</Button>
+          </div>
         </div>
 
-        <button className="md:hidden p-2 text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+        <button className="md:hidden p-2 text-white bg-white/5 rounded-xl border border-white/10" onClick={() => setIsMenuOpen(!isMenuOpen)}>
           {isMenuOpen ? <X /> : <Menu />}
         </button>
       </nav>
 
       {/* Hero */}
-      <section className="pt-32 md:pt-48 pb-20 md:pb-32 px-4 md:px-8 relative overflow-hidden w-full">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-[#050505] to-[#050505]" />
-        <div className="max-w-6xl mx-auto text-center relative z-10 space-y-8">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] text-primary">
-            <Sparkles className="h-4 w-4" /> Strategic Asset Intelligence
+      <section className="pt-40 md:pt-64 pb-20 md:pb-40 px-4 md:px-8 relative overflow-hidden w-full executive-grid">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-transparent to-background" />
+        <div className="max-w-7xl mx-auto text-center relative z-10 space-y-12">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white/[0.02] border border-white/[0.05] text-[10px] font-black uppercase tracking-[0.4em] text-primary backdrop-blur-xl shadow-2xl"
+          >
+            <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+            Governance & Strategic Intelligence
           </motion.div>
-          <h1 className="text-5xl md:text-9xl font-black tracking-tighter leading-[0.85] italic uppercase">
-            USE PATRIUM <span className="text-primary">OS</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            A primeira plataforma brasileira capaz de centralizar patrimônio, compliance e inteligência executiva.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-            <Button size="lg" className="rounded-2xl px-12 h-16 bg-primary text-white font-black uppercase tracking-[0.2em] text-xs">Solicitar Demonstração</Button>
-            <Button size="lg" variant="outline" className="rounded-2xl px-12 h-16 border-white/10 bg-white/5 font-black uppercase tracking-[0.2em] text-xs">Conhecer o Jarvis</Button>
+          
+          <div className="space-y-6">
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-6xl md:text-[11rem] font-black tracking-tighter leading-[0.8] italic uppercase"
+            >
+              USE PATRIUM <span className="text-primary drop-shadow-[0_0_50px_rgba(212,163,85,0.2)]">OS</span>
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-xl md:text-3xl text-muted-foreground max-w-4xl mx-auto leading-relaxed font-medium italic"
+            >
+              A nova categoria em inteligência patrimonial. Proteção, governança e conformidade em um ecossistema autônomo de alta performance.
+            </motion.p>
           </div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-12"
+          >
+            <Button size="lg" className="rounded-2xl px-14 h-20 bg-primary text-black font-black uppercase tracking-[0.25em] text-xs hover:scale-105 transition-all shadow-2xl shadow-primary/20 border-none">Solicitar Demonstração</Button>
+            <Button size="lg" variant="outline" className="rounded-2xl px-14 h-20 border-white/10 bg-white/[0.02] font-black uppercase tracking-[0.25em] text-xs backdrop-blur-xl hover:bg-white/5 transition-all">Conhecer o Jarvis</Button>
+          </motion.div>
         </div>
       </section>
 
