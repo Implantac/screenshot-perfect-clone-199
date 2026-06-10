@@ -12,6 +12,7 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginPage() {
+  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -154,22 +155,35 @@ function LoginPage() {
     return () => clearTimeout(timer);
   }, [navigate]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
-      toast.success("Bem-vindo ao Use Patrium");
-      navigate({ to: "/" });
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: email.split("@")[0],
+            }
+          }
+        });
+        if (error) throw error;
+        toast.success("Conta criada com sucesso! Verifique seu e-mail ou faça login.");
+        setIsSignUp(false);
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        toast.success("Bem-vindo ao Use Patrium");
+        navigate({ to: "/dashboard" });
+      }
     } catch (error: any) {
-      toast.error(error.message || "Erro ao realizar login");
+      toast.error(error.message || "Erro ao realizar autenticação");
     } finally {
       setLoading(false);
     }
@@ -265,11 +279,11 @@ function LoginPage() {
           className="glass-card rounded-[2.5rem] p-10 space-y-8 border-white/10 relative overflow-hidden"
         >
           <div className="space-y-2 relative z-10 text-center">
-            <h2 className="text-2xl font-bold text-foreground">Acesso Restrito</h2>
-            <p className="text-sm text-muted-foreground">Insira suas credenciais para gerenciar a governança.</p>
+            <h2 className="text-2xl font-bold text-foreground">{isSignUp ? "Criar Conta" : "Acesso Restrito"}</h2>
+            <p className="text-sm text-muted-foreground">{isSignUp ? "Cadastre seu e-mail corporativo." : "Insira suas credenciais para gerenciar a governança."}</p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-6 relative z-10">
+          <form onSubmit={handleAuth} className="space-y-6 relative z-10">
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">E-mail Corporativo</label>
               <div className="relative group">
@@ -315,11 +329,21 @@ function LoginPage() {
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <>
-                  Entrar no Sistema
+                  {isSignUp ? "Criar Minha Conta" : "Entrar no Sistema"}
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </>
               )}
             </button>
+
+            <div className="text-center">
+              <button 
+                type="button" 
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"
+              >
+                {isSignUp ? "Já tenho uma conta? Entrar" : "Ainda não tem conta? Cadastrar"}
+              </button>
+            </div>
           </form>
 
           <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
