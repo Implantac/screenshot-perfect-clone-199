@@ -239,5 +239,47 @@ function SolutionSection() {
         <FeatureCard icon={ShieldCheck} title="Compliance 360" desc="Monitoramento autônomo de regularidade com alertas preditivos." />
       </div>
     </section>
+function MarketAnalysis() {
+  return (
+    <section className="py-20 md:py-40 px-4 md:px-8 bg-white/[0.01] border-y border-white/[0.03] relative overflow-hidden">
+      <div className="absolute inset-0 executive-grid opacity-30" />
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center relative z-10">
+        <div className="space-y-12">
+          <SectionHeader badge="Relatório de Inteligência" title="Quem Utiliza a Patrium" subtitle="Verticalização setorial para as estruturas patrimoniais mais complexas do país." />
+          <div className="space-y-8">
+            <div className="flex gap-6 p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/[0.05] hover:border-primary/20 transition-all backdrop-blur-xl">
+              <Building2 className="h-10 w-10 text-primary shrink-0" />
+              <div>
+                <h5 className="font-black italic uppercase tracking-tight text-lg mb-2">Holdings & Family Offices</h5>
+                <p className="text-sm text-muted-foreground italic font-medium leading-relaxed">Centralização de múltiplas empresas e sócios em um único grafo de governança.</p>
+              </div>
+            </div>
+            <div className="flex gap-6 p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/[0.05] hover:border-primary/20 transition-all backdrop-blur-xl">
+              <Globe className="h-10 w-10 text-primary shrink-0" />
+              <div>
+                <h5 className="font-black italic uppercase tracking-tight text-lg mb-2">Agronegócio Patrimonial</h5>
+                <p className="text-sm text-muted-foreground italic font-medium leading-relaxed">Gestão de fazendas, matrículas, CAR e ativos biológicos com precisão militar.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-6">
+          {[
+            { label: "Consultorias", icon: Briefcase },
+            { label: "Boutiques Jurídicas", icon: Scale },
+            { label: "Grupos do Agro", icon: Globe },
+            { label: "Family Offices", icon: Users }
+          ].map((item, i) => (
+            <div key={i} className="aspect-square rounded-[3.5rem] bg-white/[0.02] border border-white/[0.05] flex flex-col items-center justify-center p-8 text-center space-y-6 hover:border-primary/40 transition-all group backdrop-blur-xl">
+              <div className="h-16 w-16 rounded-2xl bg-white/[0.03] flex items-center justify-center border border-white/[0.05] group-hover:scale-110 group-hover:bg-primary/10 transition-all">
+                <item.icon className="h-8 w-8 text-primary/60 group-hover:text-primary transition-colors" />
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] leading-tight italic">{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
+
