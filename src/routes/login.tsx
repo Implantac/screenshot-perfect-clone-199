@@ -54,44 +54,46 @@ function LoginPage() {
       
       <div className="w-full max-w-[450px] space-y-8 animate-in fade-in zoom-in duration-700">
         <div className="text-center space-y-12 group/main cursor-default">
-          <div className="inline-flex items-center justify-center mb-2 [perspective:2000px]">
+          <div className="inline-flex items-center justify-center mb-2">
             <motion.div
               animate={{ 
                 rotateY: [0, 360]
               }}
               transition={{ 
-                duration: 20, 
+                duration: 25, 
                 repeat: Infinity, 
                 ease: "linear" 
               }}
               style={{ 
                 transformStyle: "preserve-3d",
-                backfaceVisibility: "visible"
+                perspective: "1200px"
               }}
-              className="relative w-48 h-48"
+              className="relative w-48 h-48 flex items-center justify-center"
             >
+              {/* Front Face */}
               <img 
                 src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
                 alt="Use Patrium" 
-                className="w-full h-full object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.5)] brightness-110"
-                style={{ transform: "translateZ(2px)" }}
+                className="w-full h-full object-contain brightness-110 drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
+                style={{ transform: "translateZ(4px)" }}
               />
-              {/* Symmetrical back face to simulate solid object */}
+              {/* Back Face (Exact duplicate) */}
               <img 
                 src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
                 alt="" 
-                className="absolute inset-0 w-full h-full object-contain filter brightness-90 opacity-80"
-                style={{ transform: "rotateY(180deg) translateZ(2px)" }}
+                className="absolute inset-0 w-full h-full object-contain brightness-110"
+                style={{ transform: "rotateY(180deg) translateZ(4px)" }}
               />
               
-              {/* Premium cinematic depth glow */}
-              <div className="absolute inset-[-30%] bg-primary/20 blur-[100px] rounded-full -z-10 animate-pulse" />
+              {/* Cinematic background depth glow */}
+              <div className="absolute inset-[-30%] bg-primary/10 blur-[100px] rounded-full -z-10" />
             </motion.div>
           </div>
           <h1 className="text-7xl font-black tracking-[0.4em] text-foreground uppercase animate-in slide-in-from-bottom-12 duration-1000 delay-200 bg-clip-text text-transparent bg-gradient-to-b from-white via-white/90 to-white/30 drop-shadow-[0_15px_30px_rgba(0,0,0,0.5)]">
             USE PATRIUM
           </h1>
         </div>
+
 
 
 
