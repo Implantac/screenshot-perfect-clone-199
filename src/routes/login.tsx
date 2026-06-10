@@ -90,7 +90,7 @@ function LoginPage() {
               <div className="absolute inset-[-40%] bg-primary/15 blur-[120px] rounded-full -z-10" />
             </motion.div>
           </div>
-          <div className="relative perspective-2000 group/text">
+          <div className="relative perspective-2000 group/text flex flex-col items-center">
             <motion.h1 
               animate={{ 
                 rotateX: [-2, 2, -2],
@@ -99,24 +99,25 @@ function LoginPage() {
               }}
               transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
               style={{ transformStyle: "preserve-3d" }}
-              className="text-4xl font-black tracking-[0.4em] uppercase animate-in slide-in-from-bottom-20 duration-1000 delay-200 bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] relative z-10 drop-shadow-[0_10px_30px_rgba(122,83,30,0.4)]"
+              className="text-4xl font-black tracking-[0.4em] uppercase animate-in slide-in-from-bottom-20 duration-1000 delay-200 bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] relative z-10 drop-shadow-[0_10px_30px_rgba(122,83,30,0.4)] flex flex-col leading-[0.9]"
             >
-              USE PATRIUM
+              <span>USE</span>
+              <span>PATRIUM</span>
             </motion.h1>
             {/* Multi-layered High-End 3D Shadows */}
             <h1 
-              className="absolute inset-0 text-4xl font-black tracking-[0.4em] uppercase text-[#63421a] blur-[1px] pointer-events-none select-none" 
+              className="absolute inset-0 text-4xl font-black tracking-[0.4em] uppercase text-[#63421a] blur-[1px] pointer-events-none select-none flex flex-col leading-[0.9]" 
               style={{ transform: "translateZ(-8px) translateY(3px)" }}
             >
-              USE PATRIUM
+              <span>USE</span>
+              <span>PATRIUM</span>
             </h1>
             <h1 
-              className="absolute inset-0 text-4xl font-black tracking-[0.4em] uppercase text-[#3d2910] blur-[4px] opacity-40 pointer-events-none select-none" 
+              className="absolute inset-0 text-4xl font-black tracking-[0.4em] uppercase text-[#3d2910] blur-[4px] opacity-40 pointer-events-none select-none flex flex-col leading-[0.9]" 
               style={{ transform: "translateZ(-20px) translateY(8px)" }}
-
-
             >
-              USE PATRIUM
+              <span>USE</span>
+              <span>PATRIUM</span>
             </h1>
           </div>
 
