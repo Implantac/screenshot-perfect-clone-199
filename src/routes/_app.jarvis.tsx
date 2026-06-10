@@ -28,32 +28,39 @@ const jarvisMenu = [
 
 function JarvisLayout() {
   return (
-    <div className="space-y-8 max-w-[1600px] mx-auto pb-20 overflow-x-hidden">
+    <div className="space-y-12 max-w-[1600px] mx-auto pb-24 overflow-x-hidden relative">
+      <div className="fixed inset-0 noise-overlay opacity-[0.015] pointer-events-none" />
+      
       {/* Jarvis Hero Header */}
-      <div className="relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a] border border-white/5 p-12 shadow-2xl">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10 translate-x-1/2 -translate-y-1/2 animate-pulse" />
+      <div className="relative overflow-hidden rounded-[4rem] bg-black/40 border border-white/[0.05] p-16 shadow-2xl executive-grid">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.05] to-transparent opacity-50" />
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[150px] -z-10 translate-x-1/2 -translate-y-1/2 animate-pulse" />
         
-        <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
-          <div className="relative">
+        <div className="flex flex-col md:flex-row items-center gap-14 relative z-10">
+          <div className="relative group">
             <motion.div
               animate={{ 
-                scale: [1, 1.05, 1],
-                rotate: [0, 5, -5, 0]
+                scale: [1, 1.08, 1],
+                rotate: [0, 8, -8, 0]
               }}
-              transition={{ duration: 6, repeat: Infinity }}
-              className="h-24 w-24 rounded-3xl bg-primary/20 flex items-center justify-center border border-primary/30 shadow-[0_0_50px_rgba(var(--primary),0.2)]"
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+              className="h-32 w-32 rounded-[2.5rem] bg-primary/10 flex items-center justify-center border border-primary/20 shadow-[0_0_60px_rgba(var(--primary),0.25)] backdrop-blur-3xl group-hover:scale-110 transition-transform duration-700"
             >
-              <Sparkles className="h-12 w-12 text-primary" />
+              <Sparkles className="h-14 w-14 text-primary drop-shadow-[0_0_15px_rgba(var(--primary),0.6)]" />
             </motion.div>
-            <div className="absolute -inset-4 bg-primary/10 blur-2xl rounded-full -z-10" />
+            <div className="absolute -inset-8 bg-primary/10 blur-[40px] rounded-full -z-10 animate-pulse" />
           </div>
           
-          <div className="space-y-2 text-center md:text-left">
-            <h1 className="text-4xl md:text-5xl font-black tracking-tighter italic uppercase text-foreground">
-              JARVIS <span className="text-primary">PATRIUM</span>
+          <div className="space-y-4 text-center md:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-[0.4em] text-primary">
+              <Activity className="h-3 w-3" />
+              Intelligence Protocol Active
+            </div>
+            <h1 className="text-5xl md:text-7xl font-black tracking-tighter italic uppercase text-foreground leading-none">
+              JARVIS <span className="text-primary drop-shadow-[0_0_30px_rgba(212,163,85,0.2)]">CORE</span>
             </h1>
-            <p className="text-muted-foreground text-lg font-medium max-w-xl">
-              Diretor Patrimonial Digital em operação. Monitorando ativos, riscos e governança proativamente.
+            <p className="text-muted-foreground text-xl font-medium max-w-2xl italic leading-relaxed opacity-80">
+              O primeiro Diretor Patrimonial Digital operando em infraestrutura neural. Monitoramento autônomo, conformidade e governança estratégica.
             </p>
           </div>
         </div>
