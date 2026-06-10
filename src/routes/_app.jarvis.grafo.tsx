@@ -36,23 +36,29 @@ function JarvisGraphPage() {
   ];
 
   return (
-    <div className="space-y-10 overflow-x-hidden max-w-[1800px] mx-auto w-full">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <h2 className="text-3xl font-black italic tracking-tighter uppercase">Rede de <span className="text-primary">Relacionamentos</span></h2>
-          <p className="text-muted-foreground text-sm font-medium">Mapeamento visual da estrutura societária e conexões patrimoniais.</p>
+    <div className="space-y-12 overflow-x-hidden max-w-[1800px] mx-auto w-full relative">
+      <div className="fixed inset-0 noise-overlay opacity-[0.02] pointer-events-none" />
+      
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/[0.05] pb-10">
+        <div className="space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/20 text-[10px] font-black uppercase tracking-[0.4em] text-primary backdrop-blur-md">
+            <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            Neural Relationship Engine
+          </div>
+          <h2 className="text-5xl font-black italic tracking-tighter uppercase leading-none">Mapa de <span className="text-primary">Conexões</span></h2>
+          <p className="text-muted-foreground text-base font-medium italic opacity-70">Visualização estratégica da capilaridade societária e ativos reais.</p>
         </div>
         
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-xs font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-all">
+        <div className="flex items-center gap-4">
+          <button className="flex items-center gap-3 px-8 py-4 bg-primary text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-105 transition-all">
             <Maximize2 className="h-4 w-4" />
-            Tela Cheia
+            Full Immersion
           </button>
         </div>
       </div>
 
-      <div className="glass-card rounded-2xl md:rounded-[3.5rem] h-[500px] md:h-[800px] border-white/5 bg-[#080808] relative overflow-hidden flex items-center justify-center border-dashed border-2 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary),0.08)_0,transparent_70%)]" />
+      <div className="glass-card rounded-[4rem] h-[600px] md:h-[850px] border-white/[0.05] bg-black/40 relative overflow-hidden flex items-center justify-center border-dashed border-2 shadow-2xl executive-grid">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary),0.12)_0,transparent_70%)]" />
         
         {/* SVG for connections with glow effect */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none">
