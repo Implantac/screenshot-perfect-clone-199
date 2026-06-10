@@ -123,19 +123,19 @@ function JarvisGraphPage() {
           </motion.div>
         ))}
 
-        <div className="absolute bottom-10 left-10 p-6 glass-card rounded-3xl border-white/5 bg-white/[0.02] space-y-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-2">Legenda do Grafo</p>
-          <div className="flex items-center gap-3">
-            <div className="h-3 w-3 rounded-full bg-primary" />
-            <span className="text-[10px] font-bold text-foreground">Holdings</span>
+        <div className="absolute bottom-10 left-10 p-8 glass-card rounded-[2.5rem] border-white/5 bg-white/[0.02] space-y-5 shadow-2xl backdrop-blur-2xl">
+          <p className="text-[11px] font-black uppercase tracking-[0.3em] text-primary/70 mb-4 italic">Diretório de Conexões</p>
+          <div className="flex items-center gap-4">
+            <div className="h-4 w-4 rounded-lg bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
+            <span className="text-xs font-black uppercase tracking-widest text-foreground/80">Holdings</span>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="h-3 w-3 rounded-full bg-blue-500" />
-            <span className="text-[10px] font-bold text-foreground">Empresas</span>
+          <div className="flex items-center gap-4">
+            <div className="h-4 w-4 rounded-lg bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+            <span className="text-xs font-black uppercase tracking-widest text-foreground/80">Empresas</span>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="h-3 w-3 rounded-full bg-amber-500" />
-            <span className="text-[10px] font-bold text-foreground">Sócios</span>
+          <div className="flex items-center gap-4">
+            <div className="h-4 w-4 rounded-lg bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+            <span className="text-xs font-black uppercase tracking-widest text-foreground/80">Sócios</span>
           </div>
         </div>
 
