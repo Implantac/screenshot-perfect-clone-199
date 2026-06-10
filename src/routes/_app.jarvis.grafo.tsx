@@ -108,17 +108,27 @@ function JarvisGraphPage() {
             style={{ left: node.x, top: node.y, transform: "translate(-50%, -50%)" }}
           >
             <div className={cn(
-              "h-20 w-20 rounded-2xl flex flex-col items-center justify-center border transition-all duration-500 relative bg-black/40 backdrop-blur-md",
-              node.type === 'holding' ? 'border-primary shadow-[0_0_30px_rgba(var(--primary),0.2)]' :
-              node.type === 'company' ? 'border-blue-500/50' :
-              node.type === 'person' ? 'border-amber-500/50' :
+              "h-24 w-24 rounded-[2rem] flex flex-col items-center justify-center border transition-all duration-700 relative bg-black/60 backdrop-blur-xl group-hover:scale-110",
+              node.type === 'holding' ? 'border-primary/50 shadow-[0_0_40px_rgba(var(--primary),0.2)]' :
+              node.type === 'company' ? 'border-blue-500/40 shadow-[0_0_30px_rgba(59,130,246,0.15)]' :
+              node.type === 'person' ? 'border-amber-500/40 shadow-[0_0_30px_rgba(245,158,11,0.15)]' :
               'border-white/10'
             )}>
               <NodeIcon type={node.type} />
-              <div className="absolute -bottom-10 whitespace-nowrap">
-                <p className="text-[10px] font-black uppercase tracking-widest text-foreground group-hover:text-primary transition-colors">{node.label}</p>
-                <p className="text-[8px] text-center text-muted-foreground uppercase">{node.type}</p>
+              <div className="absolute -bottom-14 whitespace-nowrap text-center">
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-foreground group-hover:text-primary transition-colors italic">{node.label}</p>
+                <p className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">{node.type}</p>
               </div>
+              
+              {/* Pulse effect for nodes */}
+              <motion.div 
+                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.1, 0.3] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className={cn(
+                  "absolute inset-0 rounded-[2rem] -z-10",
+                  node.type === 'holding' ? 'bg-primary/20' : 'bg-white/5'
+                )}
+              />
             </div>
           </motion.div>
         ))}
