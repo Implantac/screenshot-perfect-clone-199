@@ -1,16 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { 
-  Activity, 
-  ShieldCheck, 
-  Zap, 
+  Brain, 
   Target, 
-  TrendingUp,
-  Brain,
-  AlertCircle,
-  Clock,
+  Zap, 
   ArrowRight
 } from "lucide-react";
-import { motion } from "framer-motion";
 import { useJarvisHealth, useJarvisInsights, useJarvisActionPlans } from "@/hooks/useJarvis";
 import { cn } from "@/lib/utils";
 
@@ -26,9 +20,9 @@ function JarvisIntelligenceCenter() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10">
       
-      {/* Global Scores - Command Center Style */}
-      <div className="lg:col-span-8 space-y-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {/* Global Scores */}
+      <div className="lg:col-span-8 space-y-8 lg:space-y-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
           <ScoreGauge label="Patrimonial" value={health?.patrimonial_score || 96} color="primary" />
           <ScoreGauge label="Documental" value={health?.documental_score || 88} color="blue" />
           <ScoreGauge label="Compliance" value={health?.compliance_score || 92} color="emerald" />
@@ -36,22 +30,22 @@ function JarvisIntelligenceCenter() {
         </div>
 
         {/* Proactive Analysis Room */}
-        <div className="glass-card rounded-[3rem] p-10 border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent">
-          <div className="flex items-center justify-between mb-10">
-            <h3 className="text-2xl font-black italic tracking-tighter flex items-center gap-4">
-              <Brain className="h-7 w-7 text-primary" />
+        <div className="glass-card rounded-3xl lg:rounded-[3rem] p-6 lg:p-10 border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8 lg:mb-10">
+            <h3 className="text-xl lg:text-2xl font-black italic tracking-tighter flex items-center gap-4">
+              <Brain className="h-6 w-6 lg:h-7 lg:w-7 text-primary shrink-0" />
               ANÁLISE PREDITIVA ATIVA
             </h3>
-            <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full">
+            <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full w-fit">
               <span className="h-2 w-2 rounded-full bg-primary animate-ping" />
-              <span className="text-[10px] font-black text-primary uppercase tracking-widest">IA em Tempo Real</span>
+              <span className="text-[9px] lg:text-[10px] font-black text-primary uppercase tracking-widest">IA em Tempo Real</span>
             </div>
           </div>
 
-          <div className="space-y-6">
-            {insights?.slice(0, 3).map((insight, idx) => (
+          <div className="space-y-4 lg:space-y-6">
+            {(insights && insights.length > 0) ? insights.slice(0, 3).map((insight, idx) => (
               <InsightCard key={insight.id || idx} insight={insight} />
-            )) || (
+            )) : (
               <>
                 <InsightCard 
                   insight={{
@@ -75,18 +69,18 @@ function JarvisIntelligenceCenter() {
         </div>
       </div>
 
-      {/* Action Plans & Timeline - Side Panel */}
+      {/* Action Plans & Timeline */}
       <div className="lg:col-span-4 space-y-8">
-        <div className="glass-card rounded-[3.5rem] p-10 border-primary/10 bg-primary/[0.02]">
+        <div className="glass-card rounded-[2.5rem] lg:rounded-[3.5rem] p-6 lg:p-10 border-primary/10 bg-primary/[0.02]">
           <h3 className="text-xl font-black italic tracking-tighter flex items-center gap-4 mb-8 text-primary">
-            <Target className="h-6 w-6" />
+            <Target className="h-6 w-6 shrink-0" />
             PLANO DE ATAQUE
           </h3>
           
           <div className="space-y-6">
-            {actions?.slice(0, 5).map((action, idx) => (
+            {(actions && actions.length > 0) ? actions.slice(0, 5).map((action, idx) => (
               <ActionItem key={action.id || idx} action={action} />
-            )) || (
+            )) : (
               <>
                 <ActionItem action={{ title: "Regularizar CND Federal - Agro J", priority: "P1", status: "pending", due_date: "12/06" }} />
                 <ActionItem action={{ title: "Atualizar Laudo de Avaliação", priority: "P2", status: "in_progress", due_date: "15/06" }} />
@@ -95,23 +89,23 @@ function JarvisIntelligenceCenter() {
             )}
           </div>
 
-          <button className="w-full mt-10 py-5 bg-primary text-primary-foreground rounded-3xl font-black text-[11px] uppercase tracking-[0.3em] shadow-xl shadow-primary/20 hover:opacity-90 transition-all flex items-center justify-center gap-3">
+          <button className="w-full mt-10 py-5 bg-primary text-primary-foreground rounded-2xl lg:rounded-3xl font-black text-[10px] lg:text-[11px] uppercase tracking-[0.3em] shadow-xl shadow-primary/20 hover:opacity-90 transition-all flex items-center justify-center gap-3 active:scale-95">
             Executar Protocolos
             <Zap className="h-4 w-4" />
           </button>
         </div>
 
         {/* Digital Twin Shortcut */}
-        <div className="glass-card rounded-[3.5rem] p-10 border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all cursor-pointer group shadow-xl">
+        <div className="glass-card rounded-3xl lg:rounded-[3.5rem] p-6 lg:p-10 border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all cursor-pointer group shadow-xl">
           <div className="flex items-center gap-5">
-            <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-primary/50 transition-colors">
+            <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-primary/50 transition-colors shrink-0">
               <Zap className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
             </div>
-            <div>
-              <p className="text-sm font-bold tracking-tight">Digital Twin</p>
-              <p className="text-[10px] text-muted-foreground font-medium">Visualização 360° do Ativo</p>
+            <div className="min-w-0">
+              <p className="text-sm font-bold tracking-tight truncate">Digital Twin</p>
+              <p className="text-[10px] text-muted-foreground font-medium truncate">Visualização 360° do Ativo</p>
             </div>
-            <ArrowRight className="h-5 w-5 ml-auto text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+            <ArrowRight className="h-5 w-5 ml-auto text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
           </div>
         </div>
       </div>
@@ -128,18 +122,26 @@ function ScoreGauge({ label, value, color }: any) {
   };
 
   return (
-    <div className="glass-card rounded-[2.5rem] p-6 text-center border-white/5 bg-white/[0.02]">
+    <div className="glass-card rounded-[2rem] p-6 text-center border-white/5 bg-white/[0.02] flex flex-col items-center">
       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">{label}</p>
-      <div className={cn("inline-flex items-center justify-center h-24 w-24 rounded-full border-4 relative", colors[color])}>
-        <span className="text-2xl font-black italic">{value}%</span>
-        <svg className="absolute -inset-1 h-26 w-26 rotate-[-90deg]">
+      <div className={cn("inline-flex items-center justify-center h-20 w-20 lg:h-24 lg:w-24 rounded-full border-4 relative", colors[color])}>
+        <span className="text-xl lg:text-2xl font-black italic">{value}%</span>
+        <svg className="absolute -inset-1 h-[88px] w-[88px] lg:h-[104px] lg:w-[104px] rotate-[-90deg]">
           <circle 
-            cx="48" cy="48" r="44" 
+            cx="44" cy="44" r="40" 
             fill="transparent" 
             stroke="currentColor" 
             strokeWidth="4" 
-            strokeDasharray={`${value * 2.76} 276`}
-            className="opacity-100"
+            strokeDasharray={`${value * 2.51} 251`}
+            className="lg:hidden"
+          />
+          <circle 
+            cx="52" cy="52" r="48" 
+            fill="transparent" 
+            stroke="currentColor" 
+            strokeWidth="4" 
+            strokeDasharray={`${value * 3.01} 301`}
+            className="hidden lg:block"
           />
         </svg>
       </div>
@@ -156,16 +158,17 @@ function InsightCard({ insight }: any) {
   };
 
   return (
-    <div className="flex gap-6 p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 hover:border-primary/30 transition-all group">
-      <div className={cn("h-3 w-3 rounded-full mt-2 shrink-0", sevs[insight.severity])} />
-      <div className="space-y-2">
-        <div className="flex items-center gap-3">
-          <h4 className="text-lg font-black italic tracking-tight group-hover:text-primary transition-colors">{insight.title}</h4>
-          <span className="px-2 py-0.5 rounded-md bg-white/5 text-[9px] font-black uppercase tracking-widest text-muted-foreground">{insight.type}</span>
+    <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 p-6 lg:p-8 rounded-2xl lg:rounded-[2.5rem] bg-white/[0.02] border border-white/5 hover:border-primary/30 transition-all group">
+      <div className={cn("h-3 w-3 rounded-full mt-2 shrink-0 hidden sm:block", sevs[insight.severity])} />
+      <div className="space-y-2 flex-1 min-w-0">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className={cn("h-2.5 w-2.5 rounded-full sm:hidden shrink-0", sevs[insight.severity])} />
+          <h4 className="text-base lg:text-lg font-black italic tracking-tight group-hover:text-primary transition-colors truncate">{insight.title}</h4>
+          <span className="px-2 py-0.5 rounded-md bg-white/5 text-[8px] lg:text-[9px] font-black uppercase tracking-widest text-muted-foreground w-fit">{insight.type}</span>
         </div>
-        <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">{insight.description}</p>
+        <p className="text-[13px] lg:text-sm text-muted-foreground leading-relaxed line-clamp-2 lg:line-clamp-none">{insight.description}</p>
       </div>
-      <button className="ml-auto self-center h-12 w-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all">
+      <button className="sm:ml-auto self-end sm:self-center h-10 w-10 lg:h-12 lg:w-12 rounded-xl lg:rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all shrink-0">
         <ArrowRight className="h-5 w-5" />
       </button>
     </div>
@@ -182,13 +185,12 @@ function ActionItem({ action }: any) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <span className={cn("px-2 py-0.5 rounded-md text-[9px] font-black", priorities[action.priority])}>{action.priority}</span>
-        <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-2">
-          <Clock className="h-3 w-3" />
+        <span className={cn("px-2 py-0.5 rounded-md text-[8px] lg:text-[9px] font-black", priorities[action.priority])}>{action.priority}</span>
+        <span className="text-[9px] lg:text-[10px] font-bold text-muted-foreground flex items-center gap-2">
           {action.due_date}
         </span>
       </div>
-      <p className="text-sm font-bold text-foreground/90">{action.title}</p>
+      <p className="text-[13px] lg:text-sm font-bold text-foreground/90 truncate">{action.title}</p>
       <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
         <div 
           className={cn("h-full transition-all duration-1000", action.status === 'in_progress' ? 'w-1/2 bg-amber-500' : 'w-0')} 
