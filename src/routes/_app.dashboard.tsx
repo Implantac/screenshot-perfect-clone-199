@@ -82,28 +82,29 @@ function DashboardExecutivo() {
           </p>
         </div>
         
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-6 xl:gap-10">
-          <div className="p-6 lg:p-8 glass-card rounded-3xl lg:rounded-[2.5rem] flex flex-col items-center sm:items-end min-w-0 sm:min-w-[240px] border-primary/10 bg-white/[0.02]">
-             <p className="text-[10px] lg:text-[11px] uppercase tracking-[0.3em] text-muted-foreground font-black mb-2 opacity-50">AUM Global</p>
-             <p className="text-3xl lg:text-5xl font-black text-foreground tabular-nums tracking-tighter">
-                R$ {(totalValue / 1000000).toFixed(1)}<span className="text-base lg:text-lg ml-1 text-primary">M</span>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-8 xl:gap-14 relative z-10">
+          <div className="p-10 lg:p-12 glass-card rounded-[3rem] lg:rounded-[4rem] flex flex-col items-center sm:items-end min-w-0 sm:min-w-[280px] border-primary/20 bg-primary/[0.02] shadow-2xl">
+             <p className="text-[10px] lg:text-[12px] uppercase tracking-[0.4em] text-primary font-black mb-4 italic opacity-80">Portfolio Value (AUM)</p>
+             <p className="text-4xl lg:text-7xl font-black text-foreground tabular-nums tracking-tighter italic">
+                R$ {(totalValue / 1000000).toFixed(1)}<span className="text-lg lg:text-2xl ml-1 text-primary">M</span>
              </p>
-             <div className="flex items-center gap-1.5 text-[10px] lg:text-xs text-emerald-500 font-black mt-2 bg-emerald-500/10 px-3 py-1 rounded-full">
-                <ArrowUpRight className="h-3.5 w-3.5" /> +12.4% vs LY
+             <div className="flex items-center gap-2 text-[10px] lg:text-xs text-emerald-500 font-black mt-4 bg-emerald-500/10 px-4 py-1.5 rounded-full border border-emerald-500/20">
+                <ArrowUpRight className="h-4 w-4" /> +12.4% <span className="opacity-60 font-bold ml-1 uppercase tracking-widest">Growth</span>
              </div>
           </div>
 
-          <div className="flex items-center justify-between sm:justify-end gap-6 lg:gap-8 bg-primary/5 p-6 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border border-primary/20 backdrop-blur-2xl group hover:bg-primary/10 transition-all duration-700 shadow-2xl shadow-primary/5">
-            <div className="text-left sm:text-right space-y-1">
-              <p className="text-[10px] lg:text-[11px] uppercase tracking-[0.3em] text-primary font-black">Score de Compliance</p>
-              <p className="text-2xl lg:text-4xl font-black text-foreground tabular-nums tracking-tighter">{avgCompliance.toFixed(1)}<span className="text-xs lg:text-sm ml-1 opacity-40">%</span></p>
+          <div className="flex items-center justify-between sm:justify-end gap-8 lg:gap-12 bg-white/[0.01] p-10 lg:p-12 rounded-[3rem] lg:rounded-[4rem] border border-white/[0.05] backdrop-blur-3xl group hover:bg-white/[0.03] transition-all duration-1000 shadow-2xl relative overflow-hidden">
+            <div className="absolute inset-0 executive-grid opacity-20 pointer-events-none" />
+            <div className="text-left sm:text-right space-y-2 relative z-10">
+              <p className="text-[10px] lg:text-[12px] uppercase tracking-[0.4em] text-primary font-black italic">Compliance Score</p>
+              <p className="text-3xl lg:text-5xl font-black text-foreground tabular-nums tracking-tighter italic">{avgCompliance.toFixed(1)}<span className="text-sm lg:text-base ml-1 opacity-30">%</span></p>
             </div>
-            <div className="h-12 w-12 lg:h-16 lg:w-16 rounded-full border-[3px] border-primary/20 border-t-primary flex items-center justify-center relative shadow-[0_0_25px_rgba(var(--primary),0.25)] shrink-0">
-               <ShieldCheck className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
+            <div className="h-16 w-16 lg:h-20 lg:w-20 rounded-full border-[4px] border-primary/10 border-t-primary flex items-center justify-center relative shadow-[0_0_40px_rgba(var(--primary),0.2)] shrink-0 z-10">
+               <ShieldCheck className="h-8 w-8 lg:h-10 lg:w-10 text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.4)]" />
                <motion.div 
                  animate={{ rotate: 360 }}
-                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                 className="absolute inset-0 rounded-full border border-dashed border-primary/40 scale-110"
+                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                 className="absolute inset-0 rounded-full border border-dashed border-primary/30 scale-125"
                />
             </div>
           </div>
