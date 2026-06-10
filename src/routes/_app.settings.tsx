@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Settings, Shield, Bell, Lock, User, Palette, Globe, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/_app/settings" as any)({
+export const Route = createFileRoute("/_app/settings")({
   component: SettingsPage,
 });
 
