@@ -80,7 +80,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Use Patrium" },
-      { name: "description", content: "Pixel Perfect Replication creates exact visual duplicates of screenshots using TypeScript." },
+      { name: "description", content: "JARVIS PATRIUM - O primeiro Diretor Patrimonial Digital do Brasil. Monitoramento ativo de holdings, ativos e compliance." },
       { name: "author", content: "Lovable" },
       { property: "og:title", content: "Use Patrium" },
       { property: "og:description", content: "Pixel Perfect Replication creates exact visual duplicates of screenshots using TypeScript." },
