@@ -70,37 +70,46 @@ export function Sidebar() {
   return (
     <div className="flex h-screen w-72 flex-col bg-sidebar border-r border-sidebar-border relative z-20 shadow-2xl">
       {/* Brand */}
-      <div className="flex h-40 flex-col justify-center px-6 gap-4 group/logo cursor-pointer relative">
-        <div className="relative w-20 h-20 [perspective:1200px] self-center">
+      <div className="flex h-44 flex-col justify-center px-6 gap-6 group/logo cursor-pointer relative">
+        <div className="relative w-24 h-24 self-center [perspective:1000px]">
           <motion.div
             animate={{ 
-              rotateY: [0, 10, -10, 0],
-              y: [0, -4, 0]
+              rotateY: [0, 360]
             }}
             transition={{ 
-              duration: 8, 
+              duration: 15, 
               repeat: Infinity, 
-              ease: "easeInOut" 
+              ease: "linear" 
             }}
-            style={{ transformStyle: "preserve-3d" }}
+            style={{ 
+              transformStyle: "preserve-3d",
+              backfaceVisibility: "visible"
+            }}
             className="w-full h-full relative"
           >
             <img 
               src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
               alt="Use Patrium" 
-              className="w-full h-full object-contain filter drop-shadow-[0_8px_15px_rgba(0,0,0,0.3)] brightness-110 contrast-110"
+              className="w-full h-full object-contain filter drop-shadow-[0_8px_15px_rgba(0,0,0,0.3)] brightness-110"
+              style={{ transform: "translateZ(1px)" }}
             />
-            {/* Subtle Reflection Layer */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-30 mix-blend-overlay pointer-events-none rounded-full" />
+            {/* Symmetrical back face to simulate solid object */}
+            <img 
+              src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
+              alt="" 
+              className="absolute inset-0 w-full h-full object-contain filter brightness-90 opacity-80"
+              style={{ transform: "rotateY(180deg) translateZ(1px)" }}
+            />
           </motion.div>
           
-          {/* Refined soft glow */}
-          <div className="absolute inset-0 bg-primary/10 blur-3xl rounded-full -z-10 opacity-40 group-hover/logo:opacity-70 transition-opacity duration-1000" />
+          {/* Elegant ambient glow */}
+          <div className="absolute inset-0 bg-primary/10 blur-[40px] rounded-full -z-10 opacity-60 group-hover/logo:opacity-100 transition-opacity duration-1000" />
         </div>
-        <h1 className="text-xl font-black tracking-[0.3em] text-center text-foreground leading-none uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/60 group-hover/logo:tracking-[0.4em] transition-all duration-1000 ease-out">
+        <h1 className="text-xl font-black tracking-[0.35em] text-center text-foreground leading-none uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-white via-white/90 to-white/50 group-hover/logo:tracking-[0.45em] transition-all duration-1000 ease-out">
           USE PATRIUM
         </h1>
       </div>
+
 
 
 
