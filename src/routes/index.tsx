@@ -117,11 +117,24 @@ function LandingPage() {
             <PricingCard plan="Enterprise" price="R$ 7.997" desc="Para Family Offices e Grupos." features={["Digital Twin de Ativos", "Agro Patrimonial", "Data Room Estratégico"]} />
             <PricingCard plan="Corporate" price="Sob Consulta" desc="Para grandes grupos econômicos." features={["Customização Total", "SLA Exclusivo", "Integração via API"]} />
           </div>
+        <div className="mt-20 p-12 rounded-[3rem] bg-white/[0.02] border border-white/5 text-center max-w-4xl mx-auto backdrop-blur-3xl shadow-2xl">
+          <h3 className="text-2xl font-black italic uppercase mb-6">Visão de Futuro</h3>
+          <p className="text-lg text-white/50 leading-relaxed italic">
+            "O USE PATRIUM está construindo a próxima geração da Governança Patrimonial no Brasil. Estamos criando um cérebro patrimonial capaz de proteger, organizar e potencializar o patrimônio de empresas, holdings e famílias por gerações."
+          </p>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-20 text-center border-t border-white/5 text-[9px] font-black uppercase tracking-[0.5em] text-white/20">
+      {/* CTA Final */}
+      <section className="py-40 px-6 text-center bg-gradient-to-b from-[#020202] to-[#080808]">
+        <div className="max-w-4xl mx-auto space-y-12">
+          <h2 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter leading-none">Pronto para transformar sua gestão patrimonial?</h2>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <Button className="h-16 px-10 rounded-2xl bg-primary text-black font-black uppercase tracking-[0.2em] text-xs hover:scale-105 transition-all">Solicitar Demonstração</Button>
+            <Button className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 font-black uppercase tracking-[0.2em] text-xs transition-all">Falar com Especialista</Button>
+          </div>
+        </div>
+      </section>
         PATRIUM OS — © 2026 — SISTEMA DE GOVERNANÇA ESTRATÉGICA
       </footer>
     </div>
