@@ -71,44 +71,46 @@ export function Sidebar() {
     <div className="flex h-screen w-72 flex-col bg-sidebar border-r border-sidebar-border relative z-20 shadow-2xl">
       {/* Brand */}
       <div className="flex h-44 flex-col justify-center px-6 gap-6 group/logo cursor-pointer relative">
-        <div className="relative w-24 h-24 self-center [perspective:1000px]">
+        <div className="relative w-24 h-24 self-center">
           <motion.div
             animate={{ 
               rotateY: [0, 360]
             }}
             transition={{ 
-              duration: 15, 
+              duration: 20, 
               repeat: Infinity, 
               ease: "linear" 
             }}
             style={{ 
               transformStyle: "preserve-3d",
-              backfaceVisibility: "visible"
+              perspective: "1000px"
             }}
-            className="w-full h-full relative"
+            className="w-full h-full relative flex items-center justify-center"
           >
+            {/* Front Face */}
             <img 
               src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
               alt="Use Patrium" 
-              className="w-full h-full object-contain filter drop-shadow-[0_8px_15px_rgba(0,0,0,0.3)] brightness-110"
-              style={{ transform: "translateZ(1px)" }}
+              className="w-full h-full object-contain brightness-110 drop-shadow-[0_0_15px_rgba(var(--primary),0.3)]"
+              style={{ transform: "translateZ(2px)" }}
             />
-            {/* Symmetrical back face to simulate solid object */}
+            {/* Back Face (Exact duplicate) */}
             <img 
               src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
               alt="" 
-              className="absolute inset-0 w-full h-full object-contain filter brightness-90 opacity-80"
-              style={{ transform: "rotateY(180deg) translateZ(1px)" }}
+              className="absolute inset-0 w-full h-full object-contain brightness-110"
+              style={{ transform: "rotateY(180deg) translateZ(2px)" }}
             />
           </motion.div>
           
-          {/* Elegant ambient glow */}
-          <div className="absolute inset-0 bg-primary/10 blur-[40px] rounded-full -z-10 opacity-60 group-hover/logo:opacity-100 transition-opacity duration-1000" />
+          {/* Subtle atmospheric glow */}
+          <div className="absolute inset-0 bg-primary/5 blur-[40px] rounded-full -z-10 opacity-60" />
         </div>
         <h1 className="text-xl font-black tracking-[0.35em] text-center text-foreground leading-none uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-white via-white/90 to-white/50 group-hover/logo:tracking-[0.45em] transition-all duration-1000 ease-out">
           USE PATRIUM
         </h1>
       </div>
+
 
 
 
