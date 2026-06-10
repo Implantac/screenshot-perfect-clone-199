@@ -12,15 +12,34 @@ import {
   Activity,
   History,
   Zap,
-  Sparkles
+  Sparkles,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRisks, useEntities } from "@/hooks/usePatrimonio";
 
 export const Route = createFileRoute("/_app/riscos")({
   component: CentralDeRiscos,
 });
 
+
 function CentralDeRiscos() {
+  const { data: risks, isLoading: risksLoading } = useRisks();
+  const { data: entities, isLoading: entitiesLoading } = useEntities();
+
+  if (risksLoading || entitiesLoading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  const criticalCount = risks?.filter(r => r.severity === 'critical').length || 0;
+  const avgCompliance = entities && entities.length > 0 
+    ? entities.reduce((sum, ent) => sum + (Number(ent.compliance_score) || 0), 0) / entities.length 
+    : 0;
+
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
       {/* Header */}
@@ -32,7 +51,7 @@ function CentralDeRiscos() {
         <div className="flex gap-4">
           <div className="flex items-center gap-3 px-5 py-3 bg-red-500/10 text-red-500 rounded-2xl text-xs font-black border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
             <Zap className="h-4 w-4 animate-pulse" />
-            14 Alertas Críticos
+            {criticalCount} Alertas Críticos
           </div>
           <button className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2">
             <Sparkles className="h-4 w-4" />
@@ -40,6 +59,7 @@ function CentralDeRiscos() {
           </button>
         </div>
       </div>
+
 
       {/* Risk Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -67,11 +87,12 @@ function CentralDeRiscos() {
         <RiskCategoryCard 
           icon={ShieldCheck} 
           title="Compliance Score" 
-          count={92} 
+          count={Math.round(avgCompliance)} 
           isScore
           color="text-primary"
           description="Meta de 98% estabelecida"
         />
+
       </div>
 
       {/* Alerts Table-like View */}
@@ -100,34 +121,20 @@ function CentralDeRiscos() {
         </div>
         
         <div className="divide-y divide-white/5">
-          <RiskRow 
-            title="Certidão Negativa SEFAZ - Holding Alencar"
-            type="Vencimento"
-            severity="critical"
-            date="Expira em 48h"
-            owner="Beatriz Silva"
-          />
-          <RiskRow 
-            title="Divergência de área: Matrícula #12.442 vs CAR"
-            type="Inconsistência"
-            severity="high"
-            date="Detectado 3h atrás"
-            owner="Eng. Roberto"
-          />
-          <RiskRow 
-            title="Renovação Seguro Predial - Sede SP"
-            type="Contrato"
-            severity="medium"
-            date="Expira em 12 dias"
-            owner="Depto Financeiro"
-          />
-          <RiskRow 
-            title="Inconsistência de CPF de sócio em Escritura"
-            type="Documental"
-            severity="high"
-            date="Detectado 1 dia atrás"
-            owner="Legal Admin"
-          />
+          {risks?.map((risk) => (
+            <RiskRow 
+              key={risk.id}
+              title={risk.title}
+              type={risk.description?.split(':')[0] || "Alerta"}
+              severity={risk.severity}
+              date={risk.due_date ? new Date(risk.due_date).toLocaleDateString() : "Contínuo"}
+              owner="IA Patrium"
+            />
+          ))}
+          {(!risks || risks.length === 0) && (
+            <p className="p-10 text-center text-muted-foreground">Nenhum alerta de risco no momento.</p>
+          )}
+
         </div>
 
         <div className="p-6 bg-white/[0.01] text-center">
