@@ -20,9 +20,7 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer,
-  BarChart,
-  Bar
+  ResponsiveContainer
 } from "recharts";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";

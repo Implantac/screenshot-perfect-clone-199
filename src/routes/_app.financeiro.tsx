@@ -22,9 +22,7 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer,
-  BarChart,
-  Bar
+  ResponsiveContainer
 } from "recharts";
 
 export const Route = createFileRoute("/_app/financeiro" as any)({
