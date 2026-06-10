@@ -58,13 +58,13 @@ function LoginPage() {
       const createEnv = (start: number, duration: number, maxVol: number) => {
         const gain = ctx.createGain();
         gain.gain.setValueAtTime(0, start);
-        gain.gain.linearRampToValueAtTime(maxVol, start + 0.2);
+        gain.gain.linearRampToValueAtTime(maxVol, start + 0.1);
         gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
         gain.connect(ctx.destination);
         return gain;
       };
 
-      // 1. THE "TUDUM" BASS (Logo Surge - Sustained)
+      // 1. THE "TUDUM" BASS (Logo Surge - Perfect Sync at 0.5s)
       const playBassThump = (time: number, freq: number, vol: number) => {
         const osc = ctx.createOscillator();
         const gain = createEnv(time, 2.5, vol);
@@ -76,10 +76,10 @@ function LoginPage() {
         osc.stop(time + 2.5);
       };
       
-      playBassThump(now + 0.2, 60, 0.7);
-      playBassThump(now + 0.5, 40, 0.9);
+      playBassThump(now, 60, 0.7);
+      playBassThump(now + 0.3, 40, 0.9);
 
-      // 2. TECH RESONANCE (USE - Extended)
+      // 2. TECH RESONANCE (USE - Perfect Sync at 2.0s)
       const playResonance = (time: number, freq: number) => {
         const osc = ctx.createOscillator();
         const filter = ctx.createBiquadFilter();
@@ -98,9 +98,9 @@ function LoginPage() {
         osc.start(time);
         osc.stop(time + 4.0);
       };
-      playResonance(now + 1.8, 440);
+      playResonance(now + 1.5, 440);
 
-      // 3. PREMIUM HARMONIC SWELL (PATRIUM - Cinematic Fade)
+      // 3. PREMIUM HARMONIC SWELL (PATRIUM - Perfect Sync at 3.8s)
       const playSwell = (time: number, freqs: number[]) => {
         freqs.forEach(f => {
           const osc = ctx.createOscillator();
@@ -116,9 +116,9 @@ function LoginPage() {
           osc.stop(time + 7.0);
         });
       };
-      playSwell(now + 3.5, [110, 165, 220, 330, 440]);
+      playSwell(now + 3.3, [110, 165, 220, 330, 440]);
 
-      // 4. SYSTEM INITIALIZATION WHOOSH (Form - 5.5s)
+      // 4. SYSTEM INITIALIZATION WHOOSH (Form - Perfect Sync at 5.8s)
       const playWhoosh = (time: number) => {
         const duration = 2.5;
         const bufferSize = ctx.sampleRate * duration;
@@ -147,10 +147,10 @@ function LoginPage() {
         noise.start(time);
         noise.stop(time + duration);
       };
-      playWhoosh(now + 5.5);
+      playWhoosh(now + 5.3);
     };
 
-    const timer = setTimeout(playCinematicIntro, 200);
+    const timer = setTimeout(playCinematicIntro, 500);
     return () => clearTimeout(timer);
   }, [navigate]);
 
