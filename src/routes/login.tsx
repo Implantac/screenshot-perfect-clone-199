@@ -58,7 +58,7 @@ function LoginPage() {
       const createEnv = (start: number, duration: number, maxVol: number) => {
         const gain = ctx.createGain();
         gain.gain.setValueAtTime(0, start);
-        gain.gain.linearRampToValueAtTime(maxVol, start + 0.1);
+        gain.gain.linearRampToValueAtTime(maxVol, start + 0.2);
         gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
         gain.connect(ctx.destination);
         return gain;
@@ -67,38 +67,38 @@ function LoginPage() {
       // 1. THE "TUDUM" BASS (Logo Surge - Sustained)
       const playBassThump = (time: number, freq: number, vol: number) => {
         const osc = ctx.createOscillator();
-        const gain = createEnv(time, 1.2, vol);
+        const gain = createEnv(time, 2.5, vol);
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, time);
-        osc.frequency.exponentialRampToValueAtTime(20, time + 1.2);
+        osc.frequency.exponentialRampToValueAtTime(20, time + 2.5);
         osc.connect(gain);
         osc.start(time);
-        osc.stop(time + 1.2);
+        osc.stop(time + 2.5);
       };
       
-      playBassThump(now + 0.2, 60, 0.6);
-      playBassThump(now + 0.35, 45, 0.8);
+      playBassThump(now + 0.2, 60, 0.7);
+      playBassThump(now + 0.5, 40, 0.9);
 
       // 2. TECH RESONANCE (USE - Extended)
       const playResonance = (time: number, freq: number) => {
         const osc = ctx.createOscillator();
         const filter = ctx.createBiquadFilter();
-        const gain = createEnv(time, 2.5, 0.15);
+        const gain = createEnv(time, 4.0, 0.15);
         
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(freq, time);
         
         filter.type = 'lowpass';
         filter.frequency.setValueAtTime(freq * 2, time);
-        filter.frequency.exponentialRampToValueAtTime(freq * 0.5, time + 2.5);
-        filter.Q.setValueAtTime(10, time);
+        filter.frequency.exponentialRampToValueAtTime(freq * 0.4, time + 4.0);
+        filter.Q.setValueAtTime(12, time);
         
         osc.connect(filter);
         filter.connect(gain);
         osc.start(time);
-        osc.stop(time + 2.5);
+        osc.stop(time + 4.0);
       };
-      playResonance(now + 1.2, 440);
+      playResonance(now + 1.8, 440);
 
       // 3. PREMIUM HARMONIC SWELL (PATRIUM - Cinematic Fade)
       const playSwell = (time: number, freqs: number[]) => {
@@ -106,21 +106,22 @@ function LoginPage() {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           gain.gain.setValueAtTime(0, time);
-          gain.gain.linearRampToValueAtTime(0.08, time + 1.2);
-          gain.gain.exponentialRampToValueAtTime(0.001, time + 4.5);
+          gain.gain.linearRampToValueAtTime(0.1, time + 2.0);
+          gain.gain.exponentialRampToValueAtTime(0.001, time + 7.0);
           osc.type = 'sine';
           osc.frequency.setValueAtTime(f, time);
           osc.connect(gain);
           gain.connect(ctx.destination);
           osc.start(time);
-          osc.stop(time + 4.5);
+          osc.stop(time + 7.0);
         });
       };
-      playSwell(now + 2.0, [110, 165, 220, 330]);
+      playSwell(now + 3.5, [110, 165, 220, 330, 440]);
 
-      // 4. SYSTEM INITIALIZATION WHOOSH (Form - 3.2s)
+      // 4. SYSTEM INITIALIZATION WHOOSH (Form - 5.5s)
       const playWhoosh = (time: number) => {
-        const bufferSize = ctx.sampleRate * 2;
+        const duration = 2.5;
+        const bufferSize = ctx.sampleRate * duration;
         const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
@@ -132,21 +133,21 @@ function LoginPage() {
         const gain = ctx.createGain();
         
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(200, time);
-        filter.frequency.exponentialRampToValueAtTime(3000, time + 0.4);
-        filter.frequency.exponentialRampToValueAtTime(100, time + 1.5);
+        filter.frequency.setValueAtTime(100, time);
+        filter.frequency.exponentialRampToValueAtTime(4000, time + 0.8);
+        filter.frequency.exponentialRampToValueAtTime(50, time + duration);
         
         gain.gain.setValueAtTime(0, time);
-        gain.gain.linearRampToValueAtTime(0.04, time + 0.4);
-        gain.gain.linearRampToValueAtTime(0, time + 1.5);
+        gain.gain.linearRampToValueAtTime(0.06, time + 0.8);
+        gain.gain.linearRampToValueAtTime(0, time + duration);
         
         noise.connect(filter);
         filter.connect(gain);
         gain.connect(ctx.destination);
         noise.start(time);
-        noise.stop(time + 1.5);
+        noise.stop(time + duration);
       };
-      playWhoosh(now + 3.2);
+      playWhoosh(now + 5.5);
     };
 
     const timer = setTimeout(playCinematicIntro, 200);
@@ -224,7 +225,7 @@ function LoginPage() {
               <motion.h1 
                 initial={{ opacity: 0, x: -30, filter: "blur(10px)" }}
                 animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
+                transition={{ delay: 1.8, duration: 1.2, ease: "easeOut" }}
                 style={{ transformStyle: "preserve-3d" }}
                 className="text-4xl font-black tracking-[0.2em] uppercase bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_10px_30px_rgba(122,83,30,0.4)]"
               >
@@ -233,7 +234,7 @@ function LoginPage() {
               <motion.h1 
                 initial={{ opacity: 0, x: 30, filter: "blur(10px)" }}
                 animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                transition={{ delay: 2.0, duration: 0.8, ease: "easeOut" }}
+                transition={{ delay: 3.5, duration: 1.2, ease: "easeOut" }}
                 style={{ transformStyle: "preserve-3d" }}
                 className="text-4xl font-black tracking-[0.2em] uppercase bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_10px_30px_rgba(122,83,30,0.4)]"
               >
@@ -243,12 +244,12 @@ function LoginPage() {
 
             <div className="absolute inset-0 pointer-events-none select-none flex flex-col leading-[1.0]">
               <motion.span 
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 0.8 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8, duration: 1.2 }}
                 className="text-4xl font-black tracking-[0.2em] uppercase text-[#63421a] blur-[1px]" 
                 style={{ transform: "translateZ(-8px) translateY(3px)" }}
               >USE</motion.span>
               <motion.span 
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0, duration: 0.8 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3.5, duration: 1.2 }}
                 className="text-4xl font-black tracking-[0.2em] uppercase text-[#63421a] blur-[1px]" 
                 style={{ transform: "translateZ(-8px) translateY(3px)" }}
               >PATRIUM</motion.span>
@@ -259,7 +260,7 @@ function LoginPage() {
         <motion.div 
           initial={{ opacity: 0, y: 50, filter: "blur(15px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ delay: 3.2, duration: 1.2, ease: "circOut" }}
+          transition={{ delay: 5.5, duration: 1.5, ease: "circOut" }}
           className="glass-card rounded-[2.5rem] p-10 space-y-8 border-white/10 relative overflow-hidden"
         >
           <div className="space-y-2 relative z-10 text-center">
