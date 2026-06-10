@@ -75,22 +75,27 @@ function LandingPage() {
         </div>
       </section>
 
+      <ProblemSection />
+
       {/* Comparison */}
       <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
         <SectionHeader badge="Análise" title="Por que o Patrium?" />
         <ComparisonTable />
       </section>
 
+      <MarketAnalysis />
+
       {/* Pricing */}
       <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
         <SectionHeader badge="Planos" title="Investimento Estratégico" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <PricingCard plan="Professional" price="R$ 997" desc="Para escritórios e consultorias." features={["Governança Patrimonial", "Gestão Documental", "Suporte Básico"]} />
           <PricingCard plan="Business" price="R$ 2.997" desc="Para holdings e empresas." highlighted={true} features={["Tudo do Professional", "Digital Twin", "Compliance 360", "Knowledge Graph"]} />
           <PricingCard plan="Enterprise" price="R$ 7.997" desc="Para grupos econômicos e FOs." features={["Jarvis AI Autônomo", "Gestão de Riscos", "Due Diligence Avançada", "Suporte Dedicated"]} />
           <PricingCard plan="Corporate" price="Sob Consulta" desc="Grandes grupos econômicos." features={["Customização Total", "Multi-Agentes Jarvis", "Segurança Militar", "SLA Garantido"]} />
         </div>
       </section>
+
 
       {/* Jarvis Special Section */}
       <section className="py-20 md:py-32 px-4 md:px-8 bg-gradient-to-b from-transparent via-primary/5 to-transparent">
