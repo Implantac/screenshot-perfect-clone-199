@@ -131,7 +131,7 @@ export function ComparisonTable() {
               <td className="p-8 px-10 bg-primary/[0.01]">
                 <div className="flex items-center gap-3 text-primary">
                   <CheckCircle2 className="h-5 w-5" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Native Protocol</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Protocolo Nativo</span>
                 </div>
               </td>
               <td className="p-8 px-10 text-center text-sm text-muted-foreground/50 font-medium italic">{f.sap}</td>
