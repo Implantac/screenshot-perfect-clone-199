@@ -55,15 +55,16 @@ function LoginPage() {
       <div className="w-full max-w-[450px] space-y-8 animate-in fade-in zoom-in duration-700">
         <div className="text-center space-y-16 group/main cursor-default">
           <div className="inline-flex items-center justify-center mb-4">
-            <motion.div
-              animate={{ 
-                rotateY: [0, 360]
-              }}
-              transition={{ 
-                duration: 18, 
-                repeat: Infinity, 
-                ease: "linear" 
-              }}
+          <motion.div
+            animate={{ 
+              rotateY: [0, 360]
+            }}
+            transition={{ 
+              duration: 12, 
+              repeat: Infinity, 
+              ease: "linear" 
+            }}
+
               style={{ 
                 transformStyle: "preserve-3d",
                 perspective: "2000px"
