@@ -24,19 +24,26 @@ function Compliance() {
     : 0;
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <h2 className="text-3xl font-black tracking-tight uppercase">Compliance Score</h2>
-          <p className="text-muted-foreground text-lg">Gestão regulatória e auditoria contínua de conformidade.</p>
+    <div className="space-y-12 animate-in fade-in duration-1000 overflow-x-hidden relative">
+      <div className="fixed inset-0 noise-overlay opacity-[0.015] pointer-events-none" />
+      
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-10 border-b border-white/[0.05] executive-grid">
+        <div className="space-y-4 relative z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/20 text-[10px] font-black uppercase tracking-[0.4em] text-primary backdrop-blur-md">
+            <ShieldCheck className="h-3 w-3" />
+            Active Regulatory Shield
+          </div>
+          <h2 className="text-5xl font-black italic tracking-tighter uppercase leading-none">Status de <span className="text-primary">Compliance</span></h2>
+          <p className="text-muted-foreground text-lg font-medium italic opacity-70">Auditoria neural contínua e gestão de conformidade institucional.</p>
         </div>
-        <div className="bg-white/5 border border-white/5 p-4 rounded-2xl flex items-center gap-4">
+        
+        <div className="glass-card p-6 md:p-8 rounded-[2.5rem] flex items-center gap-8 border-primary/20 bg-primary/[0.02] shadow-2xl relative z-10">
            <div className="text-right">
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Global Score</p>
-              <p className="text-xl font-black text-primary">{avgCompliance.toFixed(1)} / 100</p>
+              <p className="text-[10px] uppercase font-black text-primary/70 tracking-[0.3em] mb-1 italic">Score Global</p>
+              <p className="text-4xl font-black text-foreground italic tabular-nums leading-none">{avgCompliance.toFixed(1)} <span className="text-xs opacity-30">%</span></p>
            </div>
-           <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-              <ShieldCheck className="h-6 w-6" />
+           <div className="h-16 w-16 rounded-[1.5rem] bg-primary/10 flex items-center justify-center text-primary border border-primary/20 shadow-xl">
+              <ShieldCheck className="h-8 w-8 drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
            </div>
         </div>
       </div>
