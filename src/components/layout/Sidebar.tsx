@@ -77,10 +77,11 @@ export function Sidebar() {
               rotateY: [0, 360]
             }}
             transition={{ 
-              duration: 12, 
+              duration: 8, 
               repeat: Infinity, 
               ease: "linear" 
             }}
+
             style={{ 
               transformStyle: "preserve-3d",
               perspective: "1200px"
