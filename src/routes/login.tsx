@@ -52,14 +52,15 @@ function LoginPage() {
       
       <div className="w-full max-w-[450px] space-y-8 animate-in fade-in zoom-in duration-700">
         <div className="text-center space-y-4">
-          <div className="inline-flex h-20 w-20 bg-primary rounded-[2rem] items-center justify-center shadow-2xl shadow-primary/20 mb-4 ring-8 ring-primary/5">
-            <ShieldCheck className="text-primary-foreground h-10 w-10" />
-          </div>
-          <div className="space-y-2">
-            <h1 className="text-4xl font-black tracking-tighter text-foreground uppercase">USE PATRIUM</h1>
-            <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground font-bold">Cérebro Patrimonial</p>
+          <div className="inline-flex items-center justify-center mb-4">
+            <img 
+              src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
+              alt="Use Patrium" 
+              className="h-16 w-auto object-contain animate-in fade-in zoom-in duration-1000"
+            />
           </div>
         </div>
+
 
         <div className="glass-card rounded-[2.5rem] p-10 space-y-8 border-white/10 relative overflow-hidden">
           <div className="space-y-2 relative z-10">

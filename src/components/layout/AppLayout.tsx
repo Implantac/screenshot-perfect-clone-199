@@ -103,9 +103,14 @@ export function AppLayout({ children }: AppLayoutProps) {
               >
                 <div className="p-6 border-b border-white/5 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20">
-                      <Sparkles className="h-5 w-5" />
+                    <div className="h-10 w-auto flex items-center">
+                      <img 
+                        src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
+                        alt="Logo" 
+                        className="h-8 w-auto object-contain"
+                      />
                     </div>
+
                     <div>
                       <h2 className="font-bold text-lg leading-tight uppercase tracking-tighter">Copiloto IA Patrium</h2>
                       <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Inteligência Patrimonial Ativa</p>

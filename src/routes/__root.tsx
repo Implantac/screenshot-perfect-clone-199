@@ -89,8 +89,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "Use Patrium" },
       { name: "twitter:description", content: "Pixel Perfect Replication creates exact visual duplicates of screenshots using TypeScript." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b3675c37-4b4c-490e-af23-96d726260d4c/id-preview-ba76bdee--05c4f172-b7b6-4b34-b12b-4f8a5e4e1653.lovable.app-1781048238865.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b3675c37-4b4c-490e-af23-96d726260d4c/id-preview-ba76bdee--05c4f172-b7b6-4b34-b12b-4f8a5e4e1653.lovable.app-1781048238865.png" },
+      { property: "og:image", content: "https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" },
+      { name: "twitter:image", content: "https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" },
+
     ],
     links: [
       {
