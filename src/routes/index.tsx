@@ -130,6 +130,8 @@ function LandingPage() {
         </div>
       </section>
 
+      <VisionSection />
+
       {/* Roadmap */}
       <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
         <SectionHeader badge="Evolução" title="Roadmap Tecnológico" />
@@ -152,6 +154,7 @@ function LandingPage() {
       </section>
 
       {/* Footer */}
+
       <footer className="py-20 px-4 md:px-8 border-t border-white/5 bg-[#030303]">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
