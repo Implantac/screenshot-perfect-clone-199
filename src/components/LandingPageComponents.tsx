@@ -26,14 +26,15 @@ import { Card } from "@/components/ui/card";
 
 export function SectionHeader({ title, subtitle, badge }: { title: string; subtitle?: string; badge?: string }) {
   return (
-    <div className="space-y-4 mb-12 md:mb-16">
+    <div className="space-y-6 mb-16 md:mb-24">
       {badge && (
         <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: -10 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-widest text-primary"
+          className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-primary/5 border border-primary/20 text-[10px] font-black uppercase tracking-[0.4em] text-primary shadow-lg shadow-primary/5 backdrop-blur-md"
         >
+          <div className="h-1.5 w-1.5 rounded-full bg-primary" />
           {badge}
         </motion.div>
       )}
@@ -41,7 +42,7 @@ export function SectionHeader({ title, subtitle, badge }: { title: string; subti
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic leading-[0.9]"
+        className="text-5xl md:text-8xl font-black tracking-tighter uppercase italic leading-[0.85] max-w-4xl"
       >
         {title}
       </motion.h2>
@@ -51,7 +52,7 @@ export function SectionHeader({ title, subtitle, badge }: { title: string; subti
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed"
+          className="text-xl md:text-2xl text-muted-foreground max-w-3xl leading-relaxed italic font-medium"
         >
           {subtitle}
         </motion.p>
@@ -67,14 +68,24 @@ export function FeatureCard({ icon: Icon, title, desc, delay = 0 }: any) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay }}
-      className="p-8 md:p-10 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-primary/20 transition-all duration-500 group relative overflow-hidden h-full"
+      className="p-10 md:p-14 rounded-[3rem] bg-white/[0.01] border border-white/[0.05] hover:border-primary/30 transition-all duration-700 group relative overflow-hidden h-full flex flex-col justify-between hover:shadow-2xl hover:shadow-primary/5"
     >
-      <div className="absolute -bottom-8 -right-8 h-24 w-24 bg-primary/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
-      <div className="h-14 w-14 rounded-2xl bg-white/5 flex items-center justify-center mb-6 border border-white/10 group-hover:scale-110 group-hover:bg-primary/10 group-hover:border-primary/30 transition-all duration-500">
-        <Icon className="h-7 w-7 text-primary" />
+      <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+        <Icon className="h-20 w-20 text-primary" />
       </div>
-      <h3 className="text-xl font-black mb-3 tracking-tighter uppercase italic">{title}</h3>
-      <p className="text-muted-foreground text-sm leading-relaxed font-medium">{desc}</p>
+      
+      <div>
+        <div className="h-16 w-16 rounded-2xl bg-white/[0.03] flex items-center justify-center mb-10 border border-white/[0.05] group-hover:scale-110 group-hover:bg-primary/10 group-hover:border-primary/40 transition-all duration-700 shadow-xl backdrop-blur-md">
+          <Icon className="h-8 w-8 text-primary" />
+        </div>
+        <h3 className="text-2xl font-black mb-4 tracking-tighter uppercase italic leading-none">{title}</h3>
+        <p className="text-muted-foreground text-base leading-relaxed font-medium italic opacity-80 group-hover:opacity-100 transition-opacity">{desc}</p>
+      </div>
+      
+      <div className="mt-12 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-primary/40 group-hover:text-primary transition-colors cursor-pointer">
+        Explore Solution
+        <ArrowRight className="h-4 w-4" />
+      </div>
     </motion.div>
   );
 }
