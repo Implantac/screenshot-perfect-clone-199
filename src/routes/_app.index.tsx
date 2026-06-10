@@ -61,120 +61,139 @@ function DashboardExecutivo() {
 
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-1000">
-      {/* Executive Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-1 bg-primary rounded-full shadow-[0_0_12px_var(--color-primary)]" />
-            <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase">Centro de Comando</h2>
-          </div>
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      {/* Executive Header - Futuristic Layout */}
+      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 pb-4 border-b border-white/5">
+        <div className="space-y-4">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-4"
+          >
+            <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-[0_0_20px_rgba(var(--primary),0.1)]">
+              <Building2 className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/60">Sistema de Governança</p>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-foreground uppercase italic leading-none">
+                Comando <span className="text-primary">Estratégico</span>
+              </h2>
+            </div>
+          </motion.div>
           <p className="text-muted-foreground text-lg font-medium max-w-2xl leading-relaxed">
-            Gestão estratégica de <span className="text-foreground font-bold">Governança Patrimonial, Compliance e Inteligência Documental</span>.
+            Visão consolidada de <span className="text-foreground font-bold border-b-2 border-primary/30">Holdings, Patrimônio e Compliance</span>. 
+            IA ativa processando dados em tempo real.
           </p>
         </div>
         
-        <div className="flex items-center gap-6">
-          <div className="flex flex-col items-end">
-             <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Patrimônio Líquido</p>
-             <p className="text-3xl font-black text-foreground">
-                R$ {(totalValue / 1000000).toFixed(1)}<span className="text-xs ml-1 opacity-50">M</span>
+        <div className="flex flex-wrap items-center gap-4 xl:gap-8">
+          <div className="p-6 glass-card rounded-[2rem] flex flex-col items-end min-w-[200px] border-primary/10">
+             <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-black mb-1">AUM Global</p>
+             <p className="text-4xl font-black text-foreground tabular-nums">
+                R$ {(totalValue / 1000000).toFixed(1)}<span className="text-sm ml-1 text-primary">M</span>
              </p>
+             <div className="flex items-center gap-1 text-[10px] text-emerald-500 font-bold mt-1">
+                <ArrowUpRight className="h-3 w-3" /> +12.4% vs LY
+             </div>
           </div>
-          <div className="flex items-center gap-4 bg-white/5 p-4 rounded-[2rem] border border-white/5 backdrop-blur-md">
+
+          <div className="flex items-center gap-6 bg-primary/5 p-6 rounded-[2rem] border border-primary/20 backdrop-blur-xl group hover:bg-primary/10 transition-all duration-500">
             <div className="text-right">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Compliance Score</p>
-              <p className="text-2xl font-black text-primary">{avgCompliance.toFixed(1)}<span className="text-xs ml-1 opacity-50">%</span></p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-primary font-black">Score de Compliance</p>
+              <p className="text-3xl font-black text-foreground tabular-nums">{avgCompliance.toFixed(1)}<span className="text-xs ml-1 opacity-50">%</span></p>
             </div>
-            <div className="h-10 w-[1px] bg-white/10 mx-2" />
-            <div className="h-14 w-14 rounded-full border-4 border-primary/20 border-t-primary flex items-center justify-center relative">
+            <div className="h-12 w-12 rounded-full border-2 border-primary/20 border-t-primary flex items-center justify-center relative shadow-[0_0_15px_rgba(var(--primary),0.2)]">
                <ShieldCheck className="h-6 w-6 text-primary" />
+               <motion.div 
+                 animate={{ rotate: 360 }}
+                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                 className="absolute inset-0 rounded-full border border-dashed border-primary/30"
+               />
             </div>
           </div>
         </div>
       </div>
 
-
-      {/* Primary Health Indicators */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Primary Health Indicators - High Contrast Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <HealthCard 
           title="Saúde Patrimonial" 
           value={`R$ ${(totalValue / 1000000).toFixed(1)}M`}
-          status="Em Alta"
+          status="Otimizado"
           color="primary"
           icon={Landmark}
-          description="Valor total de ativos sob gestão"
+          description="Alocação estratégica e valorização de ativos ativos."
           metrics={[
-            { label: "Urbanos", val: `${((assets?.filter(a => a.type === 'urbano').length || 0) / (assets?.length || 1) * 100).toFixed(0)}%` },
-            { label: "Rurais", val: `${((assets?.filter(a => a.type === 'rural').length || 0) / (assets?.length || 1) * 100).toFixed(0)}%` }
+            { label: "Ativos Urbanos", val: `${((assets?.filter(a => a.type === 'urbano').length || 0) / (assets?.length || 1) * 100).toFixed(0)}%` },
+            { label: "Reserva Rural", val: `${((assets?.filter(a => a.type === 'rural').length || 0) / (assets?.length || 1) * 100).toFixed(0)}%` }
           ]}
         />
         <HealthCard 
           title="Saúde Documental" 
           value="94.2%" 
-          status="Regular"
+          status="Monitorado"
           color="blue"
           icon={FileSearch}
-          description="Validação de matrículas e ônus"
-          metrics={[{ label: "Validados", val: "1.2k" }, { label: "Pendentes", val: "42" }]}
+          description="Rastreabilidade total de matrículas e ônus reais."
+          metrics={[{ label: "Doc. Validados", val: "1.248" }, { label: "Alertas IA", val: "03" }]}
         />
         <HealthCard 
-          title="Saúde Regulatória" 
+          title="Fronteira Regulatória" 
           value="98.1%" 
-          status="Excelente"
+          status="Impecável"
           color="emerald"
           icon={ShieldCheck}
-          description="Certidões e licenças ativas"
-          metrics={[{ label: "SLA", val: "100%" }, { label: "Alertas", val: "0" }]}
+          description="Blindagem institucional e conformidade total."
+          metrics={[{ label: "SLA Resposta", val: "100%" }, { label: "Certidões", val: "Ativas" }]}
         />
       </div>
 
 
-      {/* Intelligence & Analytics Grid */}
+      {/* Intelligence & Analytics Grid - Pro Dark Theme */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Compliance Evolution */}
-        <div className="lg:col-span-8 glass-card rounded-[2.5rem] p-10 space-y-8 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-             <TrendingUp className="h-32 w-32" />
-          </div>
+        {/* Compliance Evolution - Wide Glass Panel */}
+        <div className="lg:col-span-8 glass-card rounded-[3rem] p-10 space-y-8 relative overflow-hidden group border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent">
+          <div className="absolute -top-24 -right-24 h-64 w-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-primary/20 transition-all duration-700" />
           
-          <div className="flex items-center justify-between relative z-10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
             <div>
-              <h3 className="text-xl font-bold flex items-center gap-3">
-                <Activity className="h-5 w-5 text-primary" />
-                Inteligência de Compliance
+              <h3 className="text-2xl font-black flex items-center gap-3 tracking-tight italic">
+                <Activity className="h-6 w-6 text-primary animate-pulse" />
+                DYNAMICS ANALYSIS
               </h3>
-              <p className="text-sm text-muted-foreground mt-1">Evolução histórica do score de governança</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold opacity-60">Evolução do Score de Governança Proativa</p>
             </div>
             <div className="flex gap-2">
-              <button className="px-4 py-2 bg-white/5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all">Relatório IA</button>
+              <button className="px-6 py-2 bg-primary/10 border border-primary/20 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-primary text-white transition-all shadow-lg shadow-primary/10">Gerar Relatório IA</button>
             </div>
           </div>
           
-          <div className="h-[350px] w-full relative z-10">
+          <div className="h-[400px] w-full relative z-10 pt-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={complianceData}>
                 <defs>
                   <linearGradient id="compGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.4}/>
+                    <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.5}/>
                     <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="oklch(1 0 0 / 0.03)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="oklch(1 0 0 / 0.05)" vertical={false} />
                 <XAxis 
                   dataKey="name" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fill: "var(--color-muted-foreground)", fontSize: 11, fontWeight: 700 }} 
+                  tick={{ fill: "var(--color-muted-foreground)", fontSize: 10, fontWeight: 800 }} 
                 />
                 <YAxis hide domain={[0, 100]} />
                 <Tooltip 
-                  cursor={{ stroke: 'var(--color-primary)', strokeWidth: 1 }}
+                  cursor={{ stroke: 'var(--color-primary)', strokeWidth: 2, strokeDasharray: '4 4' }}
                   contentStyle={{ 
-                    backgroundColor: "oklch(0.1 0.015 250)", 
-                    border: "1px solid oklch(1 0 0 / 0.1)",
-                    borderRadius: "20px",
-                    boxShadow: "0 20px 40px -10px rgba(0,0,0,0.6)"
+                    backgroundColor: "rgba(0,0,0,0.8)", 
+                    backdropFilter: "blur(20px)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: "24px",
+                    padding: "16px",
+                    boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)"
                   }} 
                 />
                 <Area 
@@ -183,63 +202,73 @@ function DashboardExecutivo() {
                   stroke="var(--color-primary)" 
                   fillOpacity={1} 
                   fill="url(#compGradient)" 
-                  strokeWidth={4}
-                  animationDuration={2000}
+                  strokeWidth={5}
+                  animationDuration={2500}
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Risk Summary */}
-        <div className="lg:col-span-4 space-y-6">
-          <div className="glass-card rounded-[2.5rem] p-8 space-y-6">
-            <h3 className="text-lg font-bold flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-orange-500" />
-              Pendências Críticas
-            </h3>
-            <div className="space-y-4">
+        {/* Risk & Structure - Side Stack */}
+        <div className="lg:col-span-4 space-y-8">
+          {/* Critical Issues - High Intensity */}
+          <div className="glass-card rounded-[3rem] p-8 space-y-8 border-orange-500/10 bg-gradient-to-b from-orange-500/[0.02] to-transparent">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-black flex items-center gap-3 tracking-tight italic">
+                <AlertTriangle className="h-6 w-6 text-orange-500" />
+                RISKS
+              </h3>
+              <span className="h-6 px-2 rounded-full bg-orange-500/10 text-orange-500 text-[10px] font-black flex items-center">CRÍTICO</span>
+            </div>
+            <div className="space-y-3">
               {risks?.slice(0, 4).map((risk) => (
                 <RiskItem 
                   key={risk.id}
                   title={risk.title} 
                   target={(risk.entities as any)?.name || (risk.assets as any)?.name} 
-                  days={risk.due_date ? new Date(risk.due_date).toLocaleDateString() : "IA"} 
+                  days={risk.due_date ? new Date(risk.due_date).toLocaleDateString() : "URGENTE"} 
                   severity={risk.severity}
                 />
               ))}
               {(!risks || risks.length === 0) && (
-                <p className="text-xs text-muted-foreground text-center py-4">Nenhum risco crítico detectado.</p>
+                <div className="flex flex-col items-center justify-center py-10 opacity-30">
+                  <ShieldCheck className="h-12 w-12 mb-2" />
+                  <p className="text-[10px] font-black uppercase tracking-widest">Nenhum risco detectado</p>
+                </div>
               )}
             </div>
-            <button className="w-full py-4 bg-white/5 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all">
-              Central de Riscos
+            <button className="w-full py-5 bg-white/5 border border-white/5 rounded-3xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-orange-500 hover:text-white transition-all duration-500">
+              Acessar Central de Crise
             </button>
           </div>
 
-          <div className="glass-card rounded-[2.5rem] p-8 space-y-6">
-             <h3 className="text-lg font-bold flex items-center gap-2">
-                <Boxes className="h-5 w-5 text-blue-500" />
-                Estrutura Societária
-             </h3>
-             <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                   <p className="text-[10px] uppercase font-bold text-muted-foreground">Holdings</p>
-                   <p className="text-xl font-black mt-1">{entities?.length.toString().padStart(2, '0')}</p>
-                </div>
-                <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                   <p className="text-[10px] uppercase font-bold text-muted-foreground">Sócios</p>
-                   <p className="text-xl font-black mt-1">12</p>
+          {/* Holdings Structure - Dark Tech Style */}
+          <div className="glass-card rounded-[3rem] p-8 space-y-8 border-blue-500/10">
+             <div className="flex items-center justify-between">
+                <h3 className="text-xl font-black flex items-center gap-3 tracking-tight italic">
+                  <Boxes className="h-6 w-6 text-blue-500" />
+                  STRUCTURE
+                </h3>
+                <div className="flex -space-x-3 items-center">
+                  {[1,2,3].map(i => (
+                    <div key={i} className="h-8 w-8 rounded-full border-2 border-background bg-accent overflow-hidden grayscale hover:grayscale-0 transition-all cursor-pointer">
+                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i+10}`} alt="Sócio" />
+                    </div>
+                  ))}
+                  <div className="h-8 w-8 rounded-full border-2 border-background bg-white/10 flex items-center justify-center text-[10px] font-black">
+                    +8
+                  </div>
                 </div>
              </div>
-             <div className="flex -space-x-3 items-center">
-                {[1,2,3,4].map(i => (
-                  <div key={i} className="h-10 w-10 rounded-full border-2 border-background bg-accent overflow-hidden">
-                    <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i+10}`} alt="Sócio" />
-                  </div>
-                ))}
-                <div className="h-10 w-10 rounded-full border-2 border-background bg-white/10 flex items-center justify-center text-[10px] font-bold">
-                  +8
+             <div className="grid grid-cols-2 gap-4">
+                <div className="p-6 bg-white/[0.02] rounded-3xl border border-white/5 group hover:border-blue-500/30 transition-all">
+                   <p className="text-[10px] uppercase font-black text-muted-foreground/60 tracking-widest">Holdings</p>
+                   <p className="text-3xl font-black mt-1 text-foreground">{entities?.length.toString().padStart(2, '0')}</p>
+                </div>
+                <div className="p-6 bg-white/[0.02] rounded-3xl border border-white/5 group hover:border-blue-500/30 transition-all">
+                   <p className="text-[10px] uppercase font-black text-muted-foreground/60 tracking-widest">Conselho</p>
+                   <p className="text-3xl font-black mt-1 text-foreground">12</p>
                 </div>
              </div>
           </div>
