@@ -179,7 +179,7 @@ function InteligenciaIA() {
 }
 
 function InsightCard({ title, description, impact, category, action, variant = "default" }: any) {
-  const variants: any = {
+  const variants: Record<string, string> = {
     default: "border-primary/10 bg-primary/5 text-primary",
     warning: "border-orange-500/10 bg-orange-500/5 text-orange-500",
     danger: "border-red-500/10 bg-red-500/5 text-red-500",

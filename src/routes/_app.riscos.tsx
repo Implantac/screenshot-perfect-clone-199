@@ -160,7 +160,7 @@ function RiskCategoryCard({ icon: Icon, title, count, color, description, isScor
 }
 
 function RiskRow({ title, type, severity, date, owner }: any) {
-  const severities: any = {
+  const severities: Record<string, string> = {
     critical: "bg-red-500/10 text-red-500 border-red-500/20",
     high: "bg-orange-500/10 text-orange-500 border-orange-500/20",
     medium: "bg-blue-500/10 text-blue-500 border-blue-500/20"
