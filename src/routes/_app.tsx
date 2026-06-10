@@ -16,9 +16,11 @@ export const Route = createFileRoute("/_app")({
     }
   },
   component: () => (
-    <AppLayout>
-      <Outlet />
-    </AppLayout>
+    <div className="w-full max-w-full overflow-x-hidden">
+      <AppLayout>
+        <Outlet />
+      </AppLayout>
+    </div>
   ),
 });
 
