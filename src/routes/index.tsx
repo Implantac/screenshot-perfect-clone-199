@@ -171,11 +171,15 @@ function LandingPage() {
       <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
         <SectionHeader badge="Planos" title="Investimento Estratégico" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <PricingCard plan="Professional" price="R$ 997" desc="Escritórios & Consultorias." features={["Governança Patrimonial", "Gestão Documental", "Suporte Básico"]} />
-          <PricingCard plan="Business" price="R$ 2.997" desc="Holdings & Empresas." highlighted={true} features={["Tudo do Professional", "Digital Twin", "Compliance 360", "Knowledge Graph"]} />
-          <PricingCard plan="Enterprise" price="R$ 7.997" desc="Family Offices & Grupos." features={["Jarvis AI Autônomo", "Gestão de Riscos", "Due Diligence Avançada", "Suporte Dedicated"]} />
-          <PricingCard plan="Corporate" price="Sob Consulta" desc="Grandes grupos econômicos." features={["Customização Total", "Multi-Agentes Jarvis", "Segurança Militar", "SLA Garantido"]} />
+          <PricingCard plan="Professional" price="R$ 997+" desc="Escritórios e consultorias patrimoniais." features={["Governança Patrimonial", "Gestão Documental", "Suporte Básico", "ROI: 3x no primeiro ano"]} />
+          <PricingCard plan="Business" price="R$ 2.997+" desc="Holdings e empresas familiares." highlighted={true} features={["Tudo do Professional", "Digital Twin Hub", "Compliance 360", "Knowledge Graph", "ROI: 5x em eficiência"]} />
+          <PricingCard plan="Enterprise" price="R$ 7.997+" desc="Family Offices e grupos econômicos." features={["Jarvis AI Autônomo", "Gestão de Riscos", "Due Diligence Avançada", "Suporte Dedicated", "ROI: Proteção de Legado"]} />
+          <PricingCard plan="Corporate" price="Custom" desc="Grandes grupos e prefeituras." features={["Customização Total", "Multi-Agentes Jarvis", "Segurança Militar", "SLA Garantido", "ROI: Governança Infinita"]} />
         </div>
+        <div className="mt-12 text-center">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-primary/40">Ticket médio estimado por complexidade de estrutura.</p>
+        </div>
+
       </section>
 
       <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
