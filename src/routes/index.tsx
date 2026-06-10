@@ -207,4 +207,94 @@ function LandingPage() {
   );
 }
 
+function ProblemSection() {
+  const problems = [
+    { title: "Documentos Dispersos", desc: "Contratos, matrículas e licenças espalhados em múltiplas pastas e sistemas." },
+    { title: "Riscos Invisíveis", desc: "Certidões vencidas e prazos perdidos que geram multas e insegurança jurídica." },
+    { title: "Processos Manuais", desc: "Dependência de planilhas e memórias individuais para o controle do patrimônio." },
+    { title: "Falta de Governança", desc: "Dificuldade em visualizar a estrutura sucessória e societária de forma clara." },
+  ];
+
+  return (
+    <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
+      <SectionHeader badge="O Desafio" title="A Complexidade Patrimonial" subtitle="Empresas e famílias perdem milhões anualmente por falta de visibilidade e controle sobre seus ativos." />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {problems.map((p, i) => (
+          <div key={i} className="p-8 rounded-[2rem] bg-red-500/[0.02] border border-red-500/10 space-y-4">
+            <AlertTriangle className="h-6 w-6 text-red-500/50" />
+            <h4 className="text-lg font-bold text-white/90">{p.title}</h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function MarketAnalysis() {
+  return (
+    <section className="py-20 md:py-32 px-4 md:px-8 bg-[#080808] border-y border-white/5">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="space-y-8">
+          <SectionHeader badge="Mercado" title="Uma Nova Categoria" subtitle="O crescimento de Holdings e Family Offices no Brasil exige um novo padrão de tecnologia." />
+          <div className="space-y-6">
+            <div className="flex gap-4 p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+              <TrendingUp className="h-8 w-8 text-primary shrink-0" />
+              <div>
+                <h5 className="font-bold mb-1">+400% no volume de Holdings</h5>
+                <p className="text-sm text-muted-foreground">Crescimento acelerado na busca por proteção patrimonial e sucessória no Brasil.</p>
+              </div>
+            </div>
+            <div className="flex gap-4 p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+              <Scale className="h-8 w-8 text-primary shrink-0" />
+              <div>
+                <h5 className="font-bold mb-1">Necessidade Rigorosa de Compliance</h5>
+                <p className="text-sm text-muted-foreground">Novas regulamentações exigem monitoramento contínuo de ativos e sócios.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          {[
+            { label: "Holdings Familiares", icon: Building2 },
+            { label: "Family Offices", icon: Users },
+            { label: "Grupos do Agronegócio", icon: Globe },
+            { label: "Escritórios de Advocacia", icon: Scale }
+          ].map((item, i) => (
+            <div key={i} className="aspect-square rounded-[2.5rem] bg-white/[0.01] border border-white/5 flex flex-col items-center justify-center p-6 text-center space-y-4 hover:border-primary/20 transition-colors">
+              <item.icon className="h-10 w-10 text-primary/40" />
+              <span className="text-[10px] font-black uppercase tracking-widest leading-tight">{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function VisionSection() {
+  return (
+    <section className="py-20 md:py-40 px-4 md:px-8 text-center max-w-4xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        className="space-y-12"
+      >
+        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Nossa Visão</span>
+        <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter leading-[0.9]">
+          CONSTRUINDO O FUTURO DA GOVERNANÇA.
+        </h2>
+        <p className="text-lg md:text-2xl text-muted-foreground leading-relaxed font-medium italic">
+          "Estamos criando um cérebro patrimonial capaz de proteger, organizar e potencializar o patrimônio de empresas, holdings e famílias por gerações."
+        </p>
+        <div className="pt-8">
+          <Button size="lg" className="rounded-full px-12 h-16 bg-white text-black font-black uppercase tracking-widest text-xs hover:bg-white/90">Solicitar Demonstração</Button>
+        </div>
+      </motion.div>
+    </section>
+  );
+}
+
+
 
