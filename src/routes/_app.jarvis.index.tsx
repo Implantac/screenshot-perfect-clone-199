@@ -23,6 +23,13 @@ function JarvisIntelligenceCenter() {
       
       {/* Global Scores */}
       <div className="lg:col-span-8 space-y-12 lg:space-y-16 relative z-10">
+        <div className="space-y-4">
+          <p className="text-[10px] lg:text-[12px] font-black uppercase tracking-[0.5em] text-primary/70 italic">Digital Director Intelligence Center</p>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter text-foreground uppercase italic leading-[0.85]">
+            JARVIS <span className="text-primary">DIRECTOR</span>
+          </h2>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
           <ScoreGauge label="Patrimonial" value={health?.patrimonial_score || 96} color="primary" />
           <ScoreGauge label="Documental" value={health?.documental_score || 88} color="blue" />
