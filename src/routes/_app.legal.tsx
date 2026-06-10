@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_app/legal")({
 
 function AssessoriaJuridica() {
   return (
-    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden">
+    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden max-w-[1800px] mx-auto w-full">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
@@ -46,7 +46,7 @@ function AssessoriaJuridica() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
          {/* Lawsuits Table */}
          <div className="lg:col-span-8 glass-card rounded-[2.5rem] overflow-hidden">
-            <div className="p-8 border-b border-white/5 flex items-center justify-between">
+            <div className="p-6 md:p-8 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-6">
                <h3 className="text-xl font-bold flex items-center gap-2">
                   <Scale className="h-6 w-6 text-primary" />
                   Contencioso & Litígios
@@ -54,7 +54,7 @@ function AssessoriaJuridica() {
                <div className="flex gap-2">
                   <div className="relative">
                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                     <input type="text" placeholder="Filtrar processos..." className="bg-background border-white/10 rounded-xl py-2 pl-9 pr-4 text-[10px] w-48" />
+                     <input type="text" placeholder="Filtrar processos..." className="bg-background border-white/10 rounded-xl py-2 pl-9 pr-4 text-[10px] w-full md:w-48" />
                   </div>
                </div>
             </div>

@@ -41,7 +41,7 @@ function CentralDeRiscos() {
     : 0;
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden">
+    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden max-w-[1800px] mx-auto w-full">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="space-y-1">
@@ -110,7 +110,7 @@ function CentralDeRiscos() {
               <input 
                 type="text" 
                 placeholder="Filtrar por ativo ou tipo..." 
-                className="bg-background border-white/10 rounded-2xl py-3 pl-12 pr-4 text-sm w-72 focus:ring-primary/50" 
+                className="bg-background border-white/10 rounded-2xl py-3 pl-12 pr-4 text-sm w-full md:w-72 focus:ring-primary/50" 
               />
             </div>
             <button className="h-11 px-5 bg-white/5 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-2">
@@ -174,9 +174,9 @@ function RiskRow({ title, type, severity, date, owner }: any) {
   };
 
   return (
-    <div className="flex items-center justify-between p-8 hover:bg-white/[0.03] transition-colors group cursor-pointer border-l-4 border-l-transparent hover:border-l-primary">
-      <div className="flex items-center gap-8 flex-1 min-w-0">
-        <div className={cn("px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest shrink-0 border", severities[severity])}>
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 md:p-8 hover:bg-white/[0.03] transition-colors group cursor-pointer border-l-4 border-l-transparent hover:border-l-primary gap-6 md:gap-8">
+      <div className="flex items-start md:items-center gap-4 md:gap-8 flex-1 min-w-0">
+        <div className={cn("px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest shrink-0 border mt-1 md:mt-0", severities[severity])}>
           {severity}
         </div>
         <div className="min-w-0">
@@ -193,10 +193,10 @@ function RiskRow({ title, type, severity, date, owner }: any) {
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-10">
-        <div className="text-right">
+      <div className="flex items-center justify-between sm:justify-end gap-6 md:gap-10 shrink-0">
+        <div className="text-left sm:text-right">
           <p className="text-sm font-black text-foreground">{date}</p>
-          <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-1 font-bold">Status: Pendente</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-1 font-bold whitespace-nowrap">Status: Pendente</p>
         </div>
         <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all group-hover:translate-x-1">
            <ChevronRight className="h-5 w-5" />

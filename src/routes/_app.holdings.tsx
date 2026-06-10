@@ -35,7 +35,7 @@ function HoldingsSocietario() {
   const totalVgv = assets?.reduce((sum, a) => sum + (Number(a.value) || 0), 0) || 0;
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden">
+    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden max-w-[1800px] mx-auto w-full">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
@@ -65,8 +65,8 @@ function HoldingsSocietario() {
             </div>
 
             {/* Simulated Org Chart Visual */}
-            <div className="h-[400px] flex items-center justify-center relative z-10">
-               <div className="relative space-y-12">
+            <div className="h-[400px] flex items-center justify-center relative z-10 overflow-x-auto overflow-y-hidden py-10 scrollbar-none">
+               <div className="relative space-y-12 min-w-max px-8">
                   <div className="mx-auto w-48 p-4 bg-primary text-primary-foreground rounded-2xl text-center shadow-xl shadow-primary/20 relative z-20">
                      <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Controladora</p>
                      <p className="text-sm font-bold truncate">Holding Alencar</p>
@@ -163,7 +163,7 @@ function HoldingsSocietario() {
 
 function OrgNode({ label, perc, color }: any) {
   return (
-    <div className={cn("w-36 p-3 bg-white/5 border rounded-xl text-center backdrop-blur-md relative", color)}>
+    <div className={cn("w-32 md:w-36 p-3 bg-white/5 border rounded-xl text-center backdrop-blur-md relative shrink-0", color)}>
        <p className="text-[10px] font-bold text-muted-foreground">{label}</p>
        <p className="text-xs font-black text-primary mt-1">{perc}</p>
        {/* Small line indicator */}

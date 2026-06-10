@@ -30,7 +30,7 @@ function JarvisInsightsPage() {
   ];
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 max-w-[1800px] mx-auto w-full">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <h2 className="text-3xl font-black italic tracking-tighter uppercase">Insights <span className="text-primary">Estratégicos</span></h2>
