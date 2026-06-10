@@ -9,22 +9,31 @@ import {
   Building, 
   PieChart,
   ExternalLink,
-  Plus
+  Plus,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useEntities, useAssets } from "@/hooks/usePatrimonio";
 
 export const Route = createFileRoute("/_app/holdings")({
   component: HoldingsSocietario,
 });
 
-const holdings = [
-  { id: 1, name: "Holding Alencar S.A.", entities: 8, value: "R$ 142.5M", type: "Familiar", participation: "100%", health: 96 },
-  { id: 2, name: "Agroinvest Participações", entities: 4, value: "R$ 54.2M", type: "Investimento", participation: "75%", health: 82 },
-  { id: 3, name: "SP Urbanismo Ltda", entities: 2, value: "R$ 52.0M", type: "Imobiliária", participation: "100%", health: 92 },
-];
-
 function HoldingsSocietario() {
+  const { data: entities, isLoading: entitiesLoading } = useEntities();
+  const { data: assets, isLoading: assetsLoading } = useAssets();
+
+  if (entitiesLoading || assetsLoading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  const totalVgv = assets?.reduce((sum, a) => sum + (Number(a.value) || 0), 0) || 0;
+
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
       {/* Header */}
@@ -84,9 +93,10 @@ function HoldingsSocietario() {
             <div className="glass-card rounded-[2.5rem] p-8 space-y-6">
                <h3 className="text-lg font-bold">Snapshot Corporativo</h3>
                <div className="space-y-5">
-                  <CorporateMetric label="Empresas Controladas" val="14" icon={Building} />
+                  <CorporateMetric label="Empresas Controladas" val={entities?.length.toString() || "0"} icon={Building} />
                   <CorporateMetric label="Sócios Totais" val="12" icon={Users2} />
-                  <CorporateMetric label="VGV Sob Gestão" val="R$ 482.5M" icon={TrendingUp} />
+                  <CorporateMetric label="VGV Sob Gestão" val={`R$ ${(totalVgv / 1000000).toFixed(1)}M`} icon={TrendingUp} />
+
                </div>
             </div>
 
