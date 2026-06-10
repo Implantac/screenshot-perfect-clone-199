@@ -273,15 +273,18 @@ function MarketAnalysis() {
             { label: "Consultorias", icon: Briefcase },
             { label: "Boutiques Jurídicas", icon: Scale },
             { label: "Grupos do Agro", icon: Globe },
-            { label: "Family Offices", icon: Users }
+            { label: "Family Offices", icon: Users },
+            { label: "Incorporadoras", icon: Building2 },
+            { label: "Prefeituras", icon: Globe }
           ].map((item, i) => (
-            <div key={i} className="aspect-square rounded-[3.5rem] bg-white/[0.02] border border-white/[0.05] flex flex-col items-center justify-center p-8 text-center space-y-6 hover:border-primary/40 transition-all group backdrop-blur-xl">
-              <div className="h-16 w-16 rounded-2xl bg-white/[0.03] flex items-center justify-center border border-white/[0.05] group-hover:scale-110 group-hover:bg-primary/10 transition-all">
-                <item.icon className="h-8 w-8 text-primary/60 group-hover:text-primary transition-colors" />
+            <div key={i} className="aspect-square rounded-[3.5rem] bg-white/[0.02] border border-white/[0.05] flex flex-col items-center justify-center p-8 text-center space-y-4 hover:border-primary/40 transition-all group backdrop-blur-xl">
+              <div className="h-14 w-14 rounded-2xl bg-white/[0.03] flex items-center justify-center border border-white/[0.05] group-hover:scale-110 group-hover:bg-primary/10 transition-all">
+                <item.icon className="h-6 w-6 text-primary/60 group-hover:text-primary transition-colors" />
               </div>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] leading-tight italic">{item.label}</span>
+              <span className="text-[9px] font-black uppercase tracking-[0.2em] leading-tight italic">{item.label}</span>
             </div>
           ))}
+
         </div>
       </div>
     </section>
