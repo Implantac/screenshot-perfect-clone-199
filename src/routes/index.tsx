@@ -14,7 +14,10 @@ import {
   BarChart3,
   Scale,
   ArrowRight,
-  Cpu
+  Cpu,
+  AlertTriangle,
+  TrendingUp,
+  Globe
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
