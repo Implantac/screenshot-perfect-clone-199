@@ -83,7 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "JARVIS PATRIUM - O primeiro Diretor Patrimonial Digital do Brasil. Monitoramento ativo de holdings, ativos e compliance." },
       { name: "author", content: "Lovable" },
       { property: "og:title", content: "Use Patrium" },
-      { property: "og:description", content: "Pixel Perfect Replication creates exact visual duplicates of screenshots using TypeScript." },
+      { property: "og:description", content: "JARVIS PATRIUM - O primeiro Diretor Patrimonial Digital do Brasil. Monitoramento ativo de holdings, ativos e compliance." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
