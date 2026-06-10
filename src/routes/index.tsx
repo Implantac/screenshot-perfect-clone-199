@@ -38,8 +38,6 @@ export const Route = createFileRoute("/")({
 });
 
 function LandingPage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   return (
     <div className="min-h-screen bg-background text-white selection:bg-primary/30 font-sans overflow-x-hidden w-full relative">
       <div className="fixed inset-0 noise-overlay z-[100]" />
@@ -122,11 +120,6 @@ function LandingPage() {
       </section>
 
       <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <SectionHeader badge="Módulos" title="Plataforma Integrada" subtitle="Ferramentas especializadas para cada camada da governança patrimonial." />
-        <ModuleGrid />
-      </section>
-
-      <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
         <SectionHeader badge="O Jarvis" title="Seu Diretor Patrimonial Digital" subtitle="Monitoramento 24/7 de ativos, certidões e contratos com inteligência preditiva." />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
@@ -156,6 +149,11 @@ function LandingPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
+        <SectionHeader badge="Módulos" title="Plataforma Integrada" subtitle="Ferramentas especializadas para cada camada da governança patrimonial." />
+        <ModuleGrid />
       </section>
 
       <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
@@ -239,6 +237,9 @@ function SolutionSection() {
         <FeatureCard icon={ShieldCheck} title="Compliance 360" desc="Monitoramento autônomo de regularidade com alertas preditivos." />
       </div>
     </section>
+  );
+}
+
 function MarketAnalysis() {
   return (
     <section className="py-20 md:py-40 px-4 md:px-8 bg-white/[0.01] border-y border-white/[0.03] relative overflow-hidden">
@@ -282,4 +283,3 @@ function MarketAnalysis() {
     </section>
   );
 }
-
