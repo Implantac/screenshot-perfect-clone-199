@@ -105,10 +105,22 @@ export function Sidebar() {
           {/* Subtle atmospheric center glow */}
           <div className="absolute inset-4 bg-primary/5 blur-[50px] rounded-full -z-10 opacity-60 group-hover/logo:opacity-100 transition-opacity duration-1000" />
         </div>
-        <h1 className="text-lg font-black tracking-[0.3em] text-center uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-[#e5b364] via-[#c4924c] to-[#a37233] group-hover:tracking-[0.4em] transition-all duration-1000 ease-out leading-tight">
-          USE PATRIUM
-        </h1>
+        <div className="relative [perspective:1000px] group/text">
+          <motion.h1 
+            animate={{ rotateY: [-5, 5, -5] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            style={{ transformStyle: "preserve-3d" }}
+            className="text-lg font-black tracking-[0.3em] text-center uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-[#e5b364] via-[#c4924c] to-[#a37233] group-hover/logo:tracking-[0.4em] transition-all duration-1000 ease-out leading-tight drop-shadow-[0_4px_8px_rgba(163,114,51,0.3)]"
+          >
+            USE PATRIUM
+          </motion.h1>
+          {/* 3D Depth Layer for Text */}
+          <h1 className="absolute inset-0 text-lg font-black tracking-[0.3em] text-center uppercase font-sans text-[#a37233]/20 blur-[1px] translate-z-[-2px] pointer-events-none select-none" style={{ transform: "translateY(1px) translateZ(-1px)" }}>
+            USE PATRIUM
+          </h1>
+        </div>
       </div>
+
 
 
       {/* Navigation */}
