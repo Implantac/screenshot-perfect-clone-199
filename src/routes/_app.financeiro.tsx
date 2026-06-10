@@ -210,7 +210,7 @@ function FluxoFinanceiro() {
   );
 }
 
-function FinancialMetric({ label, val, trend, up, icon: Icon, color = "text-foreground" }: any) {
+function FinancialMetric({ label, val, trend, up, icon: Icon, color = "text-foreground" }: { label: string; val: string; trend?: string; up?: boolean; icon: any; color?: string }) {
   return (
     <div className="glass-card p-6 rounded-[2rem] space-y-4">
       <div className="flex items-center justify-between">

@@ -125,7 +125,7 @@ function AssessoriaJuridica() {
   );
 }
 
-function LegalStat({ label, val, icon: Icon, color = "text-foreground" }: any) {
+function LegalStat({ label, val, icon: Icon, color = "text-foreground" }: { label: string; val: string; icon: any; color?: string }) {
   return (
     <div className="glass-card p-6 rounded-[2rem] flex items-center gap-4">
        <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">

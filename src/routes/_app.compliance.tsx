@@ -74,7 +74,7 @@ function ComplianceRow({ label, status, date, ok, alert }: any) {
    );
 }
 
-function EntityProgress({ label, val }: any) {
+function EntityProgress({ label, val }: { label: string; val: number }) {
    return (
       <div className="space-y-2">
          <div className="flex justify-between text-xs font-bold uppercase tracking-wider">

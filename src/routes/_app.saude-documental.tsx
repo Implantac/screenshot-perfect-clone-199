@@ -53,7 +53,7 @@ function SaudeDocumental() {
   );
 }
 
-function MetricCard({ label, val, detail, color = "text-foreground" }: any) {
+function MetricCard({ label, val, detail, color = "text-foreground" }: { label: string; val: string; detail: string; color?: string }) {
    return (
       <div className="glass-card p-8 rounded-[2rem] space-y-2">
          <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{label}</p>

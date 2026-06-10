@@ -68,7 +68,7 @@ function SettingsPage() {
   );
 }
 
-function SettingsTab({ icon: Icon, label, active }: any) {
+function SettingsTab({ icon: Icon, label, active }: { icon: any; label: string; active?: boolean }) {
   return (
     <button className={cn(
       "w-full flex items-center gap-3 px-6 py-4 rounded-2xl text-sm font-bold transition-all",
