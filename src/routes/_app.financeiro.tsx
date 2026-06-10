@@ -25,7 +25,7 @@ import {
   ResponsiveContainer
 } from "recharts";
 
-export const Route = createFileRoute("/_app/financeiro" as any)({
+export const Route = createFileRoute("/_app/financeiro")({
   component: FluxoFinanceiro,
 });
 

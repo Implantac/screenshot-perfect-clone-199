@@ -15,7 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
-export const Route = createFileRoute("/_app/mapa" as any)({
+export const Route = createFileRoute("/_app/mapa")({
   component: MapaGlobal,
 });
 
