@@ -175,7 +175,7 @@ export function PricingCard({ plan, price, desc, features, highlighted = false }
       </div>
       
       <Button className={`w-full h-16 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] transition-all duration-500 shadow-xl ${highlighted ? 'bg-primary text-black hover:bg-primary/90 shadow-primary/20' : 'bg-white/[0.03] hover:bg-white/[0.08] text-white border border-white/[0.08]'}`}>
-        Ativar Protocolo
+        Solicitar Demonstração
       </Button>
     </Card>
   );
