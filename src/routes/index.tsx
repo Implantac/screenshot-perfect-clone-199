@@ -1,292 +1,225 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { 
   ShieldCheck, 
+  ArrowRight, 
   Sparkles, 
   Network, 
   Lock, 
   CheckCircle2,
-  Menu,
-  X,
-  Building2,
-  Briefcase,
-  Users,
-  BarChart3,
-  Scale,
-  ArrowRight,
   Cpu,
-  AlertTriangle,
-  TrendingUp,
-  Globe,
+  Zap,
+  ChevronRight,
   Database,
-  Zap
+  Building2,
+  Globe,
+  Plus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { 
-  SectionHeader, 
-  FeatureCard, 
-  ComparisonTable, 
-  PricingCard,
-  KnowledgeGraphAnimation,
-  ArchitectureFlow,
-  ModuleGrid
-} from "@/components/LandingPageComponents";
+import { useRef } from "react";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
 });
 
 function LandingPage() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const textScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.8]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+
   return (
-    <div className="min-h-screen bg-background text-white selection:bg-primary/30 font-sans overflow-x-hidden w-full relative">
-      <div className="fixed inset-0 noise-overlay z-[100]" />
-      
-      <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-12 py-6 md:py-8 flex items-center justify-between bg-background/60 backdrop-blur-2xl border-b border-white/[0.03]">
-        <div className="flex items-center gap-3">
-          <img src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" alt="Logo" className="h-7 md:h-10" />
+    <div ref={containerRef} className="min-h-[300vh] bg-[#030303] text-white selection:bg-primary/20 font-sans overflow-x-hidden relative">
+      {/* Background Elements */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <motion.div 
+          style={{ y: backgroundY }}
+          className="absolute inset-0 executive-grid opacity-20" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#030303]/80 to-[#030303]" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
+      </div>
+
+      <nav className="fixed top-0 w-full z-[100] px-6 md:px-12 py-8 flex items-center justify-between border-b border-white/5 backdrop-blur-xl">
+        <div className="flex items-center gap-4">
+          <div className="relative h-10 w-10 flex items-center justify-center">
+            <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full animate-pulse" />
+            <div className="relative h-6 w-6 bg-primary rounded-sm rotate-45 border border-white/20" />
+          </div>
           <div className="flex flex-col">
-            <span className="font-black tracking-[0.3em] text-sm md:text-base uppercase italic leading-none">USE PATRIUM</span>
-            <span className="text-[8px] font-bold tracking-[0.5em] uppercase text-primary/80 mt-1">Strategic Intelligence</span>
+            <span className="font-black tracking-[0.4em] text-lg uppercase italic leading-none">USE PATRIUM</span>
+            <span className="text-[7px] font-bold tracking-[0.6em] uppercase text-primary/80 mt-1">Institutional Governance</span>
           </div>
         </div>
         
-        <div className="hidden md:flex items-center gap-10">
-          <div className="flex items-center gap-8">
-            {["Soluções", "Tecnologia", "Análise", "Empresa"].map((item) => (
-              <a key={item} href="#" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-white transition-colors">{item}</a>
-            ))}
-          </div>
-          <div className="h-6 w-px bg-white/10" />
-          <div className="flex items-center gap-6">
-            <a href="/login" className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 hover:text-white transition-colors">Acessar</a>
-            <Button className="rounded-full px-10 h-12 bg-white text-black font-black uppercase tracking-widest text-[10px] hover:bg-white/90 border-none">Solicitar Demonstração</Button>
-          </div>
+        <div className="hidden md:flex items-center gap-12">
+          {["Ecossistema", "Inteligência", "Governança", "Legado"].map((item) => (
+            <a key={item} href="#" className="text-[9px] font-black uppercase tracking-[0.3em] text-white/40 hover:text-primary transition-all hover:tracking-[0.5em]">
+              {item}
+            </a>
+          ))}
+          <div className="h-4 w-px bg-white/10" />
+          <Button className="rounded-full bg-white text-black font-black uppercase text-[10px] tracking-[0.2em] px-10 h-12 hover:bg-primary transition-colors border-none">
+            Solicitar Acesso
+          </Button>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="pt-40 md:pt-64 pb-20 md:pb-40 px-4 md:px-8 relative overflow-hidden w-full executive-grid">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-transparent to-background" />
-        <div className="max-w-7xl mx-auto text-center relative z-10 space-y-12">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white/[0.02] border border-white/[0.05] text-[10px] font-black uppercase tracking-[0.4em] text-primary backdrop-blur-xl shadow-2xl"
-          >
-            <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-            Governance & Strategic Intelligence
-          </motion.div>
-          
-          <div className="space-y-6">
-            <motion.h1 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-6xl md:text-[11rem] font-black tracking-tighter leading-[0.8] italic uppercase"
-            >
-              USE PATRIUM <span className="text-primary drop-shadow-[0_0_50px_rgba(212,163,85,0.2)]">OS</span>
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-xl md:text-3xl text-muted-foreground max-w-4xl mx-auto leading-relaxed font-medium italic"
-            >
-              O Sistema Operacional do Patrimônio Corporativo. A primeira plataforma brasileira capaz de centralizar governança, compliance e inteligência executiva em um único ambiente.
-            </motion.p>
-          </div>
-
+      {/* Cinematic Hero */}
+      <section className="sticky top-0 h-screen flex flex-col items-center justify-center px-6 text-center z-10">
+        <motion.div style={{ scale: textScale, opacity }} className="max-w-7xl mx-auto space-y-12">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-12"
+            className="inline-flex items-center gap-3 px-6 py-2 rounded-full border border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-[0.5em] text-primary"
           >
-            <Button size="lg" className="rounded-2xl px-14 h-20 bg-primary text-black font-black uppercase tracking-[0.25em] text-xs hover:scale-105 transition-all shadow-2xl shadow-primary/20 border-none">Solicitar Demonstração</Button>
-            <Button size="lg" variant="outline" className="rounded-2xl px-14 h-20 border-white/10 bg-white/[0.02] font-black uppercase tracking-[0.25em] text-xs backdrop-blur-xl hover:bg-white/5 transition-all">Conhecer o Jarvis</Button>
+            <div className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_10px_#d4a355]" />
+            Patrimonial Operating System
           </motion.div>
-        </div>
+          
+          <h1 className="text-8xl md:text-[14rem] font-black uppercase italic leading-[0.75] tracking-tighter mix-blend-difference">
+            THE NEW <br />
+            <span className="text-primary italic">STANDARD.</span>
+          </h1>
+
+          <p className="text-xl md:text-3xl text-white/60 font-light italic max-w-3xl mx-auto leading-relaxed">
+            A infraestrutura definitiva para a gestão de grandes patrimônios e holdings. 
+            Não é um software, é o seu novo cérebro institucional.
+          </p>
+
+          <div className="flex flex-col md:row items-center justify-center gap-6 pt-12">
+            <Button size="lg" className="h-24 px-16 rounded-[2rem] bg-primary text-black font-black uppercase tracking-[0.3em] text-xs hover:scale-105 transition-all shadow-[0_0_50px_rgba(212,163,85,0.2)]">
+              Protocolo Demo
+            </Button>
+            <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.4em] text-white/30 italic">
+              <Plus className="h-4 w-4" /> Discover Jarvis AI
+            </div>
+          </div>
+        </motion.div>
+        
+        <motion.div 
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30"
+        >
+          <span className="text-[8px] font-black uppercase tracking-[0.5em] vertical-text">Scroll to explore</span>
+          <div className="w-px h-12 bg-white/20" />
+        </motion.div>
       </section>
 
-      <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto space-y-40">
-        <ProblemSection />
-        <SolutionSection />
-      </section>
-
-      <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <SectionHeader badge="Arquitetura" title="Fluxo Inteligente" subtitle="A integração profunda entre dados, inteligência e ação executiva." />
-        <ArchitectureFlow />
-      </section>
-
-      <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <SectionHeader badge="O Jarvis" title="Seu Diretor Patrimonial Digital" subtitle="Monitoramento 24/7 de ativos, certidões e contratos com inteligência preditiva." />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      {/* The Vision Section */}
+      <section className="relative z-20 py-60 px-6 md:px-12 bg-[#030303]">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-32 items-end">
+          <div className="space-y-12">
+            <div className="inline-block text-[10px] font-black uppercase tracking-[0.5em] text-primary/60 italic border-b border-primary/20 pb-2">
+              The Architecture of Legacy
+            </div>
+            <h2 className="text-6xl md:text-9xl font-black italic uppercase leading-[0.85] tracking-tighter">
+              BEYOND <br />
+              COMPLIANCE.
+            </h2>
+          </div>
           <div className="space-y-8">
-            <p className="text-xl text-muted-foreground italic leading-relaxed">O Jarvis não apenas armazena; ele entende. Ao monitorar continuamente holdings, imóveis e certidões, ele detecta riscos e sugere planos de ação imediatos.</p>
-            <div className="space-y-4">
-              {[
-                "Detecção autônoma de vencimentos",
-                "Alertas preditivos de compliance",
-                "Insights de regularização imobiliária",
-                "Priorização de ações críticas"
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-xs font-black uppercase tracking-widest opacity-80">{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="p-8 rounded-[3rem] bg-white/[0.02] border border-white/10 space-y-6">
-            <div className="flex gap-4 p-4 rounded-2xl bg-primary/5 border border-primary/10">
-              <Sparkles className="h-5 w-5 text-primary shrink-0" />
-              <p className="text-xs italic font-medium">"Detectei 3 certidões vencidas na Holding X. Deseja iniciar o protocolo de renovação?"</p>
-            </div>
-            <div className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 translate-x-4">
-              <Sparkles className="h-5 w-5 text-primary shrink-0" />
-              <p className="text-xs italic font-medium">"Uma licença ambiental na Fazenda Y vence em 12 dias. Plano de ação prioritário criado."</p>
-            </div>
+            <p className="text-2xl md:text-3xl text-white/80 leading-relaxed italic font-light">
+              "No topo da pirâmide patrimonial, a eficiência não é mais suficiente. 
+              A governança moderna exige antecipação, conexão total e inteligência autônoma."
+            </p>
+            <div className="h-px w-24 bg-primary" />
+            <p className="text-sm text-white/40 font-bold uppercase tracking-[0.2em] italic">USE PATRIUM STRATEGIC PAPER v2.0</p>
           </div>
         </div>
-      </section>
 
-      <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <SectionHeader badge="Módulos" title="Plataforma Integrada" subtitle="Ferramentas especializadas para cada camada da governança patrimonial." />
-        <ModuleGrid />
-      </section>
-
-      <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <SectionHeader badge="Tecnologia" title="Knowledge Graph & Digital Twin" subtitle="Visualize e controle cada ativo com precisão absoluta." />
-        <KnowledgeGraphAnimation />
-      </section>
-
-      <MarketAnalysis />
-
-      <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <SectionHeader badge="Comparativo" title="Patrium vs Mercado" subtitle="A diferença entre gestão passiva e governança inteligente." />
-        <ComparisonTable />
-      </section>
-
-      <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <SectionHeader badge="Planos" title="Investimento Estratégico" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <PricingCard plan="Professional" price="R$ 997+" desc="Escritórios e consultorias patrimoniais." features={["Governança Patrimonial", "Gestão Documental", "Suporte Básico", "ROI: 3x no primeiro ano"]} />
-          <PricingCard plan="Business" price="R$ 2.997+" desc="Holdings e empresas familiares." highlighted={true} features={["Tudo do Professional", "Digital Twin Hub", "Compliance 360", "Knowledge Graph", "ROI: 5x em eficiência"]} />
-          <PricingCard plan="Enterprise" price="R$ 7.997+" desc="Family Offices e grupos econômicos." features={["Jarvis AI Autônomo", "Gestão de Riscos", "Due Diligence Avançada", "Suporte Dedicated", "ROI: Proteção de Legado"]} />
-          <PricingCard plan="Corporate" price="Custom" desc="Grandes grupos e prefeituras." features={["Customização Total", "Multi-Agentes Jarvis", "Segurança Militar", "SLA Garantido", "ROI: Governança Infinita"]} />
-        </div>
-        <div className="mt-12 text-center">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-primary/40">Ticket médio estimado por complexidade de estrutura.</p>
-        </div>
-
-      </section>
-
-      <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <SectionHeader badge="Evolução" title="Roadmap Tecnológico" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="mt-40 grid grid-cols-1 md:grid-cols-3 gap-1px bg-white/5 border border-white/5 overflow-hidden rounded-[4rem]">
           {[
-            { phase: "Fase 1", title: "Governança Patrimonial", status: "Operational" },
-            { phase: "Fase 2", title: "Compliance Preditivo", status: "Operational" },
-            { phase: "Fase 3", title: "Regularização Imobiliária", status: "Operational" },
-            { phase: "Fase 4", title: "Agronegócio Patrimonial", status: "Beta" },
-            { phase: "Fase 5", title: "Jarvis Autônomo", status: "Development" },
-            { phase: "Fase 6", title: "Marketplace de Ativos", status: "Planning" },
-            { phase: "Fase 7", title: "Integração Cartórios", status: "Planning" },
-            { phase: "Fase 8", title: "GovTech Unificada", status: "Vision" }
+            { icon: Network, title: "Knowledge Graph", desc: "Uma malha neural que conecta todos os ativos, holdings e CPFs em tempo real." },
+            { icon: Lock, title: "Digital Twin Hub", desc: "O espelho digital perfeito do seu patrimônio físico e societário, com rastreabilidade absoluta." },
+            { icon: Sparkles, title: "Jarvis Agent", desc: "A primeira IA brasileira que entende a complexidade do direito patrimonial e age preventivamente." }
           ].map((item, i) => (
-            <div key={i} className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 space-y-4">
-              <span className="text-[10px] font-black text-primary uppercase tracking-widest">{item.phase}</span>
-              <h4 className="text-base font-bold italic uppercase leading-tight">{item.title}</h4>
-              <p className="text-[9px] font-black text-white/20 uppercase tracking-widest">{item.status}</p>
+            <div key={i} className="p-16 md:p-24 bg-[#030303] hover:bg-white/[0.02] transition-colors group flex flex-col justify-between aspect-square">
+              <item.icon className="h-12 w-12 text-primary/40 group-hover:text-primary transition-all group-hover:scale-110" />
+              <div className="space-y-6">
+                <h3 className="text-3xl font-black italic uppercase tracking-tighter">{item.title}</h3>
+                <p className="text-white/40 text-base leading-relaxed italic group-hover:text-white/60 transition-colors">{item.desc}</p>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="py-40 px-4 md:px-8 text-center max-w-5xl mx-auto">
-        <SectionHeader badge="Visão de Futuro" title="THE NEXT GENERATION OF GOVERNANCE." />
-        <p className="text-xl md:text-3xl text-muted-foreground italic font-medium leading-relaxed max-w-4xl mx-auto">"O USE PATRIUM está construindo a próxima geração da Governança Patrimonial no Brasil. Estamos criando um cérebro patrimonial capaz de proteger, organizar e potencializar o patrimônio de gerações."</p>
+      {/* Strategic Intelligence / Jarvis */}
+      <section className="relative z-20 py-40 px-6 md:px-12 bg-white/[0.01] border-y border-white/5 overflow-hidden">
+        <div className="max-w-7xl mx-auto flex flex-col items-center text-center space-y-24">
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.5em] text-primary">
+              <Sparkles className="h-4 w-4" /> Jarvis Strategic Director
+            </div>
+            <h2 className="text-5xl md:text-8xl font-black italic uppercase tracking-tighter leading-none">
+              O PRIMEIRO DIRETOR <br />
+              PATRIMONIAL DIGITAL.
+            </h2>
+          </div>
+
+          <div className="relative w-full aspect-video rounded-[4rem] border border-white/5 bg-black overflow-hidden flex items-center justify-center group">
+            <div className="absolute inset-0 executive-grid opacity-10 group-hover:opacity-20 transition-opacity" />
+            <div className="relative z-10 flex flex-col items-center gap-12">
+              <div className="h-32 w-32 md:h-48 md:w-48 rounded-full border border-primary/20 flex items-center justify-center p-4">
+                <div className="h-full w-full rounded-full bg-primary/5 flex items-center justify-center animate-pulse">
+                  <Cpu className="h-12 w-12 md:h-20 md:w-20 text-primary" />
+                </div>
+              </div>
+              <div className="space-y-4 max-w-xl">
+                <div className="px-6 py-4 rounded-2xl bg-primary/5 border border-primary/10 italic text-sm text-primary/80">
+                  "Detectei uma vulnerabilidade na certidão da Holding Alfa. Protocolo de renovação iniciado automaticamente."
+                </div>
+                <div className="px-6 py-4 rounded-2xl bg-white/5 border border-white/10 italic text-sm text-white/40">
+                  "Processando Due Diligence do Imóvel X. 98% de precisão documental atingida."
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <Button size="lg" variant="ghost" className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40 hover:text-white italic">
+            Visualizar Roadmap de Inteligência <ArrowRight className="ml-4 h-4 w-4" />
+          </Button>
+        </div>
       </section>
 
-      <footer className="py-20 px-4 md:px-8 border-t border-white/5 bg-[#030303] mt-32">
-        <div className="max-w-7xl mx-auto text-center space-y-8">
-          <h2 className="text-3xl md:text-5xl font-black uppercase italic tracking-tighter">Transforme seu Legado.</h2>
-          <Button className="rounded-full px-12 h-16 bg-primary text-black font-black uppercase tracking-widest text-xs">Falar com Especialista</Button>
+      {/* CTA / Final Section */}
+      <section className="relative z-20 py-60 px-6 md:px-12 text-center bg-[#030303]">
+        <div className="max-w-5xl mx-auto space-y-16">
+          <h2 className="text-6xl md:text-[10rem] font-black italic uppercase leading-[0.8] tracking-tighter">
+            THE FUTURE <br />
+            IS <span className="text-primary italic">PRIVATE.</span>
+          </h2>
+          <p className="text-xl md:text-3xl text-white/60 italic font-light max-w-2xl mx-auto">
+            Sua governança merece o estado da arte. Junte-se à nova categoria de infraestrutura estratégica.
+          </p>
+          <div className="pt-12">
+            <Button size="lg" className="h-24 px-20 rounded-[2.5rem] bg-white text-black font-black uppercase tracking-[0.4em] text-xs hover:bg-primary transition-all">
+              Agendar Board Meeting
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <footer className="relative z-20 py-20 px-8 border-t border-white/5 text-center">
+        <div className="flex flex-col md:flex-row items-center justify-between max-w-7xl mx-auto gap-8 opacity-40">
+          <div className="flex items-center gap-3">
+            <div className="h-4 w-4 bg-white rounded-sm rotate-45" />
+            <span className="text-[10px] font-black uppercase tracking-[0.4em]">USE PATRIUM</span>
+          </div>
+          <p className="text-[8px] font-black uppercase tracking-[0.5em]">SYSTEMIC GOVERNANCE INFRASTRUCTURE © 2026</p>
+          <div className="flex items-center gap-8">
+            <a href="#" className="text-[8px] font-black uppercase tracking-[0.5em]">LEGAL</a>
+            <a href="#" className="text-[8px] font-black uppercase tracking-[0.5em]">PRIVACY</a>
+          </div>
         </div>
       </footer>
     </div>
-  );
-}
-
-function ProblemSection() {
-  return (
-    <section>
-      <SectionHeader badge="O Desafio" title="A Complexidade Silenciosa" />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-muted-foreground italic font-medium leading-relaxed">
-        <p>A fragmentação de documentos em silos analógicos e digitais, a invisibilidade de riscos e a dependência de processos manuais criam uma opacidade que coloca em risco legados multigeracionais.</p>
-        <p>Multas, processos inesperados e a perda de controle sobre a rede societária são as consequências de uma governança patrimonial que não evoluiu tecnologicamente.</p>
-      </div>
-    </section>
-  );
-}
-
-function SolutionSection() {
-  return (
-    <section>
-      <SectionHeader badge="A Solução" title="Governança Patrimonial Inteligente" />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <FeatureCard icon={Network} title="Knowledge Graph" desc="Mapeamento total da rede societária, conectando holdings, sócios e ativos." />
-        <FeatureCard icon={Lock} title="Digital Twin" desc="Espelhamento digital de ativos com rastreabilidade total de documentos e riscos." />
-        <FeatureCard icon={ShieldCheck} title="Compliance 360" desc="Monitoramento autônomo de regularidade com alertas preditivos." />
-      </div>
-    </section>
-  );
-}
-
-function MarketAnalysis() {
-  return (
-    <section className="py-20 md:py-40 px-4 md:px-8 bg-white/[0.01] border-y border-white/[0.03] relative overflow-hidden">
-      <div className="absolute inset-0 executive-grid opacity-30" />
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center relative z-10">
-        <div className="space-y-12">
-          <SectionHeader badge="Relatório de Inteligência" title="Quem Utiliza a Patrium" subtitle="Verticalização setorial para as estruturas patrimoniais mais complexas do país." />
-          <div className="space-y-8">
-            <div className="flex gap-6 p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/[0.05] hover:border-primary/20 transition-all backdrop-blur-xl">
-              <Building2 className="h-10 w-10 text-primary shrink-0" />
-              <div>
-                <h5 className="font-black italic uppercase tracking-tight text-lg mb-2">Holdings & Family Offices</h5>
-                <p className="text-sm text-muted-foreground italic font-medium leading-relaxed">Centralização de múltiplas empresas e sócios em um único grafo de governança.</p>
-              </div>
-            </div>
-            <div className="flex gap-6 p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/[0.05] hover:border-primary/20 transition-all backdrop-blur-xl">
-              <Globe className="h-10 w-10 text-primary shrink-0" />
-              <div>
-                <h5 className="font-black italic uppercase tracking-tight text-lg mb-2">Agronegócio Patrimonial</h5>
-                <p className="text-sm text-muted-foreground italic font-medium leading-relaxed">Gestão de fazendas, matrículas, CAR e ativos biológicos com precisão militar.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-6">
-          {[
-            { label: "Consultorias", icon: Briefcase },
-            { label: "Boutiques Jurídicas", icon: Scale },
-            { label: "Grupos do Agro", icon: Globe },
-            { label: "Family Offices", icon: Users },
-            { label: "Incorporadoras", icon: Building2 },
-            { label: "Prefeituras", icon: Globe }
-          ].map((item, i) => (
-            <div key={i} className="aspect-square rounded-[3.5rem] bg-white/[0.02] border border-white/[0.05] flex flex-col items-center justify-center p-8 text-center space-y-4 hover:border-primary/40 transition-all group backdrop-blur-xl">
-              <div className="h-14 w-14 rounded-2xl bg-white/[0.03] flex items-center justify-center border border-white/[0.05] group-hover:scale-110 group-hover:bg-primary/10 transition-all">
-                <item.icon className="h-6 w-6 text-primary/60 group-hover:text-primary transition-colors" />
-              </div>
-              <span className="text-[9px] font-black uppercase tracking-[0.2em] leading-tight italic">{item.label}</span>
-            </div>
-          ))}
-
-        </div>
-      </div>
-    </section>
   );
 }
