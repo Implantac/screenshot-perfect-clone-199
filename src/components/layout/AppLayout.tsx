@@ -59,7 +59,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold hover:opacity-90 transition-all shadow-lg shadow-primary/20 active:scale-95"
             >
               <Sparkles className="h-4 w-4" />
-              Copiloto IA
+              Jarvis AI
             </button>
           </div>
         </header>
