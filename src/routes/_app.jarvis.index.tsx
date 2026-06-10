@@ -102,7 +102,7 @@ function JarvisIntelligenceCenter() {
         </div>
 
         {/* Digital Twin Shortcut */}
-        <div className="glass-card rounded-[3rem] p-8 border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-colors cursor-pointer group">
+        <div className="glass-card rounded-[3.5rem] p-10 border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all cursor-pointer group shadow-xl">
           <div className="flex items-center gap-5">
             <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-primary/50 transition-colors">
               <Zap className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
