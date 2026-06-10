@@ -123,25 +123,27 @@ function ScoreGauge({ label, value, color }: any) {
   };
 
   return (
-    <div className="glass-card rounded-[2rem] p-6 text-center border-white/5 bg-white/[0.02] flex flex-col items-center">
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">{label}</p>
-      <div className={cn("inline-flex items-center justify-center h-20 w-20 lg:h-24 lg:w-24 rounded-full border-4 relative", colors[color])}>
-        <span className="text-xl lg:text-2xl font-black italic">{value}%</span>
-        <svg className="absolute -inset-1 h-[88px] w-[88px] lg:h-[104px] lg:w-[104px] rotate-[-90deg]">
+    <div className="glass-card rounded-[2.5rem] p-8 text-center border-white/[0.05] bg-white/[0.01] flex flex-col items-center hover:scale-105 transition-transform duration-700 shadow-2xl backdrop-blur-3xl">
+      <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/50 mb-6 italic">{label}</p>
+      <div className={cn("inline-flex items-center justify-center h-24 w-24 lg:h-32 lg:w-32 rounded-full border-[6px] relative", colors[color])}>
+        <span className="text-2xl lg:text-3xl font-black italic tabular-nums">{value}<span className="text-[10px] opacity-30 ml-1">%</span></span>
+        <svg className="absolute -inset-1.5 h-[108px] w-[108px] lg:h-[140px] lg:w-[140px] rotate-[-90deg] drop-shadow-[0_0_10px_rgba(var(--primary),0.2)]">
           <circle 
-            cx="44" cy="44" r="40" 
+            cx="54" cy="54" r="48" 
             fill="transparent" 
             stroke="currentColor" 
-            strokeWidth="4" 
-            strokeDasharray={`${value * 2.51} 251`}
+            strokeWidth="6" 
+            strokeDasharray={`${value * 3.01} 301`}
+            strokeLinecap="round"
             className="lg:hidden"
           />
           <circle 
-            cx="52" cy="52" r="48" 
+            cx="70" cy="70" r="62" 
             fill="transparent" 
             stroke="currentColor" 
-            strokeWidth="4" 
-            strokeDasharray={`${value * 3.01} 301`}
+            strokeWidth="6" 
+            strokeDasharray={`${value * 3.89} 389`}
+            strokeLinecap="round"
             className="hidden lg:block"
           />
         </svg>
