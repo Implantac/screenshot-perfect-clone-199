@@ -1,5 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+
 import { supabase } from "@/integrations/supabase/client";
 import { ShieldCheck, Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -51,16 +53,31 @@ function LoginPage() {
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none -translate-x-1/2 translate-y-1/2" />
       
       <div className="w-full max-w-[450px] space-y-8 animate-in fade-in zoom-in duration-700">
-        <div className="text-center space-y-6">
-          <div className="inline-flex items-center justify-center mb-2">
-            <img 
-              src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
-              alt="Use Patrium" 
-              className="h-20 w-auto object-contain animate-in fade-in zoom-in duration-1000"
-            />
+        <div className="text-center space-y-8 group/main cursor-default">
+          <div className="inline-flex items-center justify-center mb-2 [perspective:1200px]">
+            <motion.div
+              animate={{ 
+                rotateY: [0, 360],
+                y: [0, -10, 0]
+              }}
+              transition={{ 
+                rotateY: { duration: 20, repeat: Infinity, ease: "linear" },
+                y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+              }}
+              whileHover={{ scale: 1.15, transition: { duration: 0.4 } }}
+              className="relative"
+            >
+              <img 
+                src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
+                alt="Use Patrium" 
+                className="h-32 w-auto object-contain drop-shadow-[0_20px_40px_rgba(var(--primary),0.4)] relative z-10"
+              />
+              <div className="absolute inset-0 bg-primary/25 blur-[60px] rounded-full -z-10 animate-pulse" />
+            </motion.div>
           </div>
-          <h1 className="text-5xl font-black tracking-[0.25em] text-foreground uppercase animate-in slide-in-from-bottom-4 duration-1000 delay-200">USE PATRIUM</h1>
+          <h1 className="text-6xl font-black tracking-[0.3em] text-foreground uppercase animate-in slide-in-from-bottom-8 duration-1000 delay-200 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/30 drop-shadow-2xl">USE PATRIUM</h1>
         </div>
+
 
 
 

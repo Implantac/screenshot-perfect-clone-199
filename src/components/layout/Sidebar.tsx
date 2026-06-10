@@ -1,5 +1,7 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { motion } from "framer-motion";
+
 
 import { 
   LayoutDashboard, 
@@ -69,14 +71,32 @@ export function Sidebar() {
   return (
     <div className="flex h-screen w-72 flex-col bg-sidebar border-r border-sidebar-border relative z-20 shadow-2xl">
       {/* Brand */}
-      <div className="flex h-24 flex-col justify-center px-6 gap-2">
-        <img 
-          src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
-          alt="Use Patrium" 
-          className="h-10 w-auto object-contain self-start"
-        />
-        <h1 className="text-xl font-black tracking-[0.2em] text-foreground leading-none uppercase font-sans">USE PATRIUM</h1>
+      <div className="flex h-32 flex-col justify-center px-6 gap-3 group/logo cursor-pointer">
+        <div className="relative w-16 h-16 [perspective:1000px]">
+          <motion.img 
+            src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
+            alt="Use Patrium" 
+            className="w-full h-full object-contain drop-shadow-[0_10px_20px_rgba(var(--primary),0.3)]"
+            animate={{ 
+              rotateY: [0, 15, -15, 0],
+              y: [0, -5, 0]
+            }}
+            transition={{ 
+              duration: 6, 
+              repeat: Infinity, 
+              ease: "easeInOut" 
+            }}
+            whileHover={{ 
+              scale: 1.1,
+              rotateY: 180,
+              transition: { duration: 0.8 }
+            }}
+          />
+          <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full -z-10 opacity-0 group-hover/logo:opacity-100 transition-opacity duration-500" />
+        </div>
+        <h1 className="text-xl font-black tracking-[0.25em] text-foreground leading-none uppercase font-sans bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground to-foreground/50 group-hover/logo:tracking-[0.35em] transition-all duration-700">USE PATRIUM</h1>
       </div>
+
 
 
 
