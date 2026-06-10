@@ -105,10 +105,10 @@ export function ComparisonTable() {
   const features = [
     { name: "Governança Patrimonial", patrium: true, sap: "Limitado", legacy: "Parcial", soft: "Sim" },
     { name: "Compliance Autônomo 360", patrium: true, sap: "Estático", legacy: "Manual", soft: "Não" },
-    { name: "Jarvis AI (Multiagentes)", patrium: true, sap: "Não", legacy: "Não", soft: "Não" },
+    { name: "Jarvis AI (Diretor Digital)", patrium: true, sap: "Não", legacy: "Não", soft: "Não" },
     { name: "Knowledge Graph Engine", patrium: true, sap: "Não", legacy: "Não", soft: "Não" },
     { name: "Digital Twin (Ativos)", patrium: true, sap: "Não", legacy: "Não", soft: "Não" },
-    { name: "Family Office Desk", patrium: true, sap: "Não", legacy: "Não", soft: "Não" },
+    { name: "Gestão de Holdings", patrium: true, sap: "Parcial", legacy: "Manual", soft: "Não" },
     { name: "Agro Patrimonial", patrium: true, sap: "Não", legacy: "Não", soft: "Não" },
   ];
 
@@ -117,11 +117,11 @@ export function ComparisonTable() {
       <table className="w-full text-left border-collapse min-w-[1000px]">
         <thead>
           <tr className="border-b border-white/[0.05]">
-            <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Categoria / Funcionalidade</th>
+            <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Funcionalidade / Solução</th>
             <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-primary bg-primary/[0.02]">USE PATRIUM OS</th>
             <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60 text-center">SAP / Oracle</th>
-            <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60 text-center">SoftExpert / Senior</th>
-            <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60 text-center">Sistemas Legados</th>
+            <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60 text-center">SoftExpert</th>
+            <th className="p-10 text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60 text-center">Legado / Planilha</th>
           </tr>
         </thead>
         <tbody>
@@ -131,7 +131,7 @@ export function ComparisonTable() {
               <td className="p-8 px-10 bg-primary/[0.01]">
                 <div className="flex items-center gap-3 text-primary">
                   <CheckCircle2 className="h-5 w-5" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Protocolo Nativo</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">NATIVO</span>
                 </div>
               </td>
               <td className="p-8 px-10 text-center text-sm text-muted-foreground/50 font-medium italic">{f.sap}</td>
