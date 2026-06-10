@@ -117,11 +117,13 @@ function LandingPage() {
             <PricingCard plan="Enterprise" price="R$ 7.997" desc="Para Family Offices e Grupos." features={["Digital Twin de Ativos", "Agro Patrimonial", "Data Room Estratégico"]} />
             <PricingCard plan="Corporate" price="Sob Consulta" desc="Para grandes grupos econômicos." features={["Customização Total", "SLA Exclusivo", "Integração via API"]} />
           </div>
-        <div className="mt-20 p-12 rounded-[3rem] bg-white/[0.02] border border-white/5 text-center max-w-4xl mx-auto backdrop-blur-3xl shadow-2xl">
-          <h3 className="text-2xl font-black italic uppercase mb-6">Visão de Futuro</h3>
-          <p className="text-lg text-white/50 leading-relaxed italic">
-            "O USE PATRIUM está construindo a próxima geração da Governança Patrimonial no Brasil. Estamos criando um cérebro patrimonial capaz de proteger, organizar e potencializar o patrimônio de empresas, holdings e famílias por gerações."
-          </p>
+          
+          <div className="mt-20 p-12 rounded-[3rem] bg-white/[0.02] border border-white/5 text-center max-w-4xl mx-auto backdrop-blur-3xl shadow-2xl">
+            <h3 className="text-2xl font-black italic uppercase mb-6">Visão de Futuro</h3>
+            <p className="text-lg text-white/50 leading-relaxed italic">
+              "O USE PATRIUM está construindo a próxima geração da Governança Patrimonial no Brasil. Estamos criando um cérebro patrimonial capaz de proteger, organizar e potencializar o patrimônio de empresas, holdings e famílias por gerações."
+            </p>
+          </div>
         </div>
       </section>
 
@@ -135,6 +137,8 @@ function LandingPage() {
           </div>
         </div>
       </section>
+
+      <footer className="py-20 text-center border-t border-white/5 text-[9px] font-black uppercase tracking-[0.5em] text-white/20">
         PATRIUM OS — © 2026 — SISTEMA DE GOVERNANÇA ESTRATÉGICA
       </footer>
     </div>
