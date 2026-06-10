@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_app/regularizacao")({
 
 function Regularizacao() {
   return (
-    <div className="space-y-10 animate-in fade-in duration-700">
+    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="space-y-1">
           <h2 className="text-3xl font-black tracking-tight uppercase">Regularização Imobiliária</h2>
