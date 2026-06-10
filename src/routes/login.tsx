@@ -53,46 +53,47 @@ function LoginPage() {
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none -translate-x-1/2 translate-y-1/2" />
       
       <div className="w-full max-w-[450px] space-y-8 animate-in fade-in zoom-in duration-700">
-        <div className="text-center space-y-12 group/main cursor-default">
-          <div className="inline-flex items-center justify-center mb-2">
+        <div className="text-center space-y-16 group/main cursor-default">
+          <div className="inline-flex items-center justify-center mb-4">
             <motion.div
               animate={{ 
                 rotateY: [0, 360]
               }}
               transition={{ 
-                duration: 25, 
+                duration: 18, 
                 repeat: Infinity, 
                 ease: "linear" 
               }}
               style={{ 
                 transformStyle: "preserve-3d",
-                perspective: "1200px"
+                perspective: "2000px"
               }}
-              className="relative w-48 h-48 flex items-center justify-center"
+              className="relative w-64 h-64 flex items-center justify-center"
             >
-              {/* Front Face */}
-              <img 
-                src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
-                alt="Use Patrium" 
-                className="w-full h-full object-contain brightness-110 drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
-                style={{ transform: "translateZ(4px)" }}
-              />
-              {/* Back Face (Exact duplicate) */}
-              <img 
-                src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
-                alt="" 
-                className="absolute inset-0 w-full h-full object-contain brightness-110"
-                style={{ transform: "rotateY(180deg) translateZ(4px)" }}
-              />
+              {/* High-Fidelity 3D Solid Effect using stacking */}
+              {[...Array(12)].map((_, i) => (
+                <img 
+                  key={i}
+                  src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
+                  alt="Use Patrium" 
+                  className="absolute inset-0 w-full h-full object-contain"
+                  style={{ 
+                    transform: `translateZ(${i - 6}px)`,
+                    filter: i === 11 ? 'brightness(1.15) drop-shadow(0 20px 40px rgba(0,0,0,0.5))' : 'brightness(0.65)',
+                    opacity: i === 0 || i === 11 ? 1 : 0.9
+                  }}
+                />
+              ))}
               
-              {/* Cinematic background depth glow */}
-              <div className="absolute inset-[-30%] bg-primary/10 blur-[100px] rounded-full -z-10" />
+              {/* Premium cinematic depth glow */}
+              <div className="absolute inset-[-40%] bg-primary/15 blur-[120px] rounded-full -z-10" />
             </motion.div>
           </div>
-          <h1 className="text-7xl font-black tracking-[0.4em] text-foreground uppercase animate-in slide-in-from-bottom-12 duration-1000 delay-200 bg-clip-text text-transparent bg-gradient-to-b from-white via-white/90 to-white/30 drop-shadow-[0_15px_30px_rgba(0,0,0,0.5)]">
+          <h1 className="text-8xl font-black tracking-[0.45em] text-foreground uppercase animate-in slide-in-from-bottom-16 duration-1000 delay-200 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/20 drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]">
             USE PATRIUM
           </h1>
         </div>
+
 
 
 
