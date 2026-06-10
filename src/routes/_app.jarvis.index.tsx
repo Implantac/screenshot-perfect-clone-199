@@ -24,10 +24,10 @@ function JarvisIntelligenceCenter() {
   const { data: actions } = useJarvisActionPlans();
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10">
       
       {/* Global Scores - Command Center Style */}
-      <div className="lg:col-span-8 space-y-8">
+      <div className="lg:col-span-8 space-y-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <ScoreGauge label="Patrimonial" value={health?.patrimonial_score || 96} color="primary" />
           <ScoreGauge label="Documental" value={health?.documental_score || 88} color="blue" />
@@ -84,7 +84,7 @@ function JarvisIntelligenceCenter() {
           </h3>
           
           <div className="space-y-6">
-            {actions?.slice(0, 4).map((action, idx) => (
+            {actions?.slice(0, 5).map((action, idx) => (
               <ActionItem key={action.id || idx} action={action} />
             )) || (
               <>
@@ -102,14 +102,14 @@ function JarvisIntelligenceCenter() {
         </div>
 
         {/* Digital Twin Shortcut */}
-        <div className="glass-card rounded-[3rem] p-8 border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-colors cursor-pointer group">
+        <div className="glass-card rounded-[3.5rem] p-10 border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all cursor-pointer group shadow-xl">
           <div className="flex items-center gap-5">
             <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-primary/50 transition-colors">
               <Zap className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Digital Twin</p>
-              <p className="text-sm font-bold">Visualização 360° do Ativo</p>
+              <p className="text-sm font-bold tracking-tight">Digital Twin</p>
+              <p className="text-[10px] text-muted-foreground font-medium">Visualização 360° do Ativo</p>
             </div>
             <ArrowRight className="h-5 w-5 ml-auto text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
           </div>
