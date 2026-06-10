@@ -127,7 +127,7 @@
   }
   
   .premium-gradient {
-    background: linear-gradient(135deg, oklch(0.65 0.22 35), oklch(0.45 0.15 25));
+    background: linear-gradient(135deg, #f3d38c, #c4924c, #7a531e);
   }
   
   .sidebar-item-active {
