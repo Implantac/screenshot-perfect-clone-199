@@ -1,11 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
+  ShieldCheck, 
   Sparkles, 
-  ArrowRight,
-  Target,
+  Network, 
+  Lock, 
+  CheckCircle2,
+  Menu,
+  X,
+  Building2,
+  Briefcase,
+  Users,
   BarChart3,
-  Scale
+  Scale,
+  ArrowRight,
+  Cpu,
+  AlertTriangle,
+  TrendingUp,
+  Globe,
+  Database,
+  Zap
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
