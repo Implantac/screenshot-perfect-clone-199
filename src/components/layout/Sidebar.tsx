@@ -2,7 +2,6 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 
-
 import { 
   LayoutDashboard, 
   ShieldAlert, 
@@ -81,7 +80,6 @@ export function Sidebar() {
               repeat: Infinity, 
               ease: "linear" 
             }}
-
             style={{ 
               transformStyle: "preserve-3d",
               perspective: "1200px"
@@ -107,17 +105,10 @@ export function Sidebar() {
           {/* Subtle atmospheric center glow */}
           <div className="absolute inset-4 bg-primary/5 blur-[50px] rounded-full -z-10 opacity-60 group-hover/logo:opacity-100 transition-opacity duration-1000" />
         </div>
-        <h1 className="text-xl font-black tracking-[0.4em] text-center text-foreground leading-none uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-white via-white/90 to-white/40 group-hover/logo:tracking-[0.5em] transition-all duration-1000 ease-out">
+        <h1 className="text-xl font-black tracking-[0.4em] text-center uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-[#e5b364] via-[#c4924c] to-[#a37233] group-hover:tracking-[0.5em] transition-all duration-1000 ease-out">
           USE PATRIUM
         </h1>
       </div>
-
-
-
-
-
-
-
 
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-8 scrollbar-none">
@@ -139,7 +130,6 @@ export function Sidebar() {
                         ? "bg-primary/5 text-primary border-primary/10 shadow-[0_4px_12px_rgba(0,0,0,0.1)]" 
                         : "text-muted-foreground/60 hover:bg-white/5 hover:text-foreground"
                     )}
-
                   >
                     <item.icon className={cn(
                       "h-4 w-4 transition-colors",
@@ -183,7 +173,6 @@ export function Sidebar() {
         <div className="flex items-center gap-4 px-4 py-4 rounded-3xl bg-white/[0.02] border border-white/5 group hover:bg-white/5 transition-colors cursor-pointer">
           <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden border border-primary/20 group-hover:scale-105 transition-transform">
             <User className="h-5 w-5 text-primary" />
-
           </div>
           <div className="flex-1 overflow-hidden">
             <p className="text-xs font-bold truncate">Gestor de Patrimônio</p>
