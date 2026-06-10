@@ -55,7 +55,10 @@ function DashboardExecutivo() {
   }
 
   const totalValue = assets?.reduce((sum, asset) => sum + (Number(asset.value) || 0), 0) || 0;
-  const avgCompliance = entities?.reduce((sum, ent) => sum + (Number(ent.compliance_score) || 0), 0) / (entities?.length || 1) || 0;
+  const avgCompliance = entities && entities.length > 0 
+    ? entities.reduce((sum, ent) => sum + (Number(ent.compliance_score) || 0), 0) / entities.length 
+    : 0;
+
 
   return (
     <div className="space-y-10 animate-in fade-in duration-1000">
