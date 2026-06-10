@@ -64,56 +64,56 @@ function LoginPage() {
         return gain;
       };
 
-      // 1. THE "TUDUM" BASS (Logo Surge - 0.5s)
+      // 1. THE "TUDUM" BASS (Logo Surge - Sustained)
       const playBassThump = (time: number, freq: number, vol: number) => {
         const osc = ctx.createOscillator();
-        const gain = createEnv(time, 0.6, vol);
+        const gain = createEnv(time, 1.2, vol);
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, time);
-        osc.frequency.exponentialRampToValueAtTime(20, time + 0.6);
+        osc.frequency.exponentialRampToValueAtTime(20, time + 1.2);
         osc.connect(gain);
         osc.start(time);
-        osc.stop(time + 0.6);
+        osc.stop(time + 1.2);
       };
       
       playBassThump(now + 0.2, 60, 0.6);
       playBassThump(now + 0.35, 45, 0.8);
 
-      // 2. TECH RESONANCE (USE - 1.2s)
+      // 2. TECH RESONANCE (USE - Extended)
       const playResonance = (time: number, freq: number) => {
         const osc = ctx.createOscillator();
         const filter = ctx.createBiquadFilter();
-        const gain = createEnv(time, 1.2, 0.15);
+        const gain = createEnv(time, 2.5, 0.15);
         
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(freq, time);
         
         filter.type = 'lowpass';
         filter.frequency.setValueAtTime(freq * 2, time);
-        filter.frequency.exponentialRampToValueAtTime(freq * 0.5, time + 1.2);
+        filter.frequency.exponentialRampToValueAtTime(freq * 0.5, time + 2.5);
         filter.Q.setValueAtTime(10, time);
         
         osc.connect(filter);
         filter.connect(gain);
         osc.start(time);
-        osc.stop(time + 1.2);
+        osc.stop(time + 2.5);
       };
       playResonance(now + 1.2, 440);
 
-      // 3. PREMIUM HARMONIC SWELL (PATRIUM - 2.0s)
+      // 3. PREMIUM HARMONIC SWELL (PATRIUM - Cinematic Fade)
       const playSwell = (time: number, freqs: number[]) => {
         freqs.forEach(f => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           gain.gain.setValueAtTime(0, time);
-          gain.gain.linearRampToValueAtTime(0.08, time + 0.8);
-          gain.gain.exponentialRampToValueAtTime(0.001, time + 2.5);
+          gain.gain.linearRampToValueAtTime(0.08, time + 1.2);
+          gain.gain.exponentialRampToValueAtTime(0.001, time + 4.5);
           osc.type = 'sine';
           osc.frequency.setValueAtTime(f, time);
           osc.connect(gain);
           gain.connect(ctx.destination);
           osc.start(time);
-          osc.stop(time + 2.5);
+          osc.stop(time + 4.5);
         });
       };
       playSwell(now + 2.0, [110, 165, 220, 330]);
