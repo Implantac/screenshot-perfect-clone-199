@@ -18,7 +18,7 @@ function JarvisIntelligenceCenter() {
   const { data: actions } = useJarvisActionPlans();
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10 overflow-x-hidden">
       
       {/* Global Scores */}
       <div className="lg:col-span-8 space-y-8 lg:space-y-10">

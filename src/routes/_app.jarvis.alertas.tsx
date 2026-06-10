@@ -48,7 +48,7 @@ function JarvisAlertsPage() {
   ];
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 overflow-x-hidden">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-1">
           <h2 className="text-3xl font-black italic tracking-tighter uppercase text-orange-500">Alertas <span className="text-foreground">Proativos</span></h2>

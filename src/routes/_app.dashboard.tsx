@@ -55,7 +55,7 @@ function DashboardExecutivo() {
     : 0;
 
   return (
-    <div className="space-y-8 lg:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 max-w-[1600px] mx-auto">
+    <div className="space-y-8 lg:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 max-w-[1600px] mx-auto overflow-x-hidden">
       {/* Executive Header */}
       <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 lg:gap-10 pb-8 border-b border-white/[0.05]">
         <div className="space-y-4 lg:space-y-6">

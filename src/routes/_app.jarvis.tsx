@@ -28,7 +28,7 @@ const jarvisMenu = [
 
 function JarvisLayout() {
   return (
-    <div className="space-y-8 max-w-[1600px] mx-auto pb-20">
+    <div className="space-y-8 max-w-[1600px] mx-auto pb-20 overflow-x-hidden">
       {/* Jarvis Hero Header */}
       <div className="relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a] border border-white/5 p-12 shadow-2xl">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10 translate-x-1/2 -translate-y-1/2 animate-pulse" />
