@@ -27,6 +27,11 @@ import { Route as AppFinanceiroRouteImport } from './routes/_app.financeiro'
 import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
 import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
 import { Route as AppJarvisIndexRouteImport } from './routes/_app.jarvis.index'
+import { Route as AppJarvisInsightsRouteImport } from './routes/_app.jarvis.insights'
+import { Route as AppJarvisHistoricoRouteImport } from './routes/_app.jarvis.historico'
+import { Route as AppJarvisChatRouteImport } from './routes/_app.jarvis.chat'
+import { Route as AppJarvisAlertasRouteImport } from './routes/_app.jarvis.alertas'
+import { Route as AppJarvisAcoesRouteImport } from './routes/_app.jarvis.acoes'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -117,6 +122,31 @@ const AppJarvisIndexRoute = AppJarvisIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppJarvisRoute,
 } as any)
+const AppJarvisInsightsRoute = AppJarvisInsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
+  getParentRoute: () => AppJarvisRoute,
+} as any)
+const AppJarvisHistoricoRoute = AppJarvisHistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => AppJarvisRoute,
+} as any)
+const AppJarvisChatRoute = AppJarvisChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => AppJarvisRoute,
+} as any)
+const AppJarvisAlertasRoute = AppJarvisAlertasRouteImport.update({
+  id: '/alertas',
+  path: '/alertas',
+  getParentRoute: () => AppJarvisRoute,
+} as any)
+const AppJarvisAcoesRoute = AppJarvisAcoesRouteImport.update({
+  id: '/acoes',
+  path: '/acoes',
+  getParentRoute: () => AppJarvisRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -135,6 +165,11 @@ export interface FileRoutesByFullPath {
   '/riscos': typeof AppRiscosRoute
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/settings': typeof AppSettingsRoute
+  '/jarvis/acoes': typeof AppJarvisAcoesRoute
+  '/jarvis/alertas': typeof AppJarvisAlertasRoute
+  '/jarvis/chat': typeof AppJarvisChatRoute
+  '/jarvis/historico': typeof AppJarvisHistoricoRoute
+  '/jarvis/insights': typeof AppJarvisInsightsRoute
   '/jarvis/': typeof AppJarvisIndexRoute
 }
 export interface FileRoutesByTo {
@@ -153,6 +188,11 @@ export interface FileRoutesByTo {
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/settings': typeof AppSettingsRoute
   '/': typeof AppIndexRoute
+  '/jarvis/acoes': typeof AppJarvisAcoesRoute
+  '/jarvis/alertas': typeof AppJarvisAlertasRoute
+  '/jarvis/chat': typeof AppJarvisChatRoute
+  '/jarvis/historico': typeof AppJarvisHistoricoRoute
+  '/jarvis/insights': typeof AppJarvisInsightsRoute
   '/jarvis': typeof AppJarvisIndexRoute
 }
 export interface FileRoutesById {
@@ -174,6 +214,11 @@ export interface FileRoutesById {
   '/_app/saude-documental': typeof AppSaudeDocumentalRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/jarvis/acoes': typeof AppJarvisAcoesRoute
+  '/_app/jarvis/alertas': typeof AppJarvisAlertasRoute
+  '/_app/jarvis/chat': typeof AppJarvisChatRoute
+  '/_app/jarvis/historico': typeof AppJarvisHistoricoRoute
+  '/_app/jarvis/insights': typeof AppJarvisInsightsRoute
   '/_app/jarvis/': typeof AppJarvisIndexRoute
 }
 export interface FileRouteTypes {
@@ -195,6 +240,11 @@ export interface FileRouteTypes {
     | '/riscos'
     | '/saude-documental'
     | '/settings'
+    | '/jarvis/acoes'
+    | '/jarvis/alertas'
+    | '/jarvis/chat'
+    | '/jarvis/historico'
+    | '/jarvis/insights'
     | '/jarvis/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -213,6 +263,11 @@ export interface FileRouteTypes {
     | '/saude-documental'
     | '/settings'
     | '/'
+    | '/jarvis/acoes'
+    | '/jarvis/alertas'
+    | '/jarvis/chat'
+    | '/jarvis/historico'
+    | '/jarvis/insights'
     | '/jarvis'
   id:
     | '__root__'
@@ -233,6 +288,11 @@ export interface FileRouteTypes {
     | '/_app/saude-documental'
     | '/_app/settings'
     | '/_app/'
+    | '/_app/jarvis/acoes'
+    | '/_app/jarvis/alertas'
+    | '/_app/jarvis/chat'
+    | '/_app/jarvis/historico'
+    | '/_app/jarvis/insights'
     | '/_app/jarvis/'
   fileRoutesById: FileRoutesById
 }
@@ -369,14 +429,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppJarvisIndexRouteImport
       parentRoute: typeof AppJarvisRoute
     }
+    '/_app/jarvis/insights': {
+      id: '/_app/jarvis/insights'
+      path: '/insights'
+      fullPath: '/jarvis/insights'
+      preLoaderRoute: typeof AppJarvisInsightsRouteImport
+      parentRoute: typeof AppJarvisRoute
+    }
+    '/_app/jarvis/historico': {
+      id: '/_app/jarvis/historico'
+      path: '/historico'
+      fullPath: '/jarvis/historico'
+      preLoaderRoute: typeof AppJarvisHistoricoRouteImport
+      parentRoute: typeof AppJarvisRoute
+    }
+    '/_app/jarvis/chat': {
+      id: '/_app/jarvis/chat'
+      path: '/chat'
+      fullPath: '/jarvis/chat'
+      preLoaderRoute: typeof AppJarvisChatRouteImport
+      parentRoute: typeof AppJarvisRoute
+    }
+    '/_app/jarvis/alertas': {
+      id: '/_app/jarvis/alertas'
+      path: '/alertas'
+      fullPath: '/jarvis/alertas'
+      preLoaderRoute: typeof AppJarvisAlertasRouteImport
+      parentRoute: typeof AppJarvisRoute
+    }
+    '/_app/jarvis/acoes': {
+      id: '/_app/jarvis/acoes'
+      path: '/acoes'
+      fullPath: '/jarvis/acoes'
+      preLoaderRoute: typeof AppJarvisAcoesRouteImport
+      parentRoute: typeof AppJarvisRoute
+    }
   }
 }
 
 interface AppJarvisRouteChildren {
+  AppJarvisAcoesRoute: typeof AppJarvisAcoesRoute
+  AppJarvisAlertasRoute: typeof AppJarvisAlertasRoute
+  AppJarvisChatRoute: typeof AppJarvisChatRoute
+  AppJarvisHistoricoRoute: typeof AppJarvisHistoricoRoute
+  AppJarvisInsightsRoute: typeof AppJarvisInsightsRoute
   AppJarvisIndexRoute: typeof AppJarvisIndexRoute
 }
 
 const AppJarvisRouteChildren: AppJarvisRouteChildren = {
+  AppJarvisAcoesRoute: AppJarvisAcoesRoute,
+  AppJarvisAlertasRoute: AppJarvisAlertasRoute,
+  AppJarvisChatRoute: AppJarvisChatRoute,
+  AppJarvisHistoricoRoute: AppJarvisHistoricoRoute,
+  AppJarvisInsightsRoute: AppJarvisInsightsRoute,
   AppJarvisIndexRoute: AppJarvisIndexRoute,
 }
 
