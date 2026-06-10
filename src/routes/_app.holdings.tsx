@@ -30,8 +30,8 @@ function HoldingsSocietario() {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
-          <h2 className="text-3xl font-black tracking-tight uppercase">Holdings & Societário</h2>
-          <p className="text-muted-foreground mt-2">Visão consolidada do organograma societário e participações.</p>
+          <h2 className="text-3xl font-black tracking-tight uppercase">Engenharia Societária</h2>
+          <p className="text-muted-foreground mt-2">Visão 360° de Holdings, controladas e participações diretas.</p>
         </div>
         <div className="flex gap-3">
           <button className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2">
