@@ -55,53 +55,56 @@ function DashboardExecutivo() {
     : 0;
 
   return (
-    <div className="space-y-8 lg:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 max-w-[1800px] mx-auto overflow-x-hidden w-full">
+    <div className="space-y-12 lg:space-y-20 animate-in fade-in slide-in-from-bottom-8 duration-1000 max-w-[1800px] mx-auto overflow-x-hidden w-full relative">
+      <div className="fixed inset-0 noise-overlay opacity-[0.02] pointer-events-none" />
+      
       {/* Executive Header */}
-      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 lg:gap-10 pb-8 border-b border-white/[0.05]">
-        <div className="space-y-4 lg:space-y-6">
+      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10 lg:gap-14 pb-12 border-b border-white/[0.05] executive-grid">
+        <div className="space-y-6 lg:space-y-10 relative z-10">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-4 lg:gap-5"
+            className="flex items-center gap-6 lg:gap-8"
           >
-            <div className="h-12 w-12 lg:h-14 lg:w-14 rounded-xl lg:rounded-[1.25rem] bg-primary/10 flex items-center justify-center border border-primary/20 shadow-[0_0_30px_rgba(var(--primary),0.1)] group hover:scale-105 transition-transform duration-500 shrink-0">
-              <Building2 className="h-6 w-6 lg:h-7 lg:w-7 text-primary" />
+            <div className="h-16 w-16 lg:h-20 lg:w-20 rounded-2xl lg:rounded-[2rem] bg-primary/5 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/10 group hover:scale-110 transition-all duration-700 shrink-0 backdrop-blur-xl">
+              <Building2 className="h-8 w-8 lg:h-10 lg:w-10 text-primary drop-shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
             </div>
-            <div className="space-y-1">
-              <p className="text-[9px] lg:text-[11px] font-black uppercase tracking-[0.4em] text-primary/70 leading-none">Sistema de Governança</p>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-foreground uppercase italic leading-[0.9]">
-                Comando <span className="text-primary">Estratégico</span>
+            <div className="space-y-2">
+              <p className="text-[10px] lg:text-[12px] font-black uppercase tracking-[0.5em] text-primary/70 leading-none italic">Institutional Command Center</p>
+              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[5.5rem] font-black tracking-tighter text-foreground uppercase italic leading-[0.85]">
+                DASHBOARD <span className="text-primary drop-shadow-[0_0_40px_rgba(212,163,85,0.2)]">ESTRATÉGICO</span>
               </h2>
             </div>
           </motion.div>
-          <p className="text-muted-foreground text-base lg:text-xl font-medium max-w-2xl leading-relaxed opacity-80">
-            Visão consolidada de <span className="text-foreground font-bold border-b-2 border-primary/40">Holdings, Patrimônio e Compliance</span>. 
-            <Link to="/jarvis" className="text-primary font-bold hover:underline ml-1">Jarvis AI</Link> processando dados proativamente.
+          <p className="text-muted-foreground text-lg lg:text-2xl font-medium max-w-3xl leading-relaxed italic opacity-80">
+            Monitoramento de alta fidelidade para <span className="text-foreground font-black border-b-2 border-primary/40">Holdings, Ativos e Compliance</span>. 
+            <Link to="/jarvis" className="text-primary font-black hover:text-white transition-colors ml-1 uppercase tracking-widest text-xs">Jarvis AI Protocols Active</Link>.
           </p>
         </div>
         
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-6 xl:gap-10">
-          <div className="p-6 lg:p-8 glass-card rounded-3xl lg:rounded-[2.5rem] flex flex-col items-center sm:items-end min-w-0 sm:min-w-[240px] border-primary/10 bg-white/[0.02]">
-             <p className="text-[10px] lg:text-[11px] uppercase tracking-[0.3em] text-muted-foreground font-black mb-2 opacity-50">AUM Global</p>
-             <p className="text-3xl lg:text-5xl font-black text-foreground tabular-nums tracking-tighter">
-                R$ {(totalValue / 1000000).toFixed(1)}<span className="text-base lg:text-lg ml-1 text-primary">M</span>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-8 xl:gap-14 relative z-10">
+          <div className="p-10 lg:p-12 glass-card rounded-[3rem] lg:rounded-[4rem] flex flex-col items-center sm:items-end min-w-0 sm:min-w-[280px] border-primary/20 bg-primary/[0.02] shadow-2xl">
+             <p className="text-[10px] lg:text-[12px] uppercase tracking-[0.4em] text-primary font-black mb-4 italic opacity-80">Portfolio Value (AUM)</p>
+             <p className="text-4xl lg:text-7xl font-black text-foreground tabular-nums tracking-tighter italic">
+                R$ {(totalValue / 1000000).toFixed(1)}<span className="text-lg lg:text-2xl ml-1 text-primary">M</span>
              </p>
-             <div className="flex items-center gap-1.5 text-[10px] lg:text-xs text-emerald-500 font-black mt-2 bg-emerald-500/10 px-3 py-1 rounded-full">
-                <ArrowUpRight className="h-3.5 w-3.5" /> +12.4% vs LY
+             <div className="flex items-center gap-2 text-[10px] lg:text-xs text-emerald-500 font-black mt-4 bg-emerald-500/10 px-4 py-1.5 rounded-full border border-emerald-500/20">
+                <ArrowUpRight className="h-4 w-4" /> +12.4% <span className="opacity-60 font-bold ml-1 uppercase tracking-widest">Growth</span>
              </div>
           </div>
 
-          <div className="flex items-center justify-between sm:justify-end gap-6 lg:gap-8 bg-primary/5 p-6 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border border-primary/20 backdrop-blur-2xl group hover:bg-primary/10 transition-all duration-700 shadow-2xl shadow-primary/5">
-            <div className="text-left sm:text-right space-y-1">
-              <p className="text-[10px] lg:text-[11px] uppercase tracking-[0.3em] text-primary font-black">Score de Compliance</p>
-              <p className="text-2xl lg:text-4xl font-black text-foreground tabular-nums tracking-tighter">{avgCompliance.toFixed(1)}<span className="text-xs lg:text-sm ml-1 opacity-40">%</span></p>
+          <div className="flex items-center justify-between sm:justify-end gap-8 lg:gap-12 bg-white/[0.01] p-10 lg:p-12 rounded-[3rem] lg:rounded-[4rem] border border-white/[0.05] backdrop-blur-3xl group hover:bg-white/[0.03] transition-all duration-1000 shadow-2xl relative overflow-hidden">
+            <div className="absolute inset-0 executive-grid opacity-20 pointer-events-none" />
+            <div className="text-left sm:text-right space-y-2 relative z-10">
+              <p className="text-[10px] lg:text-[12px] uppercase tracking-[0.4em] text-primary font-black italic">Compliance Score</p>
+              <p className="text-3xl lg:text-5xl font-black text-foreground tabular-nums tracking-tighter italic">{avgCompliance.toFixed(1)}<span className="text-sm lg:text-base ml-1 opacity-30">%</span></p>
             </div>
-            <div className="h-12 w-12 lg:h-16 lg:w-16 rounded-full border-[3px] border-primary/20 border-t-primary flex items-center justify-center relative shadow-[0_0_25px_rgba(var(--primary),0.25)] shrink-0">
-               <ShieldCheck className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
+            <div className="h-16 w-16 lg:h-20 lg:w-20 rounded-full border-[4px] border-primary/10 border-t-primary flex items-center justify-center relative shadow-[0_0_40px_rgba(var(--primary),0.2)] shrink-0 z-10">
+               <ShieldCheck className="h-8 w-8 lg:h-10 lg:w-10 text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.4)]" />
                <motion.div 
                  animate={{ rotate: 360 }}
-                 transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                 className="absolute inset-0 rounded-full border border-dashed border-primary/40 scale-110"
+                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                 className="absolute inset-0 rounded-full border border-dashed border-primary/30 scale-125"
                />
             </div>
           </div>

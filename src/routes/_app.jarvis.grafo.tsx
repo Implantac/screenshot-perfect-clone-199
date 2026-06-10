@@ -36,23 +36,29 @@ function JarvisGraphPage() {
   ];
 
   return (
-    <div className="space-y-10 overflow-x-hidden max-w-[1800px] mx-auto w-full">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <h2 className="text-3xl font-black italic tracking-tighter uppercase">Rede de <span className="text-primary">Relacionamentos</span></h2>
-          <p className="text-muted-foreground text-sm font-medium">Mapeamento visual da estrutura societária e conexões patrimoniais.</p>
+    <div className="space-y-12 overflow-x-hidden max-w-[1800px] mx-auto w-full relative">
+      <div className="fixed inset-0 noise-overlay opacity-[0.02] pointer-events-none" />
+      
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/[0.05] pb-10">
+        <div className="space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/20 text-[10px] font-black uppercase tracking-[0.4em] text-primary backdrop-blur-md">
+            <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            Neural Relationship Engine
+          </div>
+          <h2 className="text-5xl font-black italic tracking-tighter uppercase leading-none">Mapa de <span className="text-primary">Conexões</span></h2>
+          <p className="text-muted-foreground text-base font-medium italic opacity-70">Visualização estratégica da capilaridade societária e ativos reais.</p>
         </div>
         
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl text-xs font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-all">
+        <div className="flex items-center gap-4">
+          <button className="flex items-center gap-3 px-8 py-4 bg-primary text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-105 transition-all">
             <Maximize2 className="h-4 w-4" />
-            Tela Cheia
+            Full Immersion
           </button>
         </div>
       </div>
 
-      <div className="glass-card rounded-2xl md:rounded-[3.5rem] h-[500px] md:h-[800px] border-white/5 bg-[#080808] relative overflow-hidden flex items-center justify-center border-dashed border-2 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary),0.08)_0,transparent_70%)]" />
+      <div className="glass-card rounded-[4rem] h-[600px] md:h-[850px] border-white/[0.05] bg-black/40 relative overflow-hidden flex items-center justify-center border-dashed border-2 shadow-2xl executive-grid">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary),0.12)_0,transparent_70%)]" />
         
         {/* SVG for connections with glow effect */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none">
@@ -108,24 +114,24 @@ function JarvisGraphPage() {
             style={{ left: node.x, top: node.y, transform: "translate(-50%, -50%)" }}
           >
             <div className={cn(
-              "h-24 w-24 rounded-[2rem] flex flex-col items-center justify-center border transition-all duration-700 relative bg-black/60 backdrop-blur-xl group-hover:scale-110",
-              node.type === 'holding' ? 'border-primary/50 shadow-[0_0_40px_rgba(var(--primary),0.2)]' :
-              node.type === 'company' ? 'border-blue-500/40 shadow-[0_0_30px_rgba(59,130,246,0.15)]' :
-              node.type === 'person' ? 'border-amber-500/40 shadow-[0_0_30px_rgba(245,158,11,0.15)]' :
+              "h-28 w-28 rounded-[2.5rem] flex flex-col items-center justify-center border transition-all duration-700 relative bg-black/80 backdrop-blur-2xl group-hover:scale-110 group-hover:border-primary/60",
+              node.type === 'holding' ? 'border-primary/30 shadow-[0_0_50px_rgba(var(--primary),0.15)]' :
+              node.type === 'company' ? 'border-blue-500/30 shadow-[0_0_40px_rgba(59,130,246,0.1)]' :
+              node.type === 'person' ? 'border-amber-500/30 shadow-[0_0_40px_rgba(245,158,11,0.1)]' :
               'border-white/10'
             )}>
               <NodeIcon type={node.type} />
-              <div className="absolute -bottom-14 whitespace-nowrap text-center">
-                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-foreground group-hover:text-primary transition-colors italic">{node.label}</p>
-                <p className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">{node.type}</p>
+              <div className="absolute -bottom-16 whitespace-nowrap text-center space-y-1">
+                <p className="text-[11px] font-black uppercase tracking-[0.25em] text-foreground group-hover:text-primary transition-colors italic leading-none">{node.label}</p>
+                <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-[0.3em] italic">{node.type}</p>
               </div>
               
               {/* Pulse effect for nodes */}
               <motion.div 
-                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.1, 0.3] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.05, 0.2] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className={cn(
-                  "absolute inset-0 rounded-[2rem] -z-10",
+                  "absolute inset-0 rounded-[2.5rem] -z-10",
                   node.type === 'holding' ? 'bg-primary/20' : 'bg-white/5'
                 )}
               />
@@ -133,28 +139,30 @@ function JarvisGraphPage() {
           </motion.div>
         ))}
 
-        <div className="absolute bottom-4 left-4 md:bottom-10 md:left-10 p-4 md:p-8 glass-card rounded-xl md:rounded-[2.5rem] border-white/5 bg-white/[0.02] space-y-3 md:space-y-5 shadow-2xl backdrop-blur-2xl max-w-[calc(100%-2rem)]">
-          <p className="text-[11px] font-black uppercase tracking-[0.3em] text-primary/70 mb-4 italic">Diretório de Conexões</p>
-          <div className="flex items-center gap-4">
-            <div className="h-4 w-4 rounded-lg bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
-            <span className="text-xs font-black uppercase tracking-widest text-foreground/80">Holdings</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="h-4 w-4 rounded-lg bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-            <span className="text-xs font-black uppercase tracking-widest text-foreground/80">Empresas</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="h-4 w-4 rounded-lg bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
-            <span className="text-xs font-black uppercase tracking-widest text-foreground/80">Sócios</span>
+        <div className="absolute bottom-8 left-8 md:bottom-12 md:left-12 p-8 md:p-10 glass-card rounded-[3rem] border-white/[0.05] bg-black/60 space-y-6 shadow-2xl backdrop-blur-3xl max-w-[calc(100%-4rem)]">
+          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary/80 mb-6 italic border-b border-primary/20 pb-4">Conexões Estratégicas</p>
+          <div className="space-y-4">
+            <div className="flex items-center gap-5 group cursor-default">
+              <div className="h-5 w-5 rounded-lg bg-primary shadow-[0_0_15px_rgba(var(--primary),0.4)] group-hover:scale-110 transition-transform" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/70 group-hover:text-foreground transition-colors">Holdings e Estruturas</span>
+            </div>
+            <div className="flex items-center gap-5 group cursor-default">
+              <div className="h-5 w-5 rounded-lg bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)] group-hover:scale-110 transition-transform" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/70 group-hover:text-foreground transition-colors">Sociedades e Empresas</span>
+            </div>
+            <div className="flex items-center gap-5 group cursor-default">
+              <div className="h-5 w-5 rounded-lg bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)] group-hover:scale-110 transition-transform" />
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/70 group-hover:text-foreground transition-colors">Sócios e Controladores</span>
+            </div>
           </div>
         </div>
 
-        <div className="absolute top-4 right-4 md:top-10 md:right-10 flex flex-col gap-2 md:gap-4">
-          <button className="h-10 w-10 md:h-14 md:w-14 rounded-xl md:rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all shadow-xl shadow-primary/10 group">
-            <Zap className="h-5 w-5 md:h-6 md:w-6 text-primary group-hover:text-primary-foreground" />
+        <div className="absolute top-8 right-8 md:top-12 md:right-12 flex flex-col gap-4">
+          <button className="h-14 w-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-black transition-all shadow-2xl shadow-primary/10 group">
+            <Zap className="h-6 w-6 text-primary group-hover:text-black" />
           </button>
-          <button className="h-10 w-10 md:h-14 md:w-14 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all shadow-xl">
-            <Search className="h-5 w-5 md:h-6 md:w-6 text-muted-foreground" />
+          <button className="h-14 w-14 rounded-2xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center hover:bg-white/10 transition-all shadow-2xl backdrop-blur-md">
+            <Search className="h-6 w-6 text-muted-foreground/50 hover:text-white transition-colors" />
           </button>
         </div>
       </div>

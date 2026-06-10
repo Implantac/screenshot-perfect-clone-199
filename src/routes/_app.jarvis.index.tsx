@@ -18,23 +18,24 @@ function JarvisIntelligenceCenter() {
   const { data: actions } = useJarvisActionPlans();
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10 overflow-x-hidden max-w-[1800px] mx-auto w-full">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 pb-20 overflow-x-hidden max-w-[1800px] mx-auto w-full relative">
+      <div className="fixed inset-0 noise-overlay opacity-[0.01] pointer-events-none" />
       
       {/* Global Scores */}
-      <div className="lg:col-span-8 space-y-8 lg:space-y-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+      <div className="lg:col-span-8 space-y-12 lg:space-y-16 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
           <ScoreGauge label="Patrimonial" value={health?.patrimonial_score || 96} color="primary" />
           <ScoreGauge label="Documental" value={health?.documental_score || 88} color="blue" />
           <ScoreGauge label="Compliance" value={health?.compliance_score || 92} color="emerald" />
-          <ScoreGauge label="Global" value={health?.global_score || 94} color="amber" />
+          <ScoreGauge label="Global Index" value={health?.global_score || 94} color="amber" />
         </div>
 
         {/* Proactive Analysis Room */}
-        <div className="glass-card rounded-3xl lg:rounded-[3rem] p-6 lg:p-10 border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8 lg:mb-10">
-            <h3 className="text-xl lg:text-2xl font-black italic tracking-tighter flex items-center gap-4">
-              <Brain className="h-6 w-6 lg:h-7 lg:w-7 text-primary shrink-0" />
-              ANÁLISE PREDITIVA ATIVA
+        <div className="glass-card rounded-[3.5rem] p-10 lg:p-14 border-white/[0.05] bg-black/40 shadow-2xl executive-grid">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 mb-12 lg:mb-16">
+            <h3 className="text-2xl lg:text-3xl font-black italic tracking-tighter flex items-center gap-6">
+              <Brain className="h-8 w-8 lg:h-10 lg:w-10 text-primary shrink-0 drop-shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
+              ANÁLISE NEURAL PREDITIVA
             </h3>
             <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full w-fit">
               <span className="h-2 w-2 rounded-full bg-primary animate-ping" />
@@ -122,25 +123,27 @@ function ScoreGauge({ label, value, color }: any) {
   };
 
   return (
-    <div className="glass-card rounded-[2rem] p-6 text-center border-white/5 bg-white/[0.02] flex flex-col items-center">
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">{label}</p>
-      <div className={cn("inline-flex items-center justify-center h-20 w-20 lg:h-24 lg:w-24 rounded-full border-4 relative", colors[color])}>
-        <span className="text-xl lg:text-2xl font-black italic">{value}%</span>
-        <svg className="absolute -inset-1 h-[88px] w-[88px] lg:h-[104px] lg:w-[104px] rotate-[-90deg]">
+    <div className="glass-card rounded-[2.5rem] p-8 text-center border-white/[0.05] bg-white/[0.01] flex flex-col items-center hover:scale-105 transition-transform duration-700 shadow-2xl backdrop-blur-3xl">
+      <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/50 mb-6 italic">{label}</p>
+      <div className={cn("inline-flex items-center justify-center h-24 w-24 lg:h-32 lg:w-32 rounded-full border-[6px] relative", colors[color])}>
+        <span className="text-2xl lg:text-3xl font-black italic tabular-nums">{value}<span className="text-[10px] opacity-30 ml-1">%</span></span>
+        <svg className="absolute -inset-1.5 h-[108px] w-[108px] lg:h-[140px] lg:w-[140px] rotate-[-90deg] drop-shadow-[0_0_10px_rgba(var(--primary),0.2)]">
           <circle 
-            cx="44" cy="44" r="40" 
+            cx="54" cy="54" r="48" 
             fill="transparent" 
             stroke="currentColor" 
-            strokeWidth="4" 
-            strokeDasharray={`${value * 2.51} 251`}
+            strokeWidth="6" 
+            strokeDasharray={`${value * 3.01} 301`}
+            strokeLinecap="round"
             className="lg:hidden"
           />
           <circle 
-            cx="52" cy="52" r="48" 
+            cx="70" cy="70" r="62" 
             fill="transparent" 
             stroke="currentColor" 
-            strokeWidth="4" 
-            strokeDasharray={`${value * 3.01} 301`}
+            strokeWidth="6" 
+            strokeDasharray={`${value * 3.89} 389`}
+            strokeLinecap="round"
             className="hidden lg:block"
           />
         </svg>

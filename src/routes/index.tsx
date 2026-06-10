@@ -31,40 +31,77 @@ function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-primary/30 font-sans overflow-x-hidden w-full relative">
-      <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-4 md:py-6 flex items-center justify-between bg-[#050505]/80 backdrop-blur-xl border-b border-white/5">
-        <div className="flex items-center gap-2">
-          <img src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" alt="Logo" className="h-6 md:h-8" />
-          <span className="font-black tracking-widest text-base md:text-lg uppercase italic truncate">USE PATRIUM</span>
+    <div className="min-h-screen bg-background text-white selection:bg-primary/30 font-sans overflow-x-hidden w-full relative">
+      <div className="fixed inset-0 noise-overlay z-[100]" />
+      
+      <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-12 py-6 md:py-8 flex items-center justify-between bg-background/60 backdrop-blur-2xl border-b border-white/[0.03]">
+        <div className="flex items-center gap-3">
+          <img src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" alt="Logo" className="h-7 md:h-10" />
+          <div className="flex flex-col">
+            <span className="font-black tracking-[0.3em] text-sm md:text-base uppercase italic leading-none">USE PATRIUM</span>
+            <span className="text-[8px] font-bold tracking-[0.5em] uppercase text-primary/80 mt-1">Strategic Intelligence</span>
+          </div>
         </div>
         
-        <div className="hidden md:flex items-center gap-6">
-          <a href="/login" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-white transition-colors">Acessar Sistema</a>
-          <Button className="rounded-full px-8 bg-white text-black font-black uppercase tracking-widest text-[10px] hover:bg-white/90">Solicitar Demo</Button>
+        <div className="hidden md:flex items-center gap-10">
+          <div className="flex items-center gap-8">
+            {["Soluções", "Tecnologia", "Análise", "Empresa"].map((item) => (
+              <a key={item} href="#" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-white transition-colors">{item}</a>
+            ))}
+          </div>
+          <div className="h-6 w-px bg-white/10" />
+          <div className="flex items-center gap-6">
+            <a href="/login" className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 hover:text-white transition-colors">Acessar</a>
+            <Button className="rounded-full px-10 h-12 bg-white text-black font-black uppercase tracking-widest text-[10px] hover:bg-white/90 border-none">Solicitar Demonstração</Button>
+          </div>
         </div>
 
-        <button className="md:hidden p-2 text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+        <button className="md:hidden p-2 text-white bg-white/5 rounded-xl border border-white/10" onClick={() => setIsMenuOpen(!isMenuOpen)}>
           {isMenuOpen ? <X /> : <Menu />}
         </button>
       </nav>
 
       {/* Hero */}
-      <section className="pt-32 md:pt-48 pb-20 md:pb-32 px-4 md:px-8 relative overflow-hidden w-full">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-[#050505] to-[#050505]" />
-        <div className="max-w-6xl mx-auto text-center relative z-10 space-y-8">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] text-primary">
-            <Sparkles className="h-4 w-4" /> Strategic Asset Intelligence
+      <section className="pt-40 md:pt-64 pb-20 md:pb-40 px-4 md:px-8 relative overflow-hidden w-full executive-grid">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-transparent to-background" />
+        <div className="max-w-7xl mx-auto text-center relative z-10 space-y-12">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white/[0.02] border border-white/[0.05] text-[10px] font-black uppercase tracking-[0.4em] text-primary backdrop-blur-xl shadow-2xl"
+          >
+            <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+            Governance & Strategic Intelligence
           </motion.div>
-          <h1 className="text-5xl md:text-9xl font-black tracking-tighter leading-[0.85] italic uppercase">
-            USE PATRIUM <span className="text-primary">OS</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            A primeira plataforma brasileira capaz de centralizar patrimônio, compliance e inteligência executiva.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-            <Button size="lg" className="rounded-2xl px-12 h-16 bg-primary text-white font-black uppercase tracking-[0.2em] text-xs">Solicitar Demonstração</Button>
-            <Button size="lg" variant="outline" className="rounded-2xl px-12 h-16 border-white/10 bg-white/5 font-black uppercase tracking-[0.2em] text-xs">Conhecer o Jarvis</Button>
+          
+          <div className="space-y-6">
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-6xl md:text-[11rem] font-black tracking-tighter leading-[0.8] italic uppercase"
+            >
+              USE PATRIUM <span className="text-primary drop-shadow-[0_0_50px_rgba(212,163,85,0.2)]">OS</span>
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-xl md:text-3xl text-muted-foreground max-w-4xl mx-auto leading-relaxed font-medium italic"
+            >
+              A nova categoria em inteligência patrimonial. Proteção, governança e conformidade em um ecossistema autônomo de alta performance.
+            </motion.p>
           </div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-12"
+          >
+            <Button size="lg" className="rounded-2xl px-14 h-20 bg-primary text-black font-black uppercase tracking-[0.25em] text-xs hover:scale-105 transition-all shadow-2xl shadow-primary/20 border-none">Solicitar Demonstração</Button>
+            <Button size="lg" variant="outline" className="rounded-2xl px-14 h-20 border-white/10 bg-white/[0.02] font-black uppercase tracking-[0.25em] text-xs backdrop-blur-xl hover:bg-white/5 transition-all">Conhecer o Jarvis</Button>
+          </motion.div>
         </div>
       </section>
 
@@ -209,21 +246,23 @@ function LandingPage() {
 
 function ProblemSection() {
   const problems = [
-    { title: "Documentos Dispersos", desc: "Contratos, matrículas e licenças espalhados em múltiplas pastas e sistemas." },
-    { title: "Riscos Invisíveis", desc: "Certidões vencidas e prazos perdidos que geram multas e insegurança jurídica." },
-    { title: "Processos Manuais", desc: "Dependência de planilhas e memórias individuais para o controle do patrimônio." },
-    { title: "Falta de Governança", desc: "Dificuldade em visualizar a estrutura sucessória e societária de forma clara." },
+    { title: "Documentação Dispersa", desc: "A fragmentação de dados em silos analógicos e digitais impede a tomada de decisão estratégica." },
+    { title: "Invisibilidade de Riscos", desc: "Prazos e certidões críticas negligenciadas geram passivos ocultos e insegurança jurídica." },
+    { title: "Operação Dependente", desc: "Processos manuais e dependência de pessoal-chave criam gargalos na governança patrimonial." },
+    { title: "Opacidade Estrutural", desc: "Dificuldade técnica em visualizar a capilaridade societária e a exposição real a riscos." },
   ];
 
   return (
-    <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-      <SectionHeader badge="O Desafio" title="A Complexidade Patrimonial" subtitle="Empresas e famílias perdem milhões anualmente por falta de visibilidade e controle sobre seus ativos." />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <section className="py-20 md:py-40 px-4 md:px-8 max-w-7xl mx-auto">
+      <SectionHeader badge="O Desafio Executivo" title="A Complexidade Silenciosa" subtitle="Patrimônios complexos exigem um nível de vigilância que transcende as capacidades humanas tradicionais." />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {problems.map((p, i) => (
-          <div key={i} className="p-8 rounded-[2rem] bg-red-500/[0.02] border border-red-500/10 space-y-4">
-            <AlertTriangle className="h-6 w-6 text-red-500/50" />
-            <h4 className="text-lg font-bold text-white/90">{p.title}</h4>
-            <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
+          <div key={i} className="p-10 rounded-[3rem] bg-red-500/[0.01] border border-red-500/10 space-y-6 hover:bg-red-500/[0.02] transition-colors group">
+            <div className="h-12 w-12 rounded-xl bg-red-500/5 flex items-center justify-center border border-red-500/10 group-hover:scale-110 transition-transform">
+              <AlertTriangle className="h-6 w-6 text-red-500/50" />
+            </div>
+            <h4 className="text-xl font-black italic uppercase tracking-tighter text-white/90 leading-none">{p.title}</h4>
+            <p className="text-sm text-muted-foreground leading-relaxed italic font-medium opacity-80">{p.desc}</p>
           </div>
         ))}
       </div>
@@ -233,37 +272,40 @@ function ProblemSection() {
 
 function MarketAnalysis() {
   return (
-    <section className="py-20 md:py-32 px-4 md:px-8 bg-[#080808] border-y border-white/5">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        <div className="space-y-8">
-          <SectionHeader badge="Mercado" title="Uma Nova Categoria" subtitle="O crescimento de Holdings e Family Offices no Brasil exige um novo padrão de tecnologia." />
-          <div className="space-y-6">
-            <div className="flex gap-4 p-6 rounded-2xl bg-white/[0.02] border border-white/5">
-              <TrendingUp className="h-8 w-8 text-primary shrink-0" />
+    <section className="py-20 md:py-40 px-4 md:px-8 bg-white/[0.01] border-y border-white/[0.03] relative overflow-hidden">
+      <div className="absolute inset-0 executive-grid opacity-30" />
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center relative z-10">
+        <div className="space-y-12">
+          <SectionHeader badge="Intelligence Report" title="Uma Nova Categoria de Software" subtitle="O mercado global de Family Offices e Holdings exige um sistema operacional dedicado." />
+          <div className="space-y-8">
+            <div className="flex gap-6 p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/[0.05] hover:border-primary/20 transition-all backdrop-blur-xl">
+              <TrendingUp className="h-10 w-10 text-primary shrink-0" />
               <div>
-                <h5 className="font-bold mb-1">+400% no volume de Holdings</h5>
-                <p className="text-sm text-muted-foreground">Crescimento acelerado na busca por proteção patrimonial e sucessória no Brasil.</p>
+                <h5 className="font-black italic uppercase tracking-tight text-lg mb-2">Escalabilidade Patrimonial</h5>
+                <p className="text-sm text-muted-foreground italic font-medium leading-relaxed">Infraestrutura preparada para a gestão de ativos multi-geracionais e estruturas complexas.</p>
               </div>
             </div>
-            <div className="flex gap-4 p-6 rounded-2xl bg-white/[0.02] border border-white/5">
-              <Scale className="h-8 w-8 text-primary shrink-0" />
+            <div className="flex gap-6 p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/[0.05] hover:border-primary/20 transition-all backdrop-blur-xl">
+              <Scale className="h-10 w-10 text-primary shrink-0" />
               <div>
-                <h5 className="font-bold mb-1">Necessidade Rigorosa de Compliance</h5>
-                <p className="text-sm text-muted-foreground">Novas regulamentações exigem monitoramento contínuo de ativos e sócios.</p>
+                <h5 className="font-black italic uppercase tracking-tight text-lg mb-2">Soberania de Compliance</h5>
+                <p className="text-sm text-muted-foreground italic font-medium leading-relaxed">Monitoramento preditivo que garante a regularidade total dos ativos em tempo real.</p>
               </div>
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-6">
           {[
-            { label: "Holdings Familiares", icon: Building2 },
+            { label: "Holdings Estratégicas", icon: Building2 },
             { label: "Family Offices", icon: Users },
             { label: "Grupos do Agronegócio", icon: Globe },
-            { label: "Escritórios de Advocacia", icon: Scale }
+            { label: "Boutiques Jurídicas", icon: Scale }
           ].map((item, i) => (
-            <div key={i} className="aspect-square rounded-[2.5rem] bg-white/[0.01] border border-white/5 flex flex-col items-center justify-center p-6 text-center space-y-4 hover:border-primary/20 transition-colors">
-              <item.icon className="h-10 w-10 text-primary/40" />
-              <span className="text-[10px] font-black uppercase tracking-widest leading-tight">{item.label}</span>
+            <div key={i} className="aspect-square rounded-[3.5rem] bg-white/[0.02] border border-white/[0.05] flex flex-col items-center justify-center p-8 text-center space-y-6 hover:border-primary/40 transition-all group backdrop-blur-xl">
+              <div className="h-16 w-16 rounded-2xl bg-white/[0.03] flex items-center justify-center border border-white/[0.05] group-hover:scale-110 group-hover:bg-primary/10 transition-all">
+                <item.icon className="h-8 w-8 text-primary/60 group-hover:text-primary transition-colors" />
+              </div>
+              <span className="text-xs font-black uppercase tracking-[0.2em] leading-tight italic">{item.label}</span>
             </div>
           ))}
         </div>
@@ -274,22 +316,23 @@ function MarketAnalysis() {
 
 function VisionSection() {
   return (
-    <section className="py-20 md:py-40 px-4 md:px-8 text-center max-w-4xl mx-auto">
+    <section className="py-20 md:py-60 px-4 md:px-8 text-center max-w-5xl mx-auto relative">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[150px] -z-10 animate-pulse" />
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
-        className="space-y-12"
+        className="space-y-16"
       >
-        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Nossa Visão</span>
-        <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter leading-[0.9]">
-          CONSTRUINDO O FUTURO DA GOVERNANÇA.
+        <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">Manifesto Patrium</span>
+        <h2 className="text-5xl md:text-[8rem] font-black italic uppercase tracking-tighter leading-[0.8] drop-shadow-2xl">
+          THE FUTURE OF <br /> <span className="text-primary">GOVERNANCE.</span>
         </h2>
-        <p className="text-lg md:text-2xl text-muted-foreground leading-relaxed font-medium italic">
-          "Estamos criando um cérebro patrimonial capaz de proteger, organizar e potencializar o patrimônio de empresas, holdings e famílias por gerações."
+        <p className="text-xl md:text-4xl text-muted-foreground leading-tight font-medium italic max-w-4xl mx-auto">
+          "Estamos projetando um sistema operacional capaz de eternizar o legado de empresas e famílias através da tecnologia."
         </p>
-        <div className="pt-8">
-          <Button size="lg" className="rounded-full px-12 h-16 bg-white text-black font-black uppercase tracking-widest text-xs hover:bg-white/90">Solicitar Demonstração</Button>
+        <div className="pt-12">
+          <Button size="lg" className="rounded-full px-16 h-20 bg-white text-black font-black uppercase tracking-[0.3em] text-xs hover:scale-105 transition-all shadow-2xl border-none">Solicitar Demonstração</Button>
         </div>
       </motion.div>
     </section>
