@@ -7,11 +7,7 @@ import {
   ArrowUpRight, 
   Building2, 
   Boxes,
-  FileText,
-  PieChart,
-  TrendingUp,
   FileSearch,
-  Users2,
   Loader2
 } from "lucide-react";
 import { 
@@ -40,7 +36,6 @@ export const Route = createFileRoute("/_app/dashboard")({
   component: DashboardExecutivo,
 });
 
-
 function DashboardExecutivo() {
   const { data: assets, isLoading: assetsLoading } = useAssets();
   const { data: risks, isLoading: risksLoading } = useRisks();
@@ -59,51 +54,50 @@ function DashboardExecutivo() {
     ? entities.reduce((sum, ent) => sum + (Number(ent.compliance_score) || 0), 0) / entities.length 
     : 0;
 
-
   return (
-    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 max-w-[1600px] mx-auto">
-      {/* Executive Header - Pixel Perfect Alignment */}
-      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-10 pb-8 border-b border-white/[0.05]">
-        <div className="space-y-6">
+    <div className="space-y-8 lg:space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 max-w-[1600px] mx-auto">
+      {/* Executive Header */}
+      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 lg:gap-10 pb-8 border-b border-white/[0.05]">
+        <div className="space-y-4 lg:space-y-6">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-5"
+            className="flex items-center gap-4 lg:gap-5"
           >
-            <div className="h-14 w-14 rounded-[1.25rem] bg-primary/10 flex items-center justify-center border border-primary/20 shadow-[0_0_30px_rgba(var(--primary),0.1)] group hover:scale-105 transition-transform duration-500">
-              <Building2 className="h-7 w-7 text-primary" />
+            <div className="h-12 w-12 lg:h-14 lg:w-14 rounded-xl lg:rounded-[1.25rem] bg-primary/10 flex items-center justify-center border border-primary/20 shadow-[0_0_30px_rgba(var(--primary),0.1)] group hover:scale-105 transition-transform duration-500 shrink-0">
+              <Building2 className="h-6 w-6 lg:h-7 lg:w-7 text-primary" />
             </div>
             <div className="space-y-1">
-              <p className="text-[11px] font-black uppercase tracking-[0.4em] text-primary/70 leading-none">Sistema de Governança</p>
-              <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-foreground uppercase italic leading-[0.9]">
+              <p className="text-[9px] lg:text-[11px] font-black uppercase tracking-[0.4em] text-primary/70 leading-none">Sistema de Governança</p>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-foreground uppercase italic leading-[0.9]">
                 Comando <span className="text-primary">Estratégico</span>
               </h2>
             </div>
           </motion.div>
-          <p className="text-muted-foreground text-xl font-medium max-w-2xl leading-relaxed opacity-80">
+          <p className="text-muted-foreground text-base lg:text-xl font-medium max-w-2xl leading-relaxed opacity-80">
             Visão consolidada de <span className="text-foreground font-bold border-b-2 border-primary/40">Holdings, Patrimônio e Compliance</span>. 
             <Link to="/jarvis" className="text-primary font-bold hover:underline ml-1">Jarvis AI</Link> processando dados proativamente.
           </p>
         </div>
         
-        <div className="flex flex-wrap items-center gap-6 xl:gap-10">
-          <div className="p-8 glass-card rounded-[2.5rem] flex flex-col items-end min-w-[240px] border-primary/10 bg-white/[0.02]">
-             <p className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground font-black mb-2 opacity-50">AUM Global</p>
-             <p className="text-5xl font-black text-foreground tabular-nums tracking-tighter">
-                R$ {(totalValue / 1000000).toFixed(1)}<span className="text-lg ml-1 text-primary">M</span>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-6 xl:gap-10">
+          <div className="p-6 lg:p-8 glass-card rounded-3xl lg:rounded-[2.5rem] flex flex-col items-center sm:items-end min-w-0 sm:min-w-[240px] border-primary/10 bg-white/[0.02]">
+             <p className="text-[10px] lg:text-[11px] uppercase tracking-[0.3em] text-muted-foreground font-black mb-2 opacity-50">AUM Global</p>
+             <p className="text-3xl lg:text-5xl font-black text-foreground tabular-nums tracking-tighter">
+                R$ {(totalValue / 1000000).toFixed(1)}<span className="text-base lg:text-lg ml-1 text-primary">M</span>
              </p>
-             <div className="flex items-center gap-1.5 text-xs text-emerald-500 font-black mt-2 bg-emerald-500/10 px-3 py-1 rounded-full">
+             <div className="flex items-center gap-1.5 text-[10px] lg:text-xs text-emerald-500 font-black mt-2 bg-emerald-500/10 px-3 py-1 rounded-full">
                 <ArrowUpRight className="h-3.5 w-3.5" /> +12.4% vs LY
              </div>
           </div>
 
-          <div className="flex items-center gap-8 bg-primary/5 p-8 rounded-[2.5rem] border border-primary/20 backdrop-blur-2xl group hover:bg-primary/10 transition-all duration-700 shadow-2xl shadow-primary/5">
-            <div className="text-right space-y-1">
-              <p className="text-[11px] uppercase tracking-[0.3em] text-primary font-black">Score de Compliance</p>
-              <p className="text-4xl font-black text-foreground tabular-nums tracking-tighter">{avgCompliance.toFixed(1)}<span className="text-sm ml-1 opacity-40">%</span></p>
+          <div className="flex items-center justify-between sm:justify-end gap-6 lg:gap-8 bg-primary/5 p-6 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border border-primary/20 backdrop-blur-2xl group hover:bg-primary/10 transition-all duration-700 shadow-2xl shadow-primary/5">
+            <div className="text-left sm:text-right space-y-1">
+              <p className="text-[10px] lg:text-[11px] uppercase tracking-[0.3em] text-primary font-black">Score de Compliance</p>
+              <p className="text-2xl lg:text-4xl font-black text-foreground tabular-nums tracking-tighter">{avgCompliance.toFixed(1)}<span className="text-xs lg:text-sm ml-1 opacity-40">%</span></p>
             </div>
-            <div className="h-16 w-16 rounded-full border-[3px] border-primary/20 border-t-primary flex items-center justify-center relative shadow-[0_0_25px_rgba(var(--primary),0.25)]">
-               <ShieldCheck className="h-8 w-8 text-primary" />
+            <div className="h-12 w-12 lg:h-16 lg:w-16 rounded-full border-[3px] border-primary/20 border-t-primary flex items-center justify-center relative shadow-[0_0_25px_rgba(var(--primary),0.25)] shrink-0">
+               <ShieldCheck className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
                <motion.div 
                  animate={{ rotate: 360 }}
                  transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
@@ -114,8 +108,8 @@ function DashboardExecutivo() {
         </div>
       </div>
 
-      {/* Primary Health Indicators - Spacing Adjusted */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+      {/* Primary Health Indicators */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-10">
         <HealthCard 
           title="Saúde Patrimonial" 
           value={`R$ ${(totalValue / 1000000).toFixed(1)}M`}
@@ -148,27 +142,23 @@ function DashboardExecutivo() {
         />
       </div>
 
-
-      {/* Intelligence & Analytics Grid - Refined Aligment */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        {/* Compliance Evolution - Wide Glass Panel */}
-        <div className="lg:col-span-8 glass-card rounded-[3rem] p-12 space-y-10 relative overflow-hidden group border-white/5 bg-gradient-to-br from-white/[0.04] to-transparent shadow-2xl">
+      {/* Intelligence & Analytics Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+        <div className="lg:col-span-8 glass-card rounded-[2rem] lg:rounded-[3rem] p-6 lg:p-12 space-y-8 lg:space-y-10 relative overflow-hidden group border-white/5 bg-gradient-to-br from-white/[0.04] to-transparent shadow-2xl">
           <div className="absolute -top-32 -right-32 h-80 w-80 bg-primary/10 rounded-full blur-[120px] pointer-events-none group-hover:bg-primary/20 transition-all duration-1000" />
           
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
             <div className="space-y-1">
-              <h3 className="text-3xl font-black flex items-center gap-4 tracking-tighter italic">
-                <Activity className="h-8 w-8 text-primary animate-pulse" />
+              <h3 className="text-2xl lg:text-3xl font-black flex items-center gap-4 tracking-tighter italic">
+                <Activity className="h-6 w-6 lg:h-8 lg:w-8 text-primary animate-pulse" />
                 DYNAMICS ANALYSIS
               </h3>
-              <p className="text-[11px] text-muted-foreground uppercase tracking-[0.3em] font-black opacity-50">Evolução do Score de Governança Proativa</p>
+              <p className="text-[10px] lg:text-[11px] text-muted-foreground uppercase tracking-[0.3em] font-black opacity-50">Evolução do Score de Governança</p>
             </div>
-            <div className="flex gap-3">
-              <button className="px-8 py-3 bg-primary/10 border border-primary/20 rounded-full text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary text-white transition-all shadow-xl shadow-primary/10 active:scale-95">Gerar Relatório IA</button>
-            </div>
+            <button className="px-6 lg:px-8 py-2.5 lg:py-3 bg-primary/10 border border-primary/20 rounded-full text-[10px] lg:text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary text-white transition-all shadow-xl shadow-primary/10 active:scale-95 w-full sm:w-auto">Gerar Relatório IA</button>
           </div>
           
-          <div className="h-[450px] w-full relative z-10 pt-6">
+          <div className="h-[300px] sm:h-[450px] w-full relative z-10 pt-6">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={complianceData}>
                 <defs>
@@ -182,7 +172,7 @@ function DashboardExecutivo() {
                   dataKey="name" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fill: "var(--color-muted-foreground)", fontSize: 11, fontWeight: 900 }} 
+                  tick={{ fill: "var(--color-muted-foreground)", fontSize: 10, fontWeight: 900 }} 
                 />
                 <YAxis hide domain={[0, 100]} />
                 <Tooltip 
@@ -191,8 +181,8 @@ function DashboardExecutivo() {
                     backgroundColor: "rgba(10,10,10,0.95)", 
                     backdropFilter: "blur(30px)",
                     border: "1px solid rgba(255,255,255,0.15)",
-                    borderRadius: "28px",
-                    padding: "20px",
+                    borderRadius: "20px",
+                    padding: "15px",
                     boxShadow: "0 40px 80px -20px rgba(0,0,0,0.7)"
                   }} 
                 />
@@ -202,7 +192,7 @@ function DashboardExecutivo() {
                   stroke="var(--color-primary)" 
                   fillOpacity={1} 
                   fill="url(#compGradient)" 
-                  strokeWidth={6}
+                  strokeWidth={4}
                   animationDuration={3000}
                 />
               </AreaChart>
@@ -210,16 +200,14 @@ function DashboardExecutivo() {
           </div>
         </div>
 
-        {/* Risk & Structure - Side Stack */}
-        <div className="lg:col-span-4 space-y-10">
-          {/* Critical Issues - High Intensity */}
-          <div className="glass-card rounded-[3rem] p-10 space-y-10 border-orange-500/10 bg-gradient-to-b from-orange-500/[0.03] to-transparent shadow-2xl shadow-orange-500/5">
+        <div className="lg:col-span-4 space-y-8 lg:space-y-10">
+          <div className="glass-card rounded-[2rem] lg:rounded-[3rem] p-6 lg:p-10 space-y-8 lg:space-y-10 border-orange-500/10 bg-gradient-to-b from-orange-500/[0.03] to-transparent shadow-2xl shadow-orange-500/5">
             <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-black flex items-center gap-4 tracking-tighter italic">
-                <AlertTriangle className="h-7 w-7 text-orange-500" />
+              <h3 className="text-xl lg:text-2xl font-black flex items-center gap-4 tracking-tighter italic">
+                <AlertTriangle className="h-6 w-6 lg:h-7 lg:w-7 text-orange-500" />
                 RISKS
               </h3>
-              <span className="h-7 px-3 rounded-full bg-orange-500/15 text-orange-500 text-[11px] font-black flex items-center tracking-widest border border-orange-500/20">CRÍTICO</span>
+              <span className="h-7 px-3 rounded-full bg-orange-500/15 text-orange-500 text-[10px] lg:text-[11px] font-black flex items-center tracking-widest border border-orange-500/20">CRÍTICO</span>
             </div>
             <div className="space-y-4">
               {risks?.slice(0, 4).map((risk) => (
@@ -233,47 +221,45 @@ function DashboardExecutivo() {
               ))}
               {(!risks || risks.length === 0) && (
                 <div className="flex flex-col items-center justify-center py-12 opacity-40">
-                  <ShieldCheck className="h-16 w-16 mb-4 text-emerald-500" />
-                  <p className="text-[11px] font-black uppercase tracking-[0.3em]">Ambiente Seguro</p>
+                  <ShieldCheck className="h-12 w-12 lg:h-16 lg:w-16 mb-4 text-emerald-500" />
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em]">Ambiente Seguro</p>
                 </div>
               )}
             </div>
-            <button className="w-full py-6 bg-white/5 border border-white/10 rounded-[2rem] text-[11px] font-black uppercase tracking-[0.4em] hover:bg-orange-500 hover:text-white transition-all duration-700 shadow-xl shadow-orange-500/0 hover:shadow-orange-500/20 active:scale-95">
+            <button className="w-full py-5 lg:py-6 bg-white/5 border border-white/10 rounded-[1.5rem] lg:rounded-[2rem] text-[10px] lg:text-[11px] font-black uppercase tracking-[0.4em] hover:bg-orange-500 hover:text-white transition-all duration-700 active:scale-95">
               Acessar Central de Crise
             </button>
           </div>
 
-          {/* Holdings Structure - Dark Tech Style */}
-          <div className="glass-card rounded-[3rem] p-10 space-y-10 border-blue-500/10 shadow-2xl">
-             <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-black flex items-center gap-4 tracking-tighter italic">
-                  <Boxes className="h-7 w-7 text-blue-500" />
+          <div className="glass-card rounded-[2rem] lg:rounded-[3rem] p-6 lg:p-10 space-y-8 lg:space-y-10 border-blue-500/10 shadow-2xl">
+             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                <h3 className="text-xl lg:text-2xl font-black flex items-center gap-4 tracking-tighter italic">
+                  <Boxes className="h-6 w-6 lg:h-7 lg:w-7 text-blue-500" />
                   STRUCTURE
                 </h3>
-                <div className="flex -space-x-4 items-center">
+                <div className="flex -space-x-3 items-center">
                   {[1,2,3,4].map(i => (
-                    <div key={i} className="h-10 w-10 rounded-full border-[3px] border-sidebar bg-accent overflow-hidden grayscale hover:grayscale-0 transition-all cursor-pointer hover:scale-110 relative z-[10-i]">
+                    <div key={i} className="h-8 w-8 lg:h-10 lg:w-10 rounded-full border-2 border-sidebar bg-accent overflow-hidden grayscale hover:grayscale-0 transition-all cursor-pointer hover:scale-110">
                       <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i+10}`} alt="Sócio" />
                     </div>
                   ))}
-                  <div className="h-10 w-10 rounded-full border-[3px] border-sidebar bg-white/10 flex items-center justify-center text-[11px] font-black backdrop-blur-md">
+                  <div className="h-8 w-8 lg:h-10 lg:w-10 rounded-full border-2 border-sidebar bg-white/10 flex items-center justify-center text-[10px] font-black backdrop-blur-md">
                     +8
                   </div>
                 </div>
              </div>
-             <div className="grid grid-cols-2 gap-6">
-                <div className="p-8 bg-white/[0.03] rounded-[2.5rem] border border-white/5 group hover:border-blue-500/40 transition-all duration-500 shadow-lg">
-                   <p className="text-[11px] uppercase font-black text-muted-foreground/50 tracking-[0.3em]">Holdings</p>
-                   <p className="text-4xl font-black mt-2 text-foreground tabular-nums tracking-tighter">{entities?.length.toString().padStart(2, '0')}</p>
+             <div className="grid grid-cols-2 gap-4 lg:gap-6">
+                <div className="p-6 lg:p-8 bg-white/[0.03] rounded-2xl lg:rounded-[2.5rem] border border-white/5 group hover:border-blue-500/40 transition-all duration-500">
+                   <p className="text-[9px] lg:text-[11px] uppercase font-black text-muted-foreground/50 tracking-[0.3em]">Holdings</p>
+                   <p className="text-2xl lg:text-4xl font-black mt-2 text-foreground tabular-nums tracking-tighter">{entities?.length.toString().padStart(2, '0')}</p>
                 </div>
-                <div className="p-8 bg-white/[0.03] rounded-[2.5rem] border border-white/5 group hover:border-blue-500/40 transition-all duration-500 shadow-lg">
-                   <p className="text-[11px] uppercase font-black text-muted-foreground/50 tracking-[0.3em]">Conselho</p>
-                   <p className="text-4xl font-black mt-2 text-foreground tabular-nums tracking-tighter">12</p>
+                <div className="p-6 lg:p-8 bg-white/[0.03] rounded-2xl lg:rounded-[2.5rem] border border-white/5 group hover:border-blue-500/40 transition-all duration-500">
+                   <p className="text-[9px] lg:text-[11px] uppercase font-black text-muted-foreground/50 tracking-[0.3em]">Conselho</p>
+                   <p className="text-2xl lg:text-4xl font-black mt-2 text-foreground tabular-nums tracking-tighter">12</p>
                 </div>
              </div>
           </div>
         </div>
-
       </div>
     </div>
   );
@@ -287,27 +273,27 @@ function HealthCard({ title, value, status, color, icon: Icon, description, metr
   };
 
   return (
-    <div className="glass-card rounded-[2.5rem] p-8 space-y-6 group hover:border-white/20 transition-all border border-transparent">
+    <div className="glass-card rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-8 space-y-6 group hover:border-white/20 transition-all border border-transparent">
       <div className="flex items-start justify-between">
-        <div className={cn("p-4 rounded-2xl transition-transform group-hover:scale-110 duration-500", colors[color] || colors.primary)}>
-          <Icon className="h-8 w-8" />
+        <div className={cn("p-3 lg:p-4 rounded-xl lg:rounded-2xl transition-transform group-hover:scale-110 duration-500 shrink-0", colors[color] || colors.primary)}>
+          <Icon className="h-6 w-6 lg:h-8 lg:w-8" />
         </div>
-        <div className={cn("px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest", colors[color] || colors.primary)}>
+        <div className={cn("px-2.5 py-1 rounded-full text-[9px] lg:text-[10px] font-black uppercase tracking-widest", colors[color] || colors.primary)}>
           {status}
         </div>
       </div>
       
       <div>
-        <p className="text-sm font-bold text-muted-foreground tracking-tight">{title}</p>
-        <h4 className="text-3xl font-black mt-1">{value}</h4>
-        <p className="text-xs text-muted-foreground/60 mt-2 leading-relaxed">{description}</p>
+        <p className="text-xs lg:text-sm font-bold text-muted-foreground tracking-tight">{title}</p>
+        <h4 className="text-2xl lg:text-3xl font-black mt-1">{value}</h4>
+        <p className="text-[11px] lg:text-xs text-muted-foreground/60 mt-2 leading-relaxed line-clamp-2 lg:line-clamp-none">{description}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
         {metrics?.map((m: any) => (
           <div key={m.label}>
-            <p className="text-[10px] font-black uppercase text-muted-foreground/40">{m.label}</p>
-            <p className="text-sm font-bold text-foreground mt-0.5">{m.val}</p>
+            <p className="text-[9px] lg:text-[10px] font-black uppercase text-muted-foreground/40">{m.label}</p>
+            <p className="text-xs lg:text-sm font-bold text-foreground mt-0.5">{m.val}</p>
           </div>
         ))}
       </div>
@@ -324,13 +310,13 @@ function RiskItem({ title, target, days, severity }: any) {
 
   return (
     <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-transparent hover:border-white/5 group">
-      <div className={cn("h-2.5 w-2.5 rounded-full shrink-0", sev[severity])} />
+      <div className={cn("h-2 w-2 lg:h-2.5 lg:w-2.5 rounded-full shrink-0", sev[severity])} />
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-bold truncate group-hover:text-primary transition-colors">{title}</p>
-        <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">{target}</p>
+        <p className="text-[11px] lg:text-xs font-bold truncate group-hover:text-primary transition-colors">{title}</p>
+        <p className="text-[9px] lg:text-[10px] text-muted-foreground mt-0.5 font-medium truncate">{target}</p>
       </div>
-      <div className="text-right">
-        <p className={cn("text-xs font-black", severity === 'critical' ? 'text-red-400' : 'text-foreground')}>{days}</p>
+      <div className="text-right shrink-0">
+        <p className={cn("text-[11px] lg:text-xs font-black", severity === 'critical' ? 'text-red-400' : 'text-foreground')}>{days}</p>
       </div>
     </div>
   );
