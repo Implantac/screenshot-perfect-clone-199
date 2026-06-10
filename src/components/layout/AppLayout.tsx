@@ -12,7 +12,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [isAiOpen, setIsAiOpen] = useState(false);
   const [chatInput, setChatInput] = useState("");
   const [messages, setMessages] = useState([
-    { text: "Olá, Gestor. Como posso auxiliar em sua estratégia patrimonial hoje?", isAi: true }
+    { text: "Protocolos JARVIS iniciados. Como posso auxiliar em sua estratégia patrimonial hoje, Gestor?", isAi: true }
   ]);
 
   const handleSendMessage = () => {
