@@ -279,11 +279,11 @@ function LoginPage() {
           className="glass-card rounded-[2.5rem] p-10 space-y-8 border-white/10 relative overflow-hidden"
         >
           <div className="space-y-2 relative z-10 text-center">
-            <h2 className="text-2xl font-bold text-foreground">Acesso Restrito</h2>
-            <p className="text-sm text-muted-foreground">Insira suas credenciais para gerenciar a governança.</p>
+            <h2 className="text-2xl font-bold text-foreground">{isSignUp ? "Criar Conta" : "Acesso Restrito"}</h2>
+            <p className="text-sm text-muted-foreground">{isSignUp ? "Cadastre seu e-mail corporativo." : "Insira suas credenciais para gerenciar a governança."}</p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-6 relative z-10">
+          <form onSubmit={handleAuth} className="space-y-6 relative z-10">
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">E-mail Corporativo</label>
               <div className="relative group">
