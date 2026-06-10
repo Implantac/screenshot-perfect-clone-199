@@ -56,7 +56,7 @@ export function Sidebar() {
   const location = useLocation();
 
   return (
-    <div className="flex h-screen w-64 flex-col bg-sidebar border-r border-sidebar-border relative z-20">
+    <div className="flex h-screen w-72 flex-col bg-sidebar border-r border-sidebar-border relative z-20 shadow-2xl">
       {/* Brand */}
       <div className="flex h-20 items-center px-6 gap-3">
         <div className="h-9 w-9 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
@@ -83,11 +83,12 @@ export function Sidebar() {
                     key={item.label}
                     to={item.to}
                     className={cn(
-                      "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group",
+                      "flex items-center gap-3 px-3.5 py-3 rounded-2xl text-[13px] font-bold transition-all group border border-transparent",
                       isActive 
-                        ? "bg-primary/10 text-primary border border-primary/10" 
-                        : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+                        ? "bg-primary/5 text-primary border-primary/10 shadow-[0_4px_12px_rgba(0,0,0,0.1)]" 
+                        : "text-muted-foreground/60 hover:bg-white/5 hover:text-foreground"
                     )}
+
                   >
                     <item.icon className={cn(
                       "h-4 w-4 transition-colors",
@@ -118,9 +119,10 @@ export function Sidebar() {
           <Settings className="h-4 w-4" />
           Configurações
         </Link>
-        <div className="flex items-center gap-3 px-3 py-3 rounded-2xl bg-white/5 border border-white/5">
-          <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border border-primary/20">
-            <User className="h-4 w-4 text-primary" />
+        <div className="flex items-center gap-4 px-4 py-4 rounded-3xl bg-white/[0.02] border border-white/5 group hover:bg-white/5 transition-colors cursor-pointer">
+          <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden border border-primary/20 group-hover:scale-105 transition-transform">
+            <User className="h-5 w-5 text-primary" />
+
           </div>
           <div className="flex-1 overflow-hidden">
             <p className="text-xs font-bold truncate">Gestor de Patrimônio</p>
