@@ -76,10 +76,10 @@ function LoginPage() {
         osc.stop(time + 0.6);
       };
       
-      playBassThump(now + 0.5, 60, 0.6);
-      playBassThump(now + 0.65, 45, 0.8); // Double impact
+      playBassThump(now + 0.2, 60, 0.6);
+      playBassThump(now + 0.35, 45, 0.8);
 
-      // 2. TECH RESONANCE (USE - 1.0s)
+      // 2. TECH RESONANCE (USE - 1.2s)
       const playResonance = (time: number, freq: number) => {
         const osc = ctx.createOscillator();
         const filter = ctx.createBiquadFilter();
@@ -98,9 +98,9 @@ function LoginPage() {
         osc.start(time);
         osc.stop(time + 1.2);
       };
-      playResonance(now + 1.0, 440);
+      playResonance(now + 1.2, 440);
 
-      // 3. PREMIUM HARMONIC SWELL (PATRIUM - 1.6s)
+      // 3. PREMIUM HARMONIC SWELL (PATRIUM - 2.0s)
       const playSwell = (time: number, freqs: number[]) => {
         freqs.forEach(f => {
           const osc = ctx.createOscillator();
@@ -116,9 +116,9 @@ function LoginPage() {
           osc.stop(time + 2.5);
         });
       };
-      playSwell(now + 1.6, [110, 165, 220, 330]); // A minor 7 rich chord
+      playSwell(now + 2.0, [110, 165, 220, 330]);
 
-      // 4. SYSTEM INITIALIZATION WHOOSH (Form - 2.5s)
+      // 4. SYSTEM INITIALIZATION WHOOSH (Form - 3.2s)
       const playWhoosh = (time: number) => {
         const bufferSize = ctx.sampleRate * 2;
         const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
@@ -146,10 +146,10 @@ function LoginPage() {
         noise.start(time);
         noise.stop(time + 1.5);
       };
-      playWhoosh(now + 2.5);
+      playWhoosh(now + 3.2);
     };
 
-    const timer = setTimeout(playCinematicIntro, 300);
+    const timer = setTimeout(playCinematicIntro, 200);
     return () => clearTimeout(timer);
   }, [navigate]);
 
