@@ -127,12 +127,46 @@ function LandingPage() {
       </section>
 
       <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <SectionHeader badge="Tecnologia" title="Knowledge Graph & Digital Twin" />
-        <KnowledgeGraphAnimation />
+        <SectionHeader badge="O Jarvis" title="Seu Diretor Patrimonial Digital" subtitle="Monitoramento 24/7 de ativos, certidões e contratos com inteligência preditiva." />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="space-y-8">
+            <p className="text-xl text-muted-foreground italic leading-relaxed">O Jarvis não apenas armazena; ele entende. Ao monitorar continuamente holdings, imóveis e certidões, ele detecta riscos e sugere planos de ação imediatos.</p>
+            <div className="space-y-4">
+              {[
+                "Detecção autônoma de vencimentos",
+                "Alertas preditivos de compliance",
+                "Insights de regularização imobiliária",
+                "Priorização de ações críticas"
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                  <span className="text-xs font-black uppercase tracking-widest opacity-80">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="p-8 rounded-[3rem] bg-white/[0.02] border border-white/10 space-y-6">
+            <div className="flex gap-4 p-4 rounded-2xl bg-primary/5 border border-primary/10">
+              <Sparkles className="h-5 w-5 text-primary shrink-0" />
+              <p className="text-xs italic font-medium">"Detectei 3 certidões vencidas na Holding X. Deseja iniciar o protocolo de renovação?"</p>
+            </div>
+            <div className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 translate-x-4">
+              <Sparkles className="h-5 w-5 text-primary shrink-0" />
+              <p className="text-xs italic font-medium">"Uma licença ambiental na Fazenda Y vence em 12 dias. Plano de ação prioritário criado."</p>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-        <SectionHeader badge="Análise" title="Comparativo Competitivo" />
+        <SectionHeader badge="Tecnologia" title="Knowledge Graph & Digital Twin" subtitle="Visualize e controle cada ativo com precisão absoluta." />
+        <KnowledgeGraphAnimation />
+      </section>
+
+      <MarketAnalysis />
+
+      <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
+        <SectionHeader badge="Comparativo" title="Patrium vs Mercado" subtitle="A diferença entre gestão passiva e governança inteligente." />
         <ComparisonTable />
       </section>
 
@@ -144,6 +178,33 @@ function LandingPage() {
           <PricingCard plan="Enterprise" price="R$ 7.997" desc="Family Offices & Grupos." features={["Jarvis AI Autônomo", "Gestão de Riscos", "Due Diligence Avançada", "Suporte Dedicated"]} />
           <PricingCard plan="Corporate" price="Sob Consulta" desc="Grandes grupos econômicos." features={["Customização Total", "Multi-Agentes Jarvis", "Segurança Militar", "SLA Garantido"]} />
         </div>
+      </section>
+
+      <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
+        <SectionHeader badge="Evolução" title="Roadmap Tecnológico" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { phase: "Fase 1", title: "Governança Patrimonial", status: "Operational" },
+            { phase: "Fase 2", title: "Compliance Preditivo", status: "Operational" },
+            { phase: "Fase 3", title: "Regularização Imobiliária", status: "Operational" },
+            { phase: "Fase 4", title: "Agronegócio Patrimonial", status: "Beta" },
+            { phase: "Fase 5", title: "Jarvis Autônomo", status: "Development" },
+            { phase: "Fase 6", title: "Marketplace de Ativos", status: "Planning" },
+            { phase: "Fase 7", title: "Integração Cartórios", status: "Planning" },
+            { phase: "Fase 8", title: "GovTech Unificada", status: "Vision" }
+          ].map((item, i) => (
+            <div key={i} className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 space-y-4">
+              <span className="text-[10px] font-black text-primary uppercase tracking-widest">{item.phase}</span>
+              <h4 className="text-base font-bold italic uppercase leading-tight">{item.title}</h4>
+              <p className="text-[9px] font-black text-white/20 uppercase tracking-widest">{item.status}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="py-40 px-4 md:px-8 text-center max-w-5xl mx-auto">
+        <SectionHeader badge="Visão de Futuro" title="THE NEXT GENERATION OF GOVERNANCE." />
+        <p className="text-xl md:text-3xl text-muted-foreground italic font-medium leading-relaxed max-w-4xl mx-auto">"O USE PATRIUM está construindo a próxima geração da Governança Patrimonial no Brasil. Estamos criando um cérebro patrimonial capaz de proteger, organizar e potencializar o patrimônio de gerações."</p>
       </section>
 
       <footer className="py-20 px-4 md:px-8 border-t border-white/5 bg-[#030303] mt-32">
