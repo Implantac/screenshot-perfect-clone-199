@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_app/family-office")({
 
 function FamilyOffice() {
   return (
-    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden">
+    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden max-w-[1800px] mx-auto w-full">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
