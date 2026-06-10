@@ -112,8 +112,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                     </div>
 
                     <div>
-                      <h2 className="font-bold text-lg leading-tight uppercase tracking-tighter">Copiloto IA Patrium</h2>
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Inteligência Patrimonial Ativa</p>
+                      <h2 className="font-bold text-lg leading-tight uppercase tracking-tighter">JARVIS PATRIUM</h2>
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Diretor Patrimonial Digital</p>
                     </div>
                   </div>
                   <button 
