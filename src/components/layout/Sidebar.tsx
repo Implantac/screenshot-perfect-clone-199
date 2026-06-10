@@ -105,21 +105,28 @@ export function Sidebar() {
           {/* Subtle atmospheric center glow */}
           <div className="absolute inset-4 bg-primary/5 blur-[50px] rounded-full -z-10 opacity-60 group-hover/logo:opacity-100 transition-opacity duration-1000" />
         </div>
-        <div className="relative [perspective:1000px] group/text">
+        <div className="relative group/text perspective-1000">
           <motion.h1 
-            animate={{ rotateY: [-5, 5, -5] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            animate={{ 
+              rotateY: [-3, 3, -3],
+              filter: ["brightness(1)", "brightness(1.2)", "brightness(1)"]
+            }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             style={{ transformStyle: "preserve-3d" }}
-            className="text-lg font-black tracking-[0.3em] text-center uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-[#e5b364] via-[#c4924c] to-[#a37233] group-hover/logo:tracking-[0.4em] transition-all duration-1000 ease-out leading-tight drop-shadow-[0_4px_8px_rgba(163,114,51,0.3)]"
+            className="text-lg font-black tracking-[0.45em] text-center uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_2px_10px_rgba(196,146,76,0.2)]"
           >
             USE PATRIUM
           </motion.h1>
-          {/* 3D Depth Layer for Text */}
-          <h1 className="absolute inset-0 text-lg font-black tracking-[0.3em] text-center uppercase font-sans text-[#a37233]/20 blur-[1px] translate-z-[-2px] pointer-events-none select-none" style={{ transform: "translateY(1px) translateZ(-1px)" }}>
+          {/* Sculpted Depth Shadow */}
+          <h1 
+            className="absolute inset-0 text-lg font-black tracking-[0.45em] text-center uppercase font-sans text-[#4d3311] blur-[0.5px] pointer-events-none select-none" 
+            style={{ transform: "translateZ(-1px) translateY(1.5px)" }}
+          >
             USE PATRIUM
           </h1>
         </div>
       </div>
+
 
 
 
