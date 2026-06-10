@@ -224,7 +224,7 @@ function LoginPage() {
               <motion.h1 
                 initial={{ opacity: 0, x: -30, filter: "blur(10px)" }}
                 animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                transition={{ delay: 1, duration: 0.8, ease: "easeOut" }}
+                transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
                 style={{ transformStyle: "preserve-3d" }}
                 className="text-4xl font-black tracking-[0.2em] uppercase bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_10px_30px_rgba(122,83,30,0.4)]"
               >
