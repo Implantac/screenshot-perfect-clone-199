@@ -14,7 +14,7 @@ import { motion } from "framer-motion";
 import { useJarvisHealth, useJarvisInsights, useJarvisActionPlans } from "@/hooks/useJarvis";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/_app/jarvis")({
+export const Route = createFileRoute("/_app/jarvis/")({
   component: JarvisIntelligenceCenter,
 });
 
