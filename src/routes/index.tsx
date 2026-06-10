@@ -66,11 +66,11 @@ function LandingPage() {
             transition={{ delay: 0.6 }}
             className="flex items-center justify-center gap-4 pt-8"
           >
-            <Button size="lg" className="rounded-2xl px-8 h-14 text-base font-bold bg-primary hover:bg-primary/90 shadow-2xl shadow-primary/20">
-              Solicitar Demonstração <ArrowRight className="ml-2 h-5 w-5" />
+            <Button size="lg" className="rounded-2xl px-8 h-14 text-base font-bold bg-primary hover:bg-primary/90 shadow-2xl shadow-primary/20" asChild>
+              <a href="/login">Solicitar Demonstração <ArrowRight className="ml-2 h-5 w-5" /></a>
             </Button>
-            <Button size="lg" variant="outline" className="rounded-2xl px-8 h-14 text-base font-bold border-white/10 bg-white/5 hover:bg-white/10">
-              Conhecer o Jarvis
+            <Button size="lg" variant="outline" className="rounded-2xl px-8 h-14 text-base font-bold border-white/10 bg-white/5 hover:bg-white/10" asChild>
+              <a href="/login">Conhecer o Jarvis</a>
             </Button>
           </motion.div>
         </div>
