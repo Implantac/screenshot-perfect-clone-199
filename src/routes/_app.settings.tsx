@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_app/settings")({
 
 function SettingsPage() {
   return (
-    <div className="space-y-10 animate-in fade-in duration-700">
+    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden">
       <div className="space-y-1">
         <h2 className="text-3xl font-black tracking-tight uppercase">Configurações</h2>
         <p className="text-muted-foreground text-lg">Gerencie suas preferências e segurança da plataforma.</p>
