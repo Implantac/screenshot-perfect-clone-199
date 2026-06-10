@@ -18,6 +18,7 @@ export const Route = createFileRoute("/_app/jarvis")({
 const jarvisMenu = [
   { label: "Central de Inteligência", icon: Activity, to: "/jarvis" },
   { label: "Insights", icon: Sparkles, to: "/jarvis/insights" },
+  { label: "Rede (Grafo)", icon: Network, to: "/jarvis/grafo" },
   { label: "Alertas", icon: ShieldAlert, to: "/jarvis/alertas" },
   { label: "Plano de Ação", icon: ClipboardList, to: "/jarvis/acoes" },
   { label: "Conversar com Jarvis", icon: MessageSquare, to: "/jarvis/chat" },
