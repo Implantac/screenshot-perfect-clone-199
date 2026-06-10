@@ -78,7 +78,7 @@ function DashboardExecutivo() {
           </motion.div>
           <p className="text-muted-foreground text-lg lg:text-2xl font-medium max-w-3xl leading-relaxed italic opacity-80">
             Monitoramento de alta fidelidade para <span className="text-foreground font-black border-b-2 border-primary/40">Holdings, Ativos e Compliance</span>. 
-            <Link to="/jarvis" className="text-primary font-black hover:text-white transition-colors ml-1 uppercase tracking-widest text-xs">Jarvis AI Protocols Active</Link>.
+            <Link to="/jarvis" className="text-primary font-black hover:text-white transition-colors ml-1 uppercase tracking-widest text-xs">Jarvis: Diretor Patrimonial Digital Ativo</Link>.
           </p>
         </div>
         
