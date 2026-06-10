@@ -31,7 +31,7 @@ function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-primary/30 font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-[#050505] text-white selection:bg-primary/30 font-sans overflow-x-hidden w-full relative">
       <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-4 md:py-6 flex items-center justify-between bg-[#050505]/80 backdrop-blur-xl border-b border-white/5">
         <div className="flex items-center gap-2">
           <img src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" alt="Logo" className="h-6 md:h-8" />
@@ -49,7 +49,7 @@ function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="pt-32 md:pt-48 pb-20 md:pb-32 px-4 md:px-8 relative overflow-hidden">
+      <section className="pt-32 md:pt-48 pb-20 md:pb-32 px-4 md:px-8 relative overflow-hidden w-full">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-[#050505] to-[#050505]" />
         <div className="max-w-6xl mx-auto text-center relative z-10 space-y-8">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] text-primary">
@@ -123,7 +123,7 @@ function LandingPage() {
               </div>
               <Button size="lg" className="rounded-2xl px-10 h-14 bg-primary text-white font-black uppercase tracking-widest text-[10px]">Ver em Ação</Button>
             </div>
-            <div className="flex-1 w-full aspect-square bg-white/5 rounded-[3rem] border border-white/10 flex items-center justify-center shadow-2xl">
+            <div className="flex-1 w-full aspect-square bg-white/5 rounded-2xl md:rounded-[3rem] border border-white/10 flex items-center justify-center shadow-2xl overflow-hidden">
               <div className="text-center p-8">
                 <Cpu className="h-16 w-16 text-primary mx-auto mb-6 opacity-50" />
                 <p className="text-muted-foreground font-black italic tracking-widest uppercase text-xs opacity-50">Jarvis Intelligence Core</p>

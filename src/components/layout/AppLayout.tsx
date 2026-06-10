@@ -29,7 +29,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   };
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden font-sans">
+    <div className="flex h-screen bg-background overflow-hidden font-sans w-full max-w-[100vw]">
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
         {isMobileSidebarOpen && (
