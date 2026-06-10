@@ -90,9 +90,10 @@ function LoginPage() {
               <div className="absolute inset-[-40%] bg-primary/15 blur-[120px] rounded-full -z-10" />
             </motion.div>
           </div>
-          <h1 className="text-8xl font-black tracking-[0.45em] uppercase animate-in slide-in-from-bottom-16 duration-1000 delay-200 bg-clip-text text-transparent bg-gradient-to-b from-[#e5b364] via-[#c4924c] to-[#a37233] drop-shadow-[0_20px_40px_rgba(196,146,76,0.3)]">
+          <h1 className="text-6xl font-black tracking-[0.35em] uppercase animate-in slide-in-from-bottom-16 duration-1000 delay-200 bg-clip-text text-transparent bg-gradient-to-b from-[#e5b364] via-[#c4924c] to-[#a37233] drop-shadow-[0_20px_40px_rgba(196,146,76,0.3)]">
             USE PATRIUM
           </h1>
+
 
         </div>
 

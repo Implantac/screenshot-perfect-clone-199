@@ -105,10 +105,11 @@ export function Sidebar() {
           {/* Subtle atmospheric center glow */}
           <div className="absolute inset-4 bg-primary/5 blur-[50px] rounded-full -z-10 opacity-60 group-hover/logo:opacity-100 transition-opacity duration-1000" />
         </div>
-        <h1 className="text-xl font-black tracking-[0.4em] text-center uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-[#e5b364] via-[#c4924c] to-[#a37233] group-hover:tracking-[0.5em] transition-all duration-1000 ease-out">
+        <h1 className="text-lg font-black tracking-[0.3em] text-center uppercase font-sans bg-clip-text text-transparent bg-gradient-to-b from-[#e5b364] via-[#c4924c] to-[#a37233] group-hover:tracking-[0.4em] transition-all duration-1000 ease-out leading-tight">
           USE PATRIUM
         </h1>
       </div>
+
 
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-8 scrollbar-none">
