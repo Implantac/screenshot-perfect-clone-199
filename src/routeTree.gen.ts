@@ -28,6 +28,7 @@ import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office
 import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
 import { Route as AppJarvisIndexRouteImport } from './routes/_app.jarvis.index'
 import { Route as AppJarvisInsightsRouteImport } from './routes/_app.jarvis.insights'
+import { Route as AppJarvisHistoricoRouteImport } from './routes/_app.jarvis.historico'
 import { Route as AppJarvisChatRouteImport } from './routes/_app.jarvis.chat'
 import { Route as AppJarvisAlertasRouteImport } from './routes/_app.jarvis.alertas'
 import { Route as AppJarvisAcoesRouteImport } from './routes/_app.jarvis.acoes'
@@ -126,6 +127,11 @@ const AppJarvisInsightsRoute = AppJarvisInsightsRouteImport.update({
   path: '/insights',
   getParentRoute: () => AppJarvisRoute,
 } as any)
+const AppJarvisHistoricoRoute = AppJarvisHistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => AppJarvisRoute,
+} as any)
 const AppJarvisChatRoute = AppJarvisChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -162,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/jarvis/acoes': typeof AppJarvisAcoesRoute
   '/jarvis/alertas': typeof AppJarvisAlertasRoute
   '/jarvis/chat': typeof AppJarvisChatRoute
+  '/jarvis/historico': typeof AppJarvisHistoricoRoute
   '/jarvis/insights': typeof AppJarvisInsightsRoute
   '/jarvis/': typeof AppJarvisIndexRoute
 }
@@ -184,6 +191,7 @@ export interface FileRoutesByTo {
   '/jarvis/acoes': typeof AppJarvisAcoesRoute
   '/jarvis/alertas': typeof AppJarvisAlertasRoute
   '/jarvis/chat': typeof AppJarvisChatRoute
+  '/jarvis/historico': typeof AppJarvisHistoricoRoute
   '/jarvis/insights': typeof AppJarvisInsightsRoute
   '/jarvis': typeof AppJarvisIndexRoute
 }
@@ -209,6 +217,7 @@ export interface FileRoutesById {
   '/_app/jarvis/acoes': typeof AppJarvisAcoesRoute
   '/_app/jarvis/alertas': typeof AppJarvisAlertasRoute
   '/_app/jarvis/chat': typeof AppJarvisChatRoute
+  '/_app/jarvis/historico': typeof AppJarvisHistoricoRoute
   '/_app/jarvis/insights': typeof AppJarvisInsightsRoute
   '/_app/jarvis/': typeof AppJarvisIndexRoute
 }
@@ -234,6 +243,7 @@ export interface FileRouteTypes {
     | '/jarvis/acoes'
     | '/jarvis/alertas'
     | '/jarvis/chat'
+    | '/jarvis/historico'
     | '/jarvis/insights'
     | '/jarvis/'
   fileRoutesByTo: FileRoutesByTo
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
     | '/jarvis/acoes'
     | '/jarvis/alertas'
     | '/jarvis/chat'
+    | '/jarvis/historico'
     | '/jarvis/insights'
     | '/jarvis'
   id:
@@ -280,6 +291,7 @@ export interface FileRouteTypes {
     | '/_app/jarvis/acoes'
     | '/_app/jarvis/alertas'
     | '/_app/jarvis/chat'
+    | '/_app/jarvis/historico'
     | '/_app/jarvis/insights'
     | '/_app/jarvis/'
   fileRoutesById: FileRoutesById
@@ -424,6 +436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppJarvisInsightsRouteImport
       parentRoute: typeof AppJarvisRoute
     }
+    '/_app/jarvis/historico': {
+      id: '/_app/jarvis/historico'
+      path: '/historico'
+      fullPath: '/jarvis/historico'
+      preLoaderRoute: typeof AppJarvisHistoricoRouteImport
+      parentRoute: typeof AppJarvisRoute
+    }
     '/_app/jarvis/chat': {
       id: '/_app/jarvis/chat'
       path: '/chat'
@@ -452,6 +471,7 @@ interface AppJarvisRouteChildren {
   AppJarvisAcoesRoute: typeof AppJarvisAcoesRoute
   AppJarvisAlertasRoute: typeof AppJarvisAlertasRoute
   AppJarvisChatRoute: typeof AppJarvisChatRoute
+  AppJarvisHistoricoRoute: typeof AppJarvisHistoricoRoute
   AppJarvisInsightsRoute: typeof AppJarvisInsightsRoute
   AppJarvisIndexRoute: typeof AppJarvisIndexRoute
 }
@@ -460,6 +480,7 @@ const AppJarvisRouteChildren: AppJarvisRouteChildren = {
   AppJarvisAcoesRoute: AppJarvisAcoesRoute,
   AppJarvisAlertasRoute: AppJarvisAlertasRoute,
   AppJarvisChatRoute: AppJarvisChatRoute,
+  AppJarvisHistoricoRoute: AppJarvisHistoricoRoute,
   AppJarvisInsightsRoute: AppJarvisInsightsRoute,
   AppJarvisIndexRoute: AppJarvisIndexRoute,
 }
@@ -513,3 +534,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
