@@ -28,6 +28,7 @@ import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office
 import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
 import { Route as AppJarvisIndexRouteImport } from './routes/_app.jarvis.index'
 import { Route as AppJarvisInsightsRouteImport } from './routes/_app.jarvis.insights'
+import { Route as AppJarvisChatRouteImport } from './routes/_app.jarvis.chat'
 import { Route as AppJarvisAlertasRouteImport } from './routes/_app.jarvis.alertas'
 import { Route as AppJarvisAcoesRouteImport } from './routes/_app.jarvis.acoes'
 
@@ -125,6 +126,11 @@ const AppJarvisInsightsRoute = AppJarvisInsightsRouteImport.update({
   path: '/insights',
   getParentRoute: () => AppJarvisRoute,
 } as any)
+const AppJarvisChatRoute = AppJarvisChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => AppJarvisRoute,
+} as any)
 const AppJarvisAlertasRoute = AppJarvisAlertasRouteImport.update({
   id: '/alertas',
   path: '/alertas',
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AppSettingsRoute
   '/jarvis/acoes': typeof AppJarvisAcoesRoute
   '/jarvis/alertas': typeof AppJarvisAlertasRoute
+  '/jarvis/chat': typeof AppJarvisChatRoute
   '/jarvis/insights': typeof AppJarvisInsightsRoute
   '/jarvis/': typeof AppJarvisIndexRoute
 }
@@ -176,6 +183,7 @@ export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/jarvis/acoes': typeof AppJarvisAcoesRoute
   '/jarvis/alertas': typeof AppJarvisAlertasRoute
+  '/jarvis/chat': typeof AppJarvisChatRoute
   '/jarvis/insights': typeof AppJarvisInsightsRoute
   '/jarvis': typeof AppJarvisIndexRoute
 }
@@ -200,6 +208,7 @@ export interface FileRoutesById {
   '/_app/': typeof AppIndexRoute
   '/_app/jarvis/acoes': typeof AppJarvisAcoesRoute
   '/_app/jarvis/alertas': typeof AppJarvisAlertasRoute
+  '/_app/jarvis/chat': typeof AppJarvisChatRoute
   '/_app/jarvis/insights': typeof AppJarvisInsightsRoute
   '/_app/jarvis/': typeof AppJarvisIndexRoute
 }
@@ -224,6 +233,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/jarvis/acoes'
     | '/jarvis/alertas'
+    | '/jarvis/chat'
     | '/jarvis/insights'
     | '/jarvis/'
   fileRoutesByTo: FileRoutesByTo
@@ -245,6 +255,7 @@ export interface FileRouteTypes {
     | '/'
     | '/jarvis/acoes'
     | '/jarvis/alertas'
+    | '/jarvis/chat'
     | '/jarvis/insights'
     | '/jarvis'
   id:
@@ -268,6 +279,7 @@ export interface FileRouteTypes {
     | '/_app/'
     | '/_app/jarvis/acoes'
     | '/_app/jarvis/alertas'
+    | '/_app/jarvis/chat'
     | '/_app/jarvis/insights'
     | '/_app/jarvis/'
   fileRoutesById: FileRoutesById
@@ -412,6 +424,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppJarvisInsightsRouteImport
       parentRoute: typeof AppJarvisRoute
     }
+    '/_app/jarvis/chat': {
+      id: '/_app/jarvis/chat'
+      path: '/chat'
+      fullPath: '/jarvis/chat'
+      preLoaderRoute: typeof AppJarvisChatRouteImport
+      parentRoute: typeof AppJarvisRoute
+    }
     '/_app/jarvis/alertas': {
       id: '/_app/jarvis/alertas'
       path: '/alertas'
@@ -432,6 +451,7 @@ declare module '@tanstack/react-router' {
 interface AppJarvisRouteChildren {
   AppJarvisAcoesRoute: typeof AppJarvisAcoesRoute
   AppJarvisAlertasRoute: typeof AppJarvisAlertasRoute
+  AppJarvisChatRoute: typeof AppJarvisChatRoute
   AppJarvisInsightsRoute: typeof AppJarvisInsightsRoute
   AppJarvisIndexRoute: typeof AppJarvisIndexRoute
 }
@@ -439,6 +459,7 @@ interface AppJarvisRouteChildren {
 const AppJarvisRouteChildren: AppJarvisRouteChildren = {
   AppJarvisAcoesRoute: AppJarvisAcoesRoute,
   AppJarvisAlertasRoute: AppJarvisAlertasRoute,
+  AppJarvisChatRoute: AppJarvisChatRoute,
   AppJarvisInsightsRoute: AppJarvisInsightsRoute,
   AppJarvisIndexRoute: AppJarvisIndexRoute,
 }
