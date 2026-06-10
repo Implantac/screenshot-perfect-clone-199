@@ -58,13 +58,13 @@ function LoginPage() {
       const createEnv = (start: number, duration: number, maxVol: number) => {
         const gain = ctx.createGain();
         gain.gain.setValueAtTime(0, start);
-        gain.gain.linearRampToValueAtTime(maxVol, start + 0.2);
+        gain.gain.linearRampToValueAtTime(maxVol, start + 0.1);
         gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
         gain.connect(ctx.destination);
         return gain;
       };
 
-      // 1. THE "TUDUM" BASS (Logo Surge - Sustained)
+      // 1. THE "TUDUM" BASS (Logo Surge - Perfect Sync at 0.5s)
       const playBassThump = (time: number, freq: number, vol: number) => {
         const osc = ctx.createOscillator();
         const gain = createEnv(time, 2.5, vol);
@@ -76,10 +76,10 @@ function LoginPage() {
         osc.stop(time + 2.5);
       };
       
-      playBassThump(now + 0.2, 60, 0.7);
-      playBassThump(now + 0.5, 40, 0.9);
+      playBassThump(now, 60, 0.7);
+      playBassThump(now + 0.3, 40, 0.9);
 
-      // 2. TECH RESONANCE (USE - Extended)
+      // 2. TECH RESONANCE (USE - Perfect Sync at 2.0s)
       const playResonance = (time: number, freq: number) => {
         const osc = ctx.createOscillator();
         const filter = ctx.createBiquadFilter();
@@ -98,9 +98,9 @@ function LoginPage() {
         osc.start(time);
         osc.stop(time + 4.0);
       };
-      playResonance(now + 1.8, 440);
+      playResonance(now + 1.5, 440);
 
-      // 3. PREMIUM HARMONIC SWELL (PATRIUM - Cinematic Fade)
+      // 3. PREMIUM HARMONIC SWELL (PATRIUM - Perfect Sync at 3.8s)
       const playSwell = (time: number, freqs: number[]) => {
         freqs.forEach(f => {
           const osc = ctx.createOscillator();
@@ -116,9 +116,9 @@ function LoginPage() {
           osc.stop(time + 7.0);
         });
       };
-      playSwell(now + 3.5, [110, 165, 220, 330, 440]);
+      playSwell(now + 3.3, [110, 165, 220, 330, 440]);
 
-      // 4. SYSTEM INITIALIZATION WHOOSH (Form - 5.5s)
+      // 4. SYSTEM INITIALIZATION WHOOSH (Form - Perfect Sync at 5.8s)
       const playWhoosh = (time: number) => {
         const duration = 2.5;
         const bufferSize = ctx.sampleRate * duration;
@@ -147,10 +147,10 @@ function LoginPage() {
         noise.start(time);
         noise.stop(time + duration);
       };
-      playWhoosh(now + 5.5);
+      playWhoosh(now + 5.3);
     };
 
-    const timer = setTimeout(playCinematicIntro, 200);
+    const timer = setTimeout(playCinematicIntro, 500);
     return () => clearTimeout(timer);
   }, [navigate]);
 
@@ -185,7 +185,7 @@ function LoginPage() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.8, filter: "blur(20px)" }}
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
+            transition={{ delay: 0.5, duration: 1.2, ease: "easeOut" }}
             className="inline-flex items-center justify-center mb-2"
           >
             <motion.div
@@ -225,7 +225,7 @@ function LoginPage() {
               <motion.h1 
                 initial={{ opacity: 0, x: -20, filter: "blur(10px)" }}
                 animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                transition={{ delay: 1.8, duration: 1.2, ease: "easeOut" }}
+                transition={{ delay: 2.0, duration: 1.2, ease: "easeOut" }}
                 style={{ transformStyle: "preserve-3d" }}
                 className="text-2xl md:text-3xl font-black tracking-[0.2em] uppercase bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_8px_20px_rgba(122,83,30,0.4)]"
               >
@@ -234,7 +234,7 @@ function LoginPage() {
               <motion.h1 
                 initial={{ opacity: 0, x: 20, filter: "blur(10px)" }}
                 animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                transition={{ delay: 3.5, duration: 1.2, ease: "easeOut" }}
+                transition={{ delay: 3.8, duration: 1.2, ease: "easeOut" }}
                 style={{ transformStyle: "preserve-3d" }}
                 className="text-2xl md:text-3xl font-black tracking-[0.2em] uppercase bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_8px_20px_rgba(122,83,30,0.4)]"
               >
@@ -244,12 +244,12 @@ function LoginPage() {
 
             <div className="absolute inset-0 pointer-events-none select-none flex flex-col leading-[1.0]">
               <motion.span 
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8, duration: 1.2 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0, duration: 1.2 }}
                 className="text-2xl md:text-3xl font-black tracking-[0.2em] uppercase text-[#63421a] blur-[1px]" 
                 style={{ transform: "translateZ(-8px) translateY(3px)" }}
               >USE</motion.span>
               <motion.span 
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3.5, duration: 1.2 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3.8, duration: 1.2 }}
                 className="text-2xl md:text-3xl font-black tracking-[0.2em] uppercase text-[#63421a] blur-[1px]" 
                 style={{ transform: "translateZ(-8px) translateY(3px)" }}
               >PATRIUM</motion.span>
@@ -260,7 +260,7 @@ function LoginPage() {
         <motion.div 
           initial={{ opacity: 0, y: 50, filter: "blur(15px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ delay: 5.5, duration: 1.5, ease: "circOut" }}
+          transition={{ delay: 5.8, duration: 1.5, ease: "circOut" }}
           className="glass-card rounded-[2.5rem] p-10 space-y-8 border-white/10 relative overflow-hidden"
         >
           <div className="space-y-2 relative z-10 text-center">
