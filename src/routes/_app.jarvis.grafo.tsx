@@ -8,7 +8,8 @@ import {
   ArrowUpRight, 
   ShieldCheck,
   Zap,
-  Maximize2
+  Maximize2,
+  Search
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
