@@ -8,13 +8,13 @@ export const Route = createFileRoute("/_app/settings")({
 
 function SettingsPage() {
   return (
-    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden">
+    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden max-w-[1800px] mx-auto w-full">
       <div className="space-y-1">
         <h2 className="text-3xl font-black tracking-tight uppercase">Configurações</h2>
         <p className="text-muted-foreground text-lg">Gerencie suas preferências e segurança da plataforma.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-20 md:pb-0">
         <div className="lg:col-span-1 space-y-2">
           <SettingsTab icon={User} label="Perfil Executivo" active />
           <SettingsTab icon={Shield} label="Segurança & Acesso" />
