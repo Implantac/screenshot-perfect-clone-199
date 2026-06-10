@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ShieldCheck, ShieldAlert, CheckCircle2, AlertCircle, FileText, ArrowRight, Activity, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEntities } from "@/hooks/usePatrimonio";
+import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/_app/compliance")({
   component: Compliance,
