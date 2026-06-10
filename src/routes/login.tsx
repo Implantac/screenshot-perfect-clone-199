@@ -225,7 +225,7 @@ function LoginPage() {
               <motion.h1 
                 initial={{ opacity: 0, x: -30, filter: "blur(10px)" }}
                 animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
+                transition={{ delay: 1.8, duration: 1.2, ease: "easeOut" }}
                 style={{ transformStyle: "preserve-3d" }}
                 className="text-4xl font-black tracking-[0.2em] uppercase bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_10px_30px_rgba(122,83,30,0.4)]"
               >
@@ -234,7 +234,7 @@ function LoginPage() {
               <motion.h1 
                 initial={{ opacity: 0, x: 30, filter: "blur(10px)" }}
                 animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                transition={{ delay: 2.0, duration: 0.8, ease: "easeOut" }}
+                transition={{ delay: 3.5, duration: 1.2, ease: "easeOut" }}
                 style={{ transformStyle: "preserve-3d" }}
                 className="text-4xl font-black tracking-[0.2em] uppercase bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_10px_30px_rgba(122,83,30,0.4)]"
               >
@@ -244,12 +244,12 @@ function LoginPage() {
 
             <div className="absolute inset-0 pointer-events-none select-none flex flex-col leading-[1.0]">
               <motion.span 
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 0.8 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8, duration: 1.2 }}
                 className="text-4xl font-black tracking-[0.2em] uppercase text-[#63421a] blur-[1px]" 
                 style={{ transform: "translateZ(-8px) translateY(3px)" }}
               >USE</motion.span>
               <motion.span 
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0, duration: 0.8 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3.5, duration: 1.2 }}
                 className="text-4xl font-black tracking-[0.2em] uppercase text-[#63421a] blur-[1px]" 
                 style={{ transform: "translateZ(-8px) translateY(3px)" }}
               >PATRIUM</motion.span>
@@ -260,7 +260,7 @@ function LoginPage() {
         <motion.div 
           initial={{ opacity: 0, y: 50, filter: "blur(15px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ delay: 3.2, duration: 1.2, ease: "circOut" }}
+          transition={{ delay: 5.5, duration: 1.5, ease: "circOut" }}
           className="glass-card rounded-[2.5rem] p-10 space-y-8 border-white/10 relative overflow-hidden"
         >
           <div className="space-y-2 relative z-10 text-center">
