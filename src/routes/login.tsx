@@ -157,11 +157,19 @@ function LoginPage() {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (password.length < 8) {
+      toast.error("A senha deve ter pelo menos 8 caracteres.");
+      return;
+    }
+
     setLoading(true);
+
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        console.log("Attempting signup for:", email);
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -170,23 +178,42 @@ function LoginPage() {
             }
           }
         });
-        if (error) throw error;
-        toast.success("Conta criada com sucesso! Verifique seu e-mail ou faça login.");
-        setIsSignUp(false);
+        
+        if (error) {
+          console.error("Signup error details:", error);
+          throw error;
+        }
+        
+        console.log("Signup success data:", data);
+        
+        if (data.session) {
+          toast.success("Conta criada e autenticada com sucesso!");
+          navigate({ to: "/dashboard" });
+        } else {
+          toast.success("Conta criada com sucesso! Verifique seu e-mail ou faça login.");
+          setIsSignUp(false);
+        }
       } else {
+        console.log("Attempting login for:", email);
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        if (error) throw error;
+        if (error) {
+          console.error("Login error details:", error);
+          throw error;
+        }
         toast.success("Bem-vindo ao Use Patrium");
         navigate({ to: "/dashboard" });
       }
     } catch (error: any) {
+      console.error("Auth process error:", error);
       toast.error(error.message || "Erro ao realizar autenticação");
     } finally {
       setLoading(false);
     }
+
+
   };
 
   return (
