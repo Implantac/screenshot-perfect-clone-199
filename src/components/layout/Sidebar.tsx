@@ -69,15 +69,14 @@ export function Sidebar() {
   return (
     <div className="flex h-screen w-72 flex-col bg-sidebar border-r border-sidebar-border relative z-20 shadow-2xl">
       {/* Brand */}
-      <div className="flex h-20 items-center px-6 gap-3">
-        <div className="h-9 w-9 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-          <ShieldCheck className="text-primary-foreground h-5 w-5" />
-        </div>
-        <div>
-          <h1 className="text-lg font-bold tracking-tight text-foreground leading-none uppercase">USE PATRIUM</h1>
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground mt-1.5 font-semibold">Cérebro Patrimonial</p>
-        </div>
+      <div className="flex h-24 items-center px-6">
+        <img 
+          src="https://hckncgrfhedoswsdkyni.supabase.co/storage/v1/object/public/uploads/dc291665-321e-4f33-9043-0d314f227a70/logo.png" 
+          alt="Use Patrium" 
+          className="h-10 w-auto object-contain"
+        />
       </div>
+
 
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-8 scrollbar-none">
