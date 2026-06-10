@@ -47,18 +47,11 @@ function LoginPage() {
           osc.stop(start + duration);
         };
 
-        // Sequence of tech/cinematic tones
         const now = audioContext.currentTime;
-        
-        // Initial deep sub bloom (Netflix "Ta-dum" low end)
         playOscillator(40, 'sine', now, 2, 0.4);
         playOscillator(80, 'triangle', now + 0.1, 1.5, 0.2);
-        
-        // Tech high-frequency "scan/ping"
         playOscillator(800, 'sine', now + 0.5, 0.8, 0.1);
         playOscillator(1200, 'sine', now + 0.8, 0.6, 0.05);
-        
-        // Final harmonic resolution
         playOscillator(220, 'sine', now + 1.2, 2.5, 0.3);
         playOscillator(440, 'sine', now + 1.2, 2.0, 0.15);
       } catch (e) {
@@ -66,7 +59,6 @@ function LoginPage() {
       }
     };
 
-    // Trigger audio on first interaction or slightly after load if allowed
     const timer = setTimeout(playIntroSound, 500);
     return () => clearTimeout(timer);
   }, [navigate]);
@@ -94,30 +86,32 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
-      {/* Background Decorative Elements */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[150px] -z-10 pointer-events-none translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10 pointer-events-none -translate-x-1/2 translate-y-1/2" />
       
-      <div className="w-full max-w-[450px] space-y-8 animate-in fade-in zoom-in duration-700">
+      <div className="w-full max-w-[450px] space-y-8">
         <div className="text-center space-y-16 group/main cursor-default">
-          <div className="inline-flex items-center justify-center mb-4">
-          <motion.div
-            animate={{ 
-              rotateY: [0, 360]
-            }}
-            transition={{ 
-              duration: 12, 
-              repeat: Infinity, 
-              ease: "linear" 
-            }}
-
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8, filter: "blur(20px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="inline-flex items-center justify-center mb-4"
+          >
+            <motion.div
+              animate={{ 
+                rotateY: [0, 360]
+              }}
+              transition={{ 
+                duration: 12, 
+                repeat: Infinity, 
+                ease: "linear" 
+              }}
               style={{ 
                 transformStyle: "preserve-3d",
                 perspective: "2000px"
               }}
               className="relative w-64 h-64 flex items-center justify-center"
             >
-              {/* High-Fidelity 3D Solid Effect using stacking */}
               {[...Array(12)].map((_, i) => (
                 <img 
                   key={i}
@@ -131,55 +125,53 @@ function LoginPage() {
                   }}
                 />
               ))}
-              
-              {/* Premium cinematic depth glow */}
               <div className="absolute inset-[-40%] bg-primary/15 blur-[120px] rounded-full -z-10" />
             </motion.div>
-          </div>
+          </motion.div>
+
           <div className="relative perspective-2000 group/text flex flex-col items-center">
-            <motion.h1 
-              animate={{ 
-                rotateX: [-2, 2, -2],
-                rotateY: [-5, 5, -5],
-                filter: ["brightness(1) contrast(1)", "brightness(1.1) contrast(1.05)", "brightness(1) contrast(1)"]
-              }}
-              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-              style={{ transformStyle: "preserve-3d" }}
-              className="text-4xl font-black tracking-[0.2em] uppercase animate-in slide-in-from-bottom-20 duration-1000 delay-200 bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] relative z-10 drop-shadow-[0_10px_30px_rgba(122,83,30,0.4)] flex flex-col leading-[1.0]"
-            >
-              <span>USE</span>
-              <span>PATRIUM</span>
-            </motion.h1>
-            {/* Multi-layered High-End 3D Shadows */}
-            <h1 
-              className="absolute inset-0 text-4xl font-black tracking-[0.2em] uppercase text-[#63421a] blur-[1px] pointer-events-none select-none flex flex-col leading-[1.0]" 
-              style={{ transform: "translateZ(-8px) translateY(3px)" }}
-            >
-              <span>USE</span>
-              <span>PATRIUM</span>
-            </h1>
-            <h1 
-              className="absolute inset-0 text-4xl font-black tracking-[0.2em] uppercase text-[#3d2910] blur-[4px] opacity-40 pointer-events-none select-none flex flex-col leading-[1.0]" 
-              style={{ transform: "translateZ(-20px) translateY(8px)" }}
-            >
-              <span>USE</span>
-              <span>PATRIUM</span>
-            </h1>
+            <div className="relative z-10 flex flex-col leading-[1.0]">
+              <motion.h1 
+                initial={{ opacity: 0, x: -30, filter: "blur(10px)" }}
+                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                transition={{ delay: 1, duration: 0.8, ease: "easeOut" }}
+                style={{ transformStyle: "preserve-3d" }}
+                className="text-4xl font-black tracking-[0.2em] uppercase bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_10px_30px_rgba(122,83,30,0.4)]"
+              >
+                USE
+              </motion.h1>
+              <motion.h1 
+                initial={{ opacity: 0, x: 30, filter: "blur(10px)" }}
+                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                transition={{ delay: 1.6, duration: 0.8, ease: "easeOut" }}
+                style={{ transformStyle: "preserve-3d" }}
+                className="text-4xl font-black tracking-[0.2em] uppercase bg-clip-text text-transparent bg-gradient-to-b from-[#f3d38c] via-[#c4924c] to-[#7a531e] drop-shadow-[0_10px_30px_rgba(122,83,30,0.4)]"
+              >
+                PATRIUM
+              </motion.h1>
+            </div>
+
+            <div className="absolute inset-0 pointer-events-none select-none flex flex-col leading-[1.0]">
+              <motion.span 
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 0.8 }}
+                className="text-4xl font-black tracking-[0.2em] uppercase text-[#63421a] blur-[1px]" 
+                style={{ transform: "translateZ(-8px) translateY(3px)" }}
+              >USE</motion.span>
+              <motion.span 
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6, duration: 0.8 }}
+                className="text-4xl font-black tracking-[0.2em] uppercase text-[#63421a] blur-[1px]" 
+                style={{ transform: "translateZ(-8px) translateY(3px)" }}
+              >PATRIUM</motion.span>
+            </div>
           </div>
-
-
-
-
         </div>
 
-
-
-
-
-
-
-
-        <div className="glass-card rounded-[2.5rem] p-10 space-y-8 border-white/10 relative overflow-hidden">
+        <motion.div 
+          initial={{ opacity: 0, y: 50, filter: "blur(15px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ delay: 2.5, duration: 1.2, ease: "circOut" }}
+          className="glass-card rounded-[2.5rem] p-10 space-y-8 border-white/10 relative overflow-hidden"
+        >
           <div className="space-y-2 relative z-10 text-center">
             <h2 className="text-2xl font-bold text-foreground">Acesso Restrito</h2>
             <p className="text-sm text-muted-foreground">Insira suas credenciais para gerenciar a governança.</p>
@@ -238,9 +230,8 @@ function LoginPage() {
             </button>
           </form>
 
-          {/* Decorative faint glow */}
           <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-        </div>
+        </motion.div>
 
         <p className="text-center text-[10px] text-muted-foreground uppercase tracking-widest font-bold opacity-50">
           © 2026 Use Patrium • Segurança & Compliance
