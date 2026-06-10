@@ -246,21 +246,23 @@ function LandingPage() {
 
 function ProblemSection() {
   const problems = [
-    { title: "Documentos Dispersos", desc: "Contratos, matrículas e licenças espalhados em múltiplas pastas e sistemas." },
-    { title: "Riscos Invisíveis", desc: "Certidões vencidas e prazos perdidos que geram multas e insegurança jurídica." },
-    { title: "Processos Manuais", desc: "Dependência de planilhas e memórias individuais para o controle do patrimônio." },
-    { title: "Falta de Governança", desc: "Dificuldade em visualizar a estrutura sucessória e societária de forma clara." },
+    { title: "Documentação Dispersa", desc: "A fragmentação de dados em silos analógicos e digitais impede a tomada de decisão estratégica." },
+    { title: "Invisibilidade de Riscos", desc: "Prazos e certidões críticas negligenciadas geram passivos ocultos e insegurança jurídica." },
+    { title: "Operação Dependente", desc: "Processos manuais e dependência de pessoal-chave criam gargalos na governança patrimonial." },
+    { title: "Opacidade Estrutural", desc: "Dificuldade técnica em visualizar a capilaridade societária e a exposição real a riscos." },
   ];
 
   return (
-    <section className="py-20 md:py-32 px-4 md:px-8 max-w-7xl mx-auto">
-      <SectionHeader badge="O Desafio" title="A Complexidade Patrimonial" subtitle="Empresas e famílias perdem milhões anualmente por falta de visibilidade e controle sobre seus ativos." />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <section className="py-20 md:py-40 px-4 md:px-8 max-w-7xl mx-auto">
+      <SectionHeader badge="O Desafio Executivo" title="A Complexidade Silenciosa" subtitle="Patrimônios complexos exigem um nível de vigilância que transcende as capacidades humanas tradicionais." />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {problems.map((p, i) => (
-          <div key={i} className="p-8 rounded-[2rem] bg-red-500/[0.02] border border-red-500/10 space-y-4">
-            <AlertTriangle className="h-6 w-6 text-red-500/50" />
-            <h4 className="text-lg font-bold text-white/90">{p.title}</h4>
-            <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
+          <div key={i} className="p-10 rounded-[3rem] bg-red-500/[0.01] border border-red-500/10 space-y-6 hover:bg-red-500/[0.02] transition-colors group">
+            <div className="h-12 w-12 rounded-xl bg-red-500/5 flex items-center justify-center border border-red-500/10 group-hover:scale-110 transition-transform">
+              <AlertTriangle className="h-6 w-6 text-red-500/50" />
+            </div>
+            <h4 className="text-xl font-black italic uppercase tracking-tighter text-white/90 leading-none">{p.title}</h4>
+            <p className="text-sm text-muted-foreground leading-relaxed italic font-medium opacity-80">{p.desc}</p>
           </div>
         ))}
       </div>
@@ -270,37 +272,40 @@ function ProblemSection() {
 
 function MarketAnalysis() {
   return (
-    <section className="py-20 md:py-32 px-4 md:px-8 bg-[#080808] border-y border-white/5">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        <div className="space-y-8">
-          <SectionHeader badge="Mercado" title="Uma Nova Categoria" subtitle="O crescimento de Holdings e Family Offices no Brasil exige um novo padrão de tecnologia." />
-          <div className="space-y-6">
-            <div className="flex gap-4 p-6 rounded-2xl bg-white/[0.02] border border-white/5">
-              <TrendingUp className="h-8 w-8 text-primary shrink-0" />
+    <section className="py-20 md:py-40 px-4 md:px-8 bg-white/[0.01] border-y border-white/[0.03] relative overflow-hidden">
+      <div className="absolute inset-0 executive-grid opacity-30" />
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center relative z-10">
+        <div className="space-y-12">
+          <SectionHeader badge="Intelligence Report" title="Uma Nova Categoria de Software" subtitle="O mercado global de Family Offices e Holdings exige um sistema operacional dedicado." />
+          <div className="space-y-8">
+            <div className="flex gap-6 p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/[0.05] hover:border-primary/20 transition-all backdrop-blur-xl">
+              <TrendingUp className="h-10 w-10 text-primary shrink-0" />
               <div>
-                <h5 className="font-bold mb-1">+400% no volume de Holdings</h5>
-                <p className="text-sm text-muted-foreground">Crescimento acelerado na busca por proteção patrimonial e sucessória no Brasil.</p>
+                <h5 className="font-black italic uppercase tracking-tight text-lg mb-2">Escalabilidade Patrimonial</h5>
+                <p className="text-sm text-muted-foreground italic font-medium leading-relaxed">Infraestrutura preparada para a gestão de ativos multi-geracionais e estruturas complexas.</p>
               </div>
             </div>
-            <div className="flex gap-4 p-6 rounded-2xl bg-white/[0.02] border border-white/5">
-              <Scale className="h-8 w-8 text-primary shrink-0" />
+            <div className="flex gap-6 p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/[0.05] hover:border-primary/20 transition-all backdrop-blur-xl">
+              <Scale className="h-10 w-10 text-primary shrink-0" />
               <div>
-                <h5 className="font-bold mb-1">Necessidade Rigorosa de Compliance</h5>
-                <p className="text-sm text-muted-foreground">Novas regulamentações exigem monitoramento contínuo de ativos e sócios.</p>
+                <h5 className="font-black italic uppercase tracking-tight text-lg mb-2">Soberania de Compliance</h5>
+                <p className="text-sm text-muted-foreground italic font-medium leading-relaxed">Monitoramento preditivo que garante a regularidade total dos ativos em tempo real.</p>
               </div>
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-6">
           {[
-            { label: "Holdings Familiares", icon: Building2 },
+            { label: "Holdings Estratégicas", icon: Building2 },
             { label: "Family Offices", icon: Users },
             { label: "Grupos do Agronegócio", icon: Globe },
-            { label: "Escritórios de Advocacia", icon: Scale }
+            { label: "Boutiques Jurídicas", icon: Scale }
           ].map((item, i) => (
-            <div key={i} className="aspect-square rounded-[2.5rem] bg-white/[0.01] border border-white/5 flex flex-col items-center justify-center p-6 text-center space-y-4 hover:border-primary/20 transition-colors">
-              <item.icon className="h-10 w-10 text-primary/40" />
-              <span className="text-[10px] font-black uppercase tracking-widest leading-tight">{item.label}</span>
+            <div key={i} className="aspect-square rounded-[3.5rem] bg-white/[0.02] border border-white/[0.05] flex flex-col items-center justify-center p-8 text-center space-y-6 hover:border-primary/40 transition-all group backdrop-blur-xl">
+              <div className="h-16 w-16 rounded-2xl bg-white/[0.03] flex items-center justify-center border border-white/[0.05] group-hover:scale-110 group-hover:bg-primary/10 transition-all">
+                <item.icon className="h-8 w-8 text-primary/60 group-hover:text-primary transition-colors" />
+              </div>
+              <span className="text-xs font-black uppercase tracking-[0.2em] leading-tight italic">{item.label}</span>
             </div>
           ))}
         </div>
@@ -311,22 +316,23 @@ function MarketAnalysis() {
 
 function VisionSection() {
   return (
-    <section className="py-20 md:py-40 px-4 md:px-8 text-center max-w-4xl mx-auto">
+    <section className="py-20 md:py-60 px-4 md:px-8 text-center max-w-5xl mx-auto relative">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[150px] -z-10 animate-pulse" />
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
-        className="space-y-12"
+        className="space-y-16"
       >
-        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Nossa Visão</span>
-        <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter leading-[0.9]">
-          CONSTRUINDO O FUTURO DA GOVERNANÇA.
+        <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">Manifesto Patrium</span>
+        <h2 className="text-5xl md:text-[8rem] font-black italic uppercase tracking-tighter leading-[0.8] drop-shadow-2xl">
+          THE FUTURE OF <br /> <span className="text-primary">GOVERNANCE.</span>
         </h2>
-        <p className="text-lg md:text-2xl text-muted-foreground leading-relaxed font-medium italic">
-          "Estamos criando um cérebro patrimonial capaz de proteger, organizar e potencializar o patrimônio de empresas, holdings e famílias por gerações."
+        <p className="text-xl md:text-4xl text-muted-foreground leading-tight font-medium italic max-w-4xl mx-auto">
+          "Estamos projetando um sistema operacional capaz de eternizar o legado de empresas e famílias através da tecnologia."
         </p>
-        <div className="pt-8">
-          <Button size="lg" className="rounded-full px-12 h-16 bg-white text-black font-black uppercase tracking-widest text-xs hover:bg-white/90">Solicitar Demonstração</Button>
+        <div className="pt-12">
+          <Button size="lg" className="rounded-full px-16 h-20 bg-white text-black font-black uppercase tracking-[0.3em] text-xs hover:scale-105 transition-all shadow-2xl border-none">Solicitar Demonstração</Button>
         </div>
       </motion.div>
     </section>
