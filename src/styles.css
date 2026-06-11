@@ -111,13 +111,71 @@
     border-color: var(--color-border);
   }
 
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-feature-settings: "cv02", "cv03", "cv04", "ss01";
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  /* Unified focus ring — accessible & on-brand */
+  :where(a, button, [role="button"], input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Smooth, premium-feeling transitions on interactive elements */
+  :where(a, button, [role="button"]) {
+    transition: color 200ms ease, background-color 200ms ease,
+                border-color 200ms ease, opacity 200ms ease,
+                transform 200ms ease, box-shadow 200ms ease;
+  }
+
+  /* Refined custom scrollbar (desktop) */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: oklch(1 0 0 / 0.08);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(1 0 0 / 0.16);
+    background-clip: content-box;
+  }
+
+  /* Better text selection */
+  ::selection {
+    background: color-mix(in oklab, var(--color-primary) 35%, transparent);
+    color: var(--color-foreground);
+  }
+
+  /* Tabular numerals for dashboards / metrics */
+  :where(table, .tabular-nums) {
+    font-variant-numeric: tabular-nums;
   }
 }
+
 
 @layer components {
   .glass-card {
