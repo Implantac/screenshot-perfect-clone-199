@@ -11,8 +11,25 @@ export const Route = createFileRoute("/")({
 function LandingPage() {
   return (
     <div className="bg-[#020202] text-white font-sans overflow-x-hidden selection:bg-primary/20 noise-overlay">
+      {/* Top Nav */}
+      <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-7 w-7 rounded-lg premium-gradient" />
+            <span className="text-[11px] font-black uppercase tracking-[0.3em]">Patrium <span className="text-primary">OS</span></span>
+          </div>
+          <nav className="hidden md:flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.25em] text-white/60">
+            <a href="#jarvis" className="hover:text-primary transition-colors">Jarvis</a>
+            <a href="#modulos" className="hover:text-primary transition-colors">Módulos</a>
+            <a href="#pricing" className="hover:text-primary transition-colors">Investimento</a>
+          </nav>
+          <Button className="h-9 px-5 rounded-xl bg-primary text-black font-black uppercase tracking-[0.2em] text-[10px] hover:bg-white">Demo</Button>
+        </div>
+      </header>
+
       {/* Hero Section */}
       <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center relative pt-32">
+
         <div className="absolute inset-0 executive-grid opacity-[0.03] pointer-events-none" />
         <div className="max-w-5xl mx-auto space-y-10 z-10">
           <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full border border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-[0.4em] text-primary backdrop-blur-md shadow-2xl shadow-primary/10">
@@ -32,7 +49,7 @@ function LandingPage() {
       </section>
 
       {/* Problem */}
-      <section className="py-40 px-6 bg-[#020202]">
+      <section className="py-20 md:py-40 px-6 bg-[#020202]">
         <div className="max-w-7xl mx-auto">
           <SectionHeader title="O DESAFIO ATUAL" badge="Governança Patrimonial" subtitle="Sua organização ainda sofre com processos descentralizados e riscos invisíveis?" />
           <div className="grid md:grid-cols-2 gap-8">
@@ -58,8 +75,9 @@ function LandingPage() {
         </div>
       </section>
 
+      <span id="jarvis" />
       {/* JARVIS */}
-      <section className="py-40 px-6 bg-[#050505]">
+      <section className="py-20 md:py-40 px-6 bg-[#050505]">
         <div className="max-w-7xl mx-auto">
           <SectionHeader title="CONHEÇA O JARVIS" badge="Seu Diretor Patrimonial Digital" subtitle="O Jarvis monitora continuamente seu ecossistema, transformando dados brutos em decisões estratégicas de alto valor." />
           <div className="grid md:grid-cols-3 gap-8">
@@ -73,15 +91,16 @@ function LandingPage() {
       </section>
 
       {/* Architecture */}
-      <section className="py-40 px-6">
+      <section className="py-20 md:py-40 px-6">
         <div className="max-w-7xl mx-auto text-center">
           <SectionHeader title="ARQUITETURA" badge="Sistema Operacional Patrimonial" subtitle="Do dado bruto ao insight executivo." />
           <ArchitectureFlow />
         </div>
       </section>
 
+      <span id="modulos" />
       {/* Modules */}
-      <section className="py-40 px-6 bg-[#020202] border-y border-white/5">
+      <section className="py-20 md:py-40 px-6 bg-[#020202] border-y border-white/5">
         <div className="max-w-7xl mx-auto">
           <SectionHeader title="MÓDULOS" badge="Ecossistema Completo" />
           <ModuleGrid />
@@ -89,7 +108,7 @@ function LandingPage() {
       </section>
 
       {/* Knowledge Graph */}
-      <section className="py-40 px-6">
+      <section className="py-20 md:py-40 px-6">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
           <div className="space-y-8">
             <h2 className="text-6xl md:text-8xl font-black italic uppercase tracking-tighter">KNOWLEDGE GRAPH</h2>
@@ -100,15 +119,16 @@ function LandingPage() {
       </section>
 
       {/* Comparison */}
-      <section className="py-40 px-6 bg-[#050505]">
+      <section className="py-20 md:py-40 px-6 bg-[#050505]">
         <div className="max-w-7xl mx-auto">
           <SectionHeader title="DIFERENCIAIS" badge="Posicionamento de Mercado" subtitle="Comparativo estratégico: O Patrium OS redefine a categoria." />
           <ComparisonTable />
         </div>
       </section>
 
+      <span id="pricing" />
       {/* Pricing */}
-      <section className="py-40 px-6">
+      <section className="py-20 md:py-40 px-6">
         <div className="max-w-7xl mx-auto">
           <SectionHeader title="INVESTIMENTO" badge="Projeção Estratégica" subtitle="Escalabilidade para qualquer estrutura de capital." />
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -128,7 +148,7 @@ function LandingPage() {
       </section>
 
       {/* CTA Final */}
-      <section className="py-40 px-6 text-center bg-gradient-to-b from-[#020202] to-[#080808]">
+      <section className="py-20 md:py-40 px-6 text-center bg-gradient-to-b from-[#020202] to-[#080808]">
         <div className="max-w-4xl mx-auto space-y-12">
           <h2 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter leading-none">Pronto para transformar sua gestão patrimonial?</h2>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
