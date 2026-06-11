@@ -11,8 +11,25 @@ export const Route = createFileRoute("/")({
 function LandingPage() {
   return (
     <div className="bg-[#020202] text-white font-sans overflow-x-hidden selection:bg-primary/20 noise-overlay">
+      {/* Top Nav */}
+      <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-7 w-7 rounded-lg premium-gradient" />
+            <span className="text-[11px] font-black uppercase tracking-[0.3em]">Patrium <span className="text-primary">OS</span></span>
+          </div>
+          <nav className="hidden md:flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.25em] text-white/60">
+            <a href="#jarvis" className="hover:text-primary transition-colors">Jarvis</a>
+            <a href="#modulos" className="hover:text-primary transition-colors">Módulos</a>
+            <a href="#pricing" className="hover:text-primary transition-colors">Investimento</a>
+          </nav>
+          <Button className="h-9 px-5 rounded-xl bg-primary text-black font-black uppercase tracking-[0.2em] text-[10px] hover:bg-white">Demo</Button>
+        </div>
+      </header>
+
       {/* Hero Section */}
       <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center relative pt-32">
+
         <div className="absolute inset-0 executive-grid opacity-[0.03] pointer-events-none" />
         <div className="max-w-5xl mx-auto space-y-10 z-10">
           <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full border border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-[0.4em] text-primary backdrop-blur-md shadow-2xl shadow-primary/10">
