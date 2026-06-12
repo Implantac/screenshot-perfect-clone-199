@@ -113,7 +113,7 @@ function DashboardExecutivo() {
       </div>
 
       {/* Primary Health Indicators */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
         <HealthCard 
           title="Saúde Patrimonial" 
           value={`R$ ${(totalValue / 1000000).toFixed(1)}M`}
@@ -276,28 +276,36 @@ function HealthCard({ title, value, status, color, icon: Icon, description, metr
     blue: "text-blue-500 bg-blue-500/10 border-blue-500/20",
   };
 
+  const glow: Record<string, string> = {
+    primary: "from-primary/[0.08]",
+    emerald: "from-emerald-500/[0.08]",
+    blue: "from-blue-500/[0.08]",
+  };
+
   return (
-    <div className="glass-card rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-8 space-y-6 group hover:border-white/20 transition-all border border-transparent">
-      <div className="flex items-start justify-between">
-        <div className={cn("p-3 lg:p-4 rounded-xl lg:rounded-2xl transition-transform group-hover:scale-110 duration-500 shrink-0", colors[color] || colors.primary)}>
-          <Icon className="h-6 w-6 lg:h-8 lg:w-8" />
+    <div className="group glass-card relative overflow-hidden rounded-2xl lg:rounded-[2rem] border border-white/[0.06] p-5 sm:p-6 lg:p-7 flex flex-col gap-5 lg:gap-6 transition-all duration-500 hover:border-white/[0.14] hover:-translate-y-0.5 hover:shadow-2xl">
+      <div className={cn("pointer-events-none absolute inset-x-0 -top-24 h-40 bg-gradient-to-b to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-2xl", glow[color] || glow.primary)} />
+
+      <div className="flex items-center justify-between gap-3 relative z-10">
+        <div className={cn("h-11 w-11 lg:h-12 lg:w-12 rounded-xl lg:rounded-2xl border flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:scale-105", colors[color] || colors.primary)}>
+          <Icon className="h-5 w-5 lg:h-6 lg:w-6" />
         </div>
-        <div className={cn("px-2.5 py-1 rounded-full text-[9px] lg:text-[10px] font-black uppercase tracking-widest", colors[color] || colors.primary)}>
+        <span className={cn("px-2.5 py-1 rounded-full text-[9px] lg:text-[10px] font-black uppercase tracking-[0.18em] border", colors[color] || colors.primary)}>
           {status}
-        </div>
-      </div>
-      
-      <div>
-        <p className="text-xs lg:text-sm font-bold text-muted-foreground tracking-tight">{title}</p>
-        <h4 className="text-2xl lg:text-3xl font-black mt-1">{value}</h4>
-        <p className="text-[11px] lg:text-xs text-muted-foreground/60 mt-2 leading-relaxed line-clamp-2 lg:line-clamp-none">{description}</p>
+        </span>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+      <div className="relative z-10 space-y-1.5">
+        <p className="text-[10px] lg:text-[11px] font-black uppercase tracking-[0.25em] text-muted-foreground/70">{title}</p>
+        <h4 className="text-3xl sm:text-[2rem] lg:text-[2.25rem] font-black tracking-tighter tabular-nums leading-none">{value}</h4>
+        <p className="text-[12px] lg:text-[13px] text-muted-foreground/70 leading-relaxed line-clamp-2 pt-1">{description}</p>
+      </div>
+
+      <div className="relative z-10 grid grid-cols-2 gap-3 pt-4 mt-auto border-t border-white/[0.06]">
         {metrics?.map((m: any) => (
-          <div key={m.label}>
-            <p className="text-[9px] lg:text-[10px] font-black uppercase text-muted-foreground/40">{m.label}</p>
-            <p className="text-xs lg:text-sm font-bold text-foreground mt-0.5">{m.val}</p>
+          <div key={m.label} className="min-w-0">
+            <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 truncate">{m.label}</p>
+            <p className="text-sm lg:text-base font-black text-foreground mt-1 tabular-nums truncate">{m.val}</p>
           </div>
         ))}
       </div>
