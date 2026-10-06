@@ -1,16 +1,24 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, ShieldCheck, Network, Database, Building2, Cpu, Target, Box, FileText, Scale, Search, HardHat, AlertTriangle, Users, ChevronRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionHeader, FeatureCard, ArchitectureFlow, ModuleGrid, KnowledgeGraphAnimation, ComparisonTable, PricingCard } from "@/components/LandingPageComponents";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "USE PATRIUM OS | Sistema Operacional do Patrimônio" },
+      { name: "description", content: "Centralize patrimônio, compliance, holdings e agronegócio com o JARVIS, seu Diretor Patrimonial Digital." },
+      { property: "og:title", content: "USE PATRIUM OS | Sistema Operacional do Patrimônio" },
+      { property: "og:description", content: "Governança patrimonial com inteligência executiva 24/7." },
+    ],
+  }),
   component: LandingPage,
 });
 
 function LandingPage() {
   return (
-    <div className="bg-[#020202] text-white font-sans overflow-x-hidden selection:bg-primary/20 noise-overlay">
+    <div className="bg-[#020202] text-white font-sans overflow-x-hidden selection:bg-primary/20">
       {/* Top Nav */}
       <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-black/40 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -23,7 +31,7 @@ function LandingPage() {
             <a href="#modulos" className="hover:text-primary transition-colors">Módulos</a>
             <a href="#pricing" className="hover:text-primary transition-colors">Investimento</a>
           </nav>
-          <Button className="h-9 px-5 rounded-xl bg-primary text-black font-black uppercase tracking-[0.2em] text-[10px] hover:bg-white">Demo</Button>
+          <Button asChild className="h-9 px-5 rounded-xl bg-primary text-black font-black uppercase tracking-[0.2em] text-[10px] hover:bg-white"><Link to="/login">Demo</Link></Button>
         </div>
       </header>
 
@@ -42,8 +50,8 @@ function LandingPage() {
             A primeira plataforma brasileira capaz de centralizar patrimônio, compliance, documentação, holdings, agronegócio e inteligência executiva em um único ambiente.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
-            <Button className="h-16 px-10 rounded-2xl bg-primary text-black font-black uppercase tracking-[0.2em] text-xs hover:scale-105 transition-all shadow-xl shadow-primary/20 hover:bg-white">Solicitar Demonstração</Button>
-            <Button className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 font-black uppercase tracking-[0.2em] text-xs transition-all hover:border-primary/50">Conhecer o Jarvis</Button>
+            <Button asChild className="h-16 px-10 rounded-2xl bg-primary text-black font-black uppercase tracking-[0.2em] text-xs hover:scale-105 transition-all shadow-xl shadow-primary/20 hover:bg-white"><Link to="/login">Solicitar Demonstração</Link></Button>
+            <Button asChild className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 text-foreground hover:bg-white/10 font-black uppercase tracking-[0.2em] text-xs transition-all hover:border-primary/50"><Link to="/login">Conhecer o Jarvis</Link></Button>
           </div>
         </div>
       </section>
@@ -152,8 +160,8 @@ function LandingPage() {
         <div className="max-w-4xl mx-auto space-y-12">
           <h2 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter leading-none">Pronto para transformar sua gestão patrimonial?</h2>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Button className="h-16 px-10 rounded-2xl bg-primary text-black font-black uppercase tracking-[0.2em] text-xs hover:scale-105 transition-all">Solicitar Demonstração</Button>
-            <Button className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 font-black uppercase tracking-[0.2em] text-xs transition-all">Falar com Especialista</Button>
+            <Button asChild className="h-16 px-10 rounded-2xl bg-primary text-black font-black uppercase tracking-[0.2em] text-xs hover:scale-105 transition-all"><Link to="/login">Solicitar Demonstração</Link></Button>
+            <Button asChild className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 text-foreground hover:bg-white/10 font-black uppercase tracking-[0.2em] text-xs transition-all"><Link to="/login">Falar com Especialista</Link></Button>
           </div>
         </div>
       </section>
