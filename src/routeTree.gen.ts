@@ -9,109 +9,49 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AppSettingsRouteImport } from './routes/_app.settings'
-import { Route as AppSaudeDocumentalRouteImport } from './routes/_app.saude-documental'
-import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
-import { Route as AppRegularizacaoRouteImport } from './routes/_app.regularizacao'
-import { Route as AppMapaRouteImport } from './routes/_app.mapa'
-import { Route as AppLegalRouteImport } from './routes/_app.legal'
-import { Route as AppJarvisRouteImport } from './routes/_app.jarvis'
-import { Route as AppInteligenciaRouteImport } from './routes/_app.inteligencia'
-import { Route as AppImoveisRouteImport } from './routes/_app.imoveis'
-import { Route as AppHoldingsRouteImport } from './routes/_app.holdings'
-import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
-import { Route as AppFinanceiroRouteImport } from './routes/_app.financeiro'
-import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
-import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
+import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
+import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
+import { Route as AppFinanceiroRouteImport } from './routes/_app.financeiro'
+import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
+import { Route as AppHoldingsRouteImport } from './routes/_app.holdings'
+import { Route as AppImoveisRouteImport } from './routes/_app.imoveis'
+import { Route as AppInteligenciaRouteImport } from './routes/_app.inteligencia'
+import { Route as AppJarvisRouteImport } from './routes/_app.jarvis'
+import { Route as AppLegalRouteImport } from './routes/_app.legal'
+import { Route as AppMapaRouteImport } from './routes/_app.mapa'
+import { Route as AppRegularizacaoRouteImport } from './routes/_app.regularizacao'
+import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
+import { Route as AppSaudeDocumentalRouteImport } from './routes/_app.saude-documental'
+import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 import { Route as AppJarvisIndexRouteImport } from './routes/_app.jarvis.index'
-import { Route as AppJarvisInsightsRouteImport } from './routes/_app.jarvis.insights'
-import { Route as AppJarvisHistoricoRouteImport } from './routes/_app.jarvis.historico'
-import { Route as AppJarvisGrafoRouteImport } from './routes/_app.jarvis.grafo'
-import { Route as AppJarvisChatRouteImport } from './routes/_app.jarvis.chat'
-import { Route as AppJarvisAlertasRouteImport } from './routes/_app.jarvis.alertas'
 import { Route as AppJarvisAcoesRouteImport } from './routes/_app.jarvis.acoes'
+import { Route as AppJarvisAlertasRouteImport } from './routes/_app.jarvis.alertas'
+import { Route as AppJarvisChatRouteImport } from './routes/_app.jarvis.chat'
+import { Route as AppJarvisGrafoRouteImport } from './routes/_app.jarvis.grafo'
+import { Route as AppJarvisHistoricoRouteImport } from './routes/_app.jarvis.historico'
+import { Route as AppJarvisInsightsRouteImport } from './routes/_app.jarvis.insights'
 
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppSettingsRoute = AppSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSaudeDocumentalRoute = AppSaudeDocumentalRouteImport.update({
-  id: '/saude-documental',
-  path: '/saude-documental',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppRiscosRoute = AppRiscosRouteImport.update({
-  id: '/riscos',
-  path: '/riscos',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppRegularizacaoRoute = AppRegularizacaoRouteImport.update({
-  id: '/regularizacao',
-  path: '/regularizacao',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppMapaRoute = AppMapaRouteImport.update({
-  id: '/mapa',
-  path: '/mapa',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppLegalRoute = AppLegalRouteImport.update({
-  id: '/legal',
-  path: '/legal',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppJarvisRoute = AppJarvisRouteImport.update({
-  id: '/jarvis',
-  path: '/jarvis',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppInteligenciaRoute = AppInteligenciaRouteImport.update({
-  id: '/inteligencia',
-  path: '/inteligencia',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppImoveisRoute = AppImoveisRouteImport.update({
-  id: '/imoveis',
-  path: '/imoveis',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppHoldingsRoute = AppHoldingsRouteImport.update({
-  id: '/holdings',
-  path: '/holdings',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppFornecedoresRoute = AppFornecedoresRouteImport.update({
-  id: '/fornecedores',
-  path: '/fornecedores',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppFinanceiroRoute = AppFinanceiroRouteImport.update({
-  id: '/financeiro',
-  path: '/financeiro',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppFamilyOfficeRoute = AppFamilyOfficeRouteImport.update({
-  id: '/family-office',
-  path: '/family-office',
+const AppComplianceRoute = AppComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
   getParentRoute: () => AppRoute,
 } as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
@@ -119,9 +59,69 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
-const AppComplianceRoute = AppComplianceRouteImport.update({
-  id: '/compliance',
-  path: '/compliance',
+const AppFamilyOfficeRoute = AppFamilyOfficeRouteImport.update({
+  id: '/family-office',
+  path: '/family-office',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFinanceiroRoute = AppFinanceiroRouteImport.update({
+  id: '/financeiro',
+  path: '/financeiro',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFornecedoresRoute = AppFornecedoresRouteImport.update({
+  id: '/fornecedores',
+  path: '/fornecedores',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppHoldingsRoute = AppHoldingsRouteImport.update({
+  id: '/holdings',
+  path: '/holdings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppImoveisRoute = AppImoveisRouteImport.update({
+  id: '/imoveis',
+  path: '/imoveis',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInteligenciaRoute = AppInteligenciaRouteImport.update({
+  id: '/inteligencia',
+  path: '/inteligencia',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppJarvisRoute = AppJarvisRouteImport.update({
+  id: '/jarvis',
+  path: '/jarvis',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLegalRoute = AppLegalRouteImport.update({
+  id: '/legal',
+  path: '/legal',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMapaRoute = AppMapaRouteImport.update({
+  id: '/mapa',
+  path: '/mapa',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRegularizacaoRoute = AppRegularizacaoRouteImport.update({
+  id: '/regularizacao',
+  path: '/regularizacao',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRiscosRoute = AppRiscosRouteImport.update({
+  id: '/riscos',
+  path: '/riscos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSaudeDocumentalRoute = AppSaudeDocumentalRouteImport.update({
+  id: '/saude-documental',
+  path: '/saude-documental',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AppRoute,
 } as any)
 const AppJarvisIndexRoute = AppJarvisIndexRouteImport.update({
@@ -129,24 +129,9 @@ const AppJarvisIndexRoute = AppJarvisIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppJarvisRoute,
 } as any)
-const AppJarvisInsightsRoute = AppJarvisInsightsRouteImport.update({
-  id: '/insights',
-  path: '/insights',
-  getParentRoute: () => AppJarvisRoute,
-} as any)
-const AppJarvisHistoricoRoute = AppJarvisHistoricoRouteImport.update({
-  id: '/historico',
-  path: '/historico',
-  getParentRoute: () => AppJarvisRoute,
-} as any)
-const AppJarvisGrafoRoute = AppJarvisGrafoRouteImport.update({
-  id: '/grafo',
-  path: '/grafo',
-  getParentRoute: () => AppJarvisRoute,
-} as any)
-const AppJarvisChatRoute = AppJarvisChatRouteImport.update({
-  id: '/chat',
-  path: '/chat',
+const AppJarvisAcoesRoute = AppJarvisAcoesRouteImport.update({
+  id: '/acoes',
+  path: '/acoes',
   getParentRoute: () => AppJarvisRoute,
 } as any)
 const AppJarvisAlertasRoute = AppJarvisAlertasRouteImport.update({
@@ -154,9 +139,24 @@ const AppJarvisAlertasRoute = AppJarvisAlertasRouteImport.update({
   path: '/alertas',
   getParentRoute: () => AppJarvisRoute,
 } as any)
-const AppJarvisAcoesRoute = AppJarvisAcoesRouteImport.update({
-  id: '/acoes',
-  path: '/acoes',
+const AppJarvisChatRoute = AppJarvisChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => AppJarvisRoute,
+} as any)
+const AppJarvisGrafoRoute = AppJarvisGrafoRouteImport.update({
+  id: '/grafo',
+  path: '/grafo',
+  getParentRoute: () => AppJarvisRoute,
+} as any)
+const AppJarvisHistoricoRoute = AppJarvisHistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => AppJarvisRoute,
+} as any)
+const AppJarvisInsightsRoute = AppJarvisInsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
   getParentRoute: () => AppJarvisRoute,
 } as any)
 
@@ -328,11 +328,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app': {
@@ -342,102 +342,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/settings': {
-      id: '/_app/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AppSettingsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/saude-documental': {
-      id: '/_app/saude-documental'
-      path: '/saude-documental'
-      fullPath: '/saude-documental'
-      preLoaderRoute: typeof AppSaudeDocumentalRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/riscos': {
-      id: '/_app/riscos'
-      path: '/riscos'
-      fullPath: '/riscos'
-      preLoaderRoute: typeof AppRiscosRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/regularizacao': {
-      id: '/_app/regularizacao'
-      path: '/regularizacao'
-      fullPath: '/regularizacao'
-      preLoaderRoute: typeof AppRegularizacaoRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/mapa': {
-      id: '/_app/mapa'
-      path: '/mapa'
-      fullPath: '/mapa'
-      preLoaderRoute: typeof AppMapaRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/legal': {
-      id: '/_app/legal'
-      path: '/legal'
-      fullPath: '/legal'
-      preLoaderRoute: typeof AppLegalRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/jarvis': {
-      id: '/_app/jarvis'
-      path: '/jarvis'
-      fullPath: '/jarvis'
-      preLoaderRoute: typeof AppJarvisRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/inteligencia': {
-      id: '/_app/inteligencia'
-      path: '/inteligencia'
-      fullPath: '/inteligencia'
-      preLoaderRoute: typeof AppInteligenciaRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/imoveis': {
-      id: '/_app/imoveis'
-      path: '/imoveis'
-      fullPath: '/imoveis'
-      preLoaderRoute: typeof AppImoveisRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/holdings': {
-      id: '/_app/holdings'
-      path: '/holdings'
-      fullPath: '/holdings'
-      preLoaderRoute: typeof AppHoldingsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/fornecedores': {
-      id: '/_app/fornecedores'
-      path: '/fornecedores'
-      fullPath: '/fornecedores'
-      preLoaderRoute: typeof AppFornecedoresRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/financeiro': {
-      id: '/_app/financeiro'
-      path: '/financeiro'
-      fullPath: '/financeiro'
-      preLoaderRoute: typeof AppFinanceiroRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/family-office': {
-      id: '/_app/family-office'
-      path: '/family-office'
-      fullPath: '/family-office'
-      preLoaderRoute: typeof AppFamilyOfficeRouteImport
+    '/_app/compliance': {
+      id: '/_app/compliance'
+      path: '/compliance'
+      fullPath: '/compliance'
+      preLoaderRoute: typeof AppComplianceRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/dashboard': {
@@ -447,11 +363,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/compliance': {
-      id: '/_app/compliance'
-      path: '/compliance'
-      fullPath: '/compliance'
-      preLoaderRoute: typeof AppComplianceRouteImport
+    '/_app/family-office': {
+      id: '/_app/family-office'
+      path: '/family-office'
+      fullPath: '/family-office'
+      preLoaderRoute: typeof AppFamilyOfficeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/financeiro': {
+      id: '/_app/financeiro'
+      path: '/financeiro'
+      fullPath: '/financeiro'
+      preLoaderRoute: typeof AppFinanceiroRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/fornecedores': {
+      id: '/_app/fornecedores'
+      path: '/fornecedores'
+      fullPath: '/fornecedores'
+      preLoaderRoute: typeof AppFornecedoresRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/holdings': {
+      id: '/_app/holdings'
+      path: '/holdings'
+      fullPath: '/holdings'
+      preLoaderRoute: typeof AppHoldingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/imoveis': {
+      id: '/_app/imoveis'
+      path: '/imoveis'
+      fullPath: '/imoveis'
+      preLoaderRoute: typeof AppImoveisRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/inteligencia': {
+      id: '/_app/inteligencia'
+      path: '/inteligencia'
+      fullPath: '/inteligencia'
+      preLoaderRoute: typeof AppInteligenciaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/jarvis': {
+      id: '/_app/jarvis'
+      path: '/jarvis'
+      fullPath: '/jarvis'
+      preLoaderRoute: typeof AppJarvisRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/legal': {
+      id: '/_app/legal'
+      path: '/legal'
+      fullPath: '/legal'
+      preLoaderRoute: typeof AppLegalRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/mapa': {
+      id: '/_app/mapa'
+      path: '/mapa'
+      fullPath: '/mapa'
+      preLoaderRoute: typeof AppMapaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/regularizacao': {
+      id: '/_app/regularizacao'
+      path: '/regularizacao'
+      fullPath: '/regularizacao'
+      preLoaderRoute: typeof AppRegularizacaoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/riscos': {
+      id: '/_app/riscos'
+      path: '/riscos'
+      fullPath: '/riscos'
+      preLoaderRoute: typeof AppRiscosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/saude-documental': {
+      id: '/_app/saude-documental'
+      path: '/saude-documental'
+      fullPath: '/saude-documental'
+      preLoaderRoute: typeof AppSaudeDocumentalRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/jarvis/': {
@@ -461,32 +461,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppJarvisIndexRouteImport
       parentRoute: typeof AppJarvisRoute
     }
-    '/_app/jarvis/insights': {
-      id: '/_app/jarvis/insights'
-      path: '/insights'
-      fullPath: '/jarvis/insights'
-      preLoaderRoute: typeof AppJarvisInsightsRouteImport
-      parentRoute: typeof AppJarvisRoute
-    }
-    '/_app/jarvis/historico': {
-      id: '/_app/jarvis/historico'
-      path: '/historico'
-      fullPath: '/jarvis/historico'
-      preLoaderRoute: typeof AppJarvisHistoricoRouteImport
-      parentRoute: typeof AppJarvisRoute
-    }
-    '/_app/jarvis/grafo': {
-      id: '/_app/jarvis/grafo'
-      path: '/grafo'
-      fullPath: '/jarvis/grafo'
-      preLoaderRoute: typeof AppJarvisGrafoRouteImport
-      parentRoute: typeof AppJarvisRoute
-    }
-    '/_app/jarvis/chat': {
-      id: '/_app/jarvis/chat'
-      path: '/chat'
-      fullPath: '/jarvis/chat'
-      preLoaderRoute: typeof AppJarvisChatRouteImport
+    '/_app/jarvis/acoes': {
+      id: '/_app/jarvis/acoes'
+      path: '/acoes'
+      fullPath: '/jarvis/acoes'
+      preLoaderRoute: typeof AppJarvisAcoesRouteImport
       parentRoute: typeof AppJarvisRoute
     }
     '/_app/jarvis/alertas': {
@@ -496,11 +475,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppJarvisAlertasRouteImport
       parentRoute: typeof AppJarvisRoute
     }
-    '/_app/jarvis/acoes': {
-      id: '/_app/jarvis/acoes'
-      path: '/acoes'
-      fullPath: '/jarvis/acoes'
-      preLoaderRoute: typeof AppJarvisAcoesRouteImport
+    '/_app/jarvis/chat': {
+      id: '/_app/jarvis/chat'
+      path: '/chat'
+      fullPath: '/jarvis/chat'
+      preLoaderRoute: typeof AppJarvisChatRouteImport
+      parentRoute: typeof AppJarvisRoute
+    }
+    '/_app/jarvis/grafo': {
+      id: '/_app/jarvis/grafo'
+      path: '/grafo'
+      fullPath: '/jarvis/grafo'
+      preLoaderRoute: typeof AppJarvisGrafoRouteImport
+      parentRoute: typeof AppJarvisRoute
+    }
+    '/_app/jarvis/historico': {
+      id: '/_app/jarvis/historico'
+      path: '/historico'
+      fullPath: '/jarvis/historico'
+      preLoaderRoute: typeof AppJarvisHistoricoRouteImport
+      parentRoute: typeof AppJarvisRoute
+    }
+    '/_app/jarvis/insights': {
+      id: '/_app/jarvis/insights'
+      path: '/insights'
+      fullPath: '/jarvis/insights'
+      preLoaderRoute: typeof AppJarvisInsightsRouteImport
       parentRoute: typeof AppJarvisRoute
     }
   }
