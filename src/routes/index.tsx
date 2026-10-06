@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, ShieldCheck, Network, Database, Building2, Cpu, Target, Box, FileText, Scale, Search, HardHat, AlertTriangle, Users, ChevronRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { NotAnERP, JarvisAlerts, DigitalTwin, RelationshipChain, Segments, Market, CompetitorTable, Differentiators, ROI, Roadmap } from "@/components/LandingSections";
 import { SectionHeader, FeatureCard, ArchitectureFlow, ModuleGrid, KnowledgeGraphAnimation, ComparisonTable, PricingCard } from "@/components/LandingPageComponents";
 
 export const Route = createFileRoute("/")({
@@ -83,6 +84,12 @@ function LandingPage() {
         </div>
       </section>
 
+      <section className="py-20 md:py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeader title="NÃO É MAIS UM SOFTWARE" badge="Categoria" />
+          <NotAnERP />
+        </div>
+      </section>
       <span id="jarvis" />
       {/* JARVIS */}
       <section className="py-20 md:py-40 px-6 bg-[#050505]">
@@ -95,6 +102,7 @@ function LandingPage() {
               { icon: Target, title: "Plano de Ação", desc: "Execução prioritária baseada na criticidade do seu portfólio." }
             ].map((f, i) => <FeatureCard key={i} {...f} delay={i * 0.1} />)}
           </div>
+          <JarvisAlerts />
         </div>
       </section>
 
@@ -115,6 +123,12 @@ function LandingPage() {
         </div>
       </section>
 
+      <section className="py-20 md:py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeader title="DIGITAL TWIN" badge="Gêmeo Digital" subtitle="Cada ativo com documentos, histórico, contratos, proprietários, riscos e compliance." />
+          <DigitalTwin />
+        </div>
+      </section>
       {/* Knowledge Graph */}
       <section className="py-20 md:py-40 px-6">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center">
@@ -124,28 +138,48 @@ function LandingPage() {
           </div>
           <KnowledgeGraphAnimation />
         </div>
+        <div className="max-w-7xl mx-auto"><RelationshipChain /></div>
       </section>
+      <section className="py-20 md:py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeader title="PARA QUEM" badge="Segmentos" subtitle="Do family office ao setor público." />
+          <Segments />
+        </div>
+      </section>
+      <section className="py-20 md:py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeader title="MERCADO" badge="Oportunidade" subtitle="Holdings, family offices e agro patrimonial crescem e exigem compliance." />
+          <Market />
+        </div>
+      </section>
+
 
       {/* Comparison */}
       <section className="py-20 md:py-40 px-6 bg-[#050505]">
         <div className="max-w-7xl mx-auto">
           <SectionHeader title="DIFERENCIAIS" badge="Posicionamento de Mercado" subtitle="Comparativo estratégico: O Patrium OS redefine a categoria." />
-          <ComparisonTable />
+          <CompetitorTable />
         </div>
       </section>
 
+      <section className="py-20 md:py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeader title="DIFERENCIAIS ÚNICOS" badge="Por que Patrium" />
+          <Differentiators />
+        </div>
+      </section>
       <span id="pricing" />
       {/* Pricing */}
       <section className="py-20 md:py-40 px-6">
         <div className="max-w-7xl mx-auto">
           <SectionHeader title="INVESTIMENTO" badge="Projeção Estratégica" subtitle="Escalabilidade para qualquer estrutura de capital." />
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <PricingCard plan="Professional" price="R$ 997" desc="Para escritórios e consultorias." features={["Governança Básica", "Gestão Documental", "Suporte Padrão"]} />
-            <PricingCard highlighted plan="Business" price="R$ 2.997" desc="Para holdings e empresas." features={["Jarvis AI (Diretor Digital)", "Compliance 360", "Knowledge Graph Engine"]} />
-            <PricingCard plan="Enterprise" price="R$ 7.997" desc="Para Family Offices e Grupos." features={["Digital Twin de Ativos", "Agro Patrimonial", "Data Room Estratégico"]} />
+            <PricingCard plan="Professional" price="R$ 997–1.997" desc="Para escritórios e consultorias." features={["Governança Básica", "Gestão Documental", "Suporte Padrão"]} />
+            <PricingCard highlighted plan="Business" price="R$ 2.997–4.997" desc="Para holdings e empresas." features={["Jarvis AI (Diretor Digital)", "Compliance 360", "Knowledge Graph Engine"]} />
+            <PricingCard plan="Enterprise" price="R$ 7.997–19.997" desc="Para Family Offices e Grupos." features={["Digital Twin de Ativos", "Agro Patrimonial", "Data Room Estratégico"]} />
             <PricingCard plan="Corporate" price="Sob Consulta" desc="Para grandes grupos econômicos." features={["Customização Total", "SLA Exclusivo", "Integração via API"]} />
           </div>
-          
+          <ROI />
           <div className="mt-20 p-12 rounded-[3rem] bg-white/[0.02] border border-white/5 text-center max-w-4xl mx-auto backdrop-blur-3xl shadow-2xl">
             <h3 className="text-2xl font-black italic uppercase mb-6">Visão de Futuro</h3>
             <p className="text-lg text-white/50 leading-relaxed italic">
@@ -155,6 +189,12 @@ function LandingPage() {
         </div>
       </section>
 
+      <section className="py-20 md:py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeader title="ROADMAP" badge="Evolução em 8 Fases" />
+          <Roadmap />
+        </div>
+      </section>
       {/* CTA Final */}
       <section className="py-20 md:py-40 px-6 text-center bg-gradient-to-b from-[#020202] to-[#080808]">
         <div className="max-w-4xl mx-auto space-y-12">
@@ -162,6 +202,7 @@ function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Button asChild className="h-16 px-10 rounded-2xl bg-primary text-black font-black uppercase tracking-[0.2em] text-xs hover:scale-105 transition-all"><Link to="/login">Solicitar Demonstração</Link></Button>
             <Button asChild className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 text-foreground hover:bg-white/10 font-black uppercase tracking-[0.2em] text-xs transition-all"><Link to="/login">Falar com Especialista</Link></Button>
+            <Button asChild className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 text-foreground hover:bg-white/10 font-black uppercase tracking-[0.2em] text-xs"><Link to="/login">Conhecer o Jarvis</Link></Button>
           </div>
         </div>
       </section>
