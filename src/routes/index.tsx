@@ -102,6 +102,7 @@ function LandingPage() {
               { icon: Target, title: "Plano de Ação", desc: "Execução prioritária baseada na criticidade do seu portfólio." }
             ].map((f, i) => <FeatureCard key={i} {...f} delay={i * 0.1} />)}
           </div>
+          <JarvisAlerts />
         </div>
       </section>
 
