@@ -51,7 +51,7 @@ function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
             <Button asChild className="h-16 px-10 rounded-2xl bg-primary text-black font-black uppercase tracking-[0.2em] text-xs hover:scale-105 transition-all shadow-xl shadow-primary/20 hover:bg-white"><Link to="/login">Solicitar Demonstração</Link></Button>
-            <Button asChild className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 font-black uppercase tracking-[0.2em] text-xs transition-all hover:border-primary/50"><Link to="/login">Conhecer o Jarvis</Link></Button>
+            <Button asChild className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 text-foreground hover:bg-white/10 font-black uppercase tracking-[0.2em] text-xs transition-all hover:border-primary/50"><Link to="/login">Conhecer o Jarvis</Link></Button>
           </div>
         </div>
       </section>
@@ -161,7 +161,7 @@ function LandingPage() {
           <h2 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter leading-none">Pronto para transformar sua gestão patrimonial?</h2>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Button asChild className="h-16 px-10 rounded-2xl bg-primary text-black font-black uppercase tracking-[0.2em] text-xs hover:scale-105 transition-all"><Link to="/login">Solicitar Demonstração</Link></Button>
-            <Button asChild className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 font-black uppercase tracking-[0.2em] text-xs transition-all"><Link to="/login">Falar com Especialista</Link></Button>
+            <Button asChild className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 text-foreground hover:bg-white/10 font-black uppercase tracking-[0.2em] text-xs transition-all"><Link to="/login">Falar com Especialista</Link></Button>
           </div>
         </div>
       </section>
