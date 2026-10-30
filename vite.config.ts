@@ -12,4 +12,9 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    // Local/preview convenience: accept any Host header (Lovable sandboxes and
+    // tunneled preview domains). Not needed when running on lovable.app.
+    server: { allowedHosts: true },
+  },
 });

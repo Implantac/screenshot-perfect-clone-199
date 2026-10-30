@@ -8,10 +8,23 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
+  // O guard de `_app` envia `?redirect=`, que antes era ignorado.
+  validateSearch: (search: Record<string, unknown>): { redirect?: string } => ({
+    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+  }),
   component: LoginPage,
 });
 
 function LoginPage() {
+  const { redirect: redirectTo } = Route.useSearch();
+  const goToApp = () => {
+    // Só aceita caminho interno — evita open redirect.
+    if (redirectTo && redirectTo.startsWith("/") && !redirectTo.startsWith("//")) {
+      window.location.assign(redirectTo);
+    } else {
+      navigate({ to: "/dashboard" });
+    }
+  };
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +34,7 @@ function LoginPage() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate({ to: "/" });
+        goToApp();
       }
     });
 
@@ -188,7 +201,7 @@ function LoginPage() {
         
         if (data.session) {
           toast.success("Conta criada e autenticada com sucesso!");
-          navigate({ to: "/dashboard" });
+          goToApp();
         } else {
           toast.success("Conta criada com sucesso! Verifique seu e-mail ou faça login.");
           setIsSignUp(false);
@@ -204,7 +217,7 @@ function LoginPage() {
           throw error;
         }
         toast.success("Bem-vindo ao Use Patrium");
-        navigate({ to: "/dashboard" });
+        goToApp();
       }
     } catch (error: any) {
       console.error("Auth process error:", error);
