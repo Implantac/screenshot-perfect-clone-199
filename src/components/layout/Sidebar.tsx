@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import {
   Boxes,
   Building2,
+  CalendarClock,
   Cpu,
   DollarSign,
   FileSearch,
@@ -54,6 +55,7 @@ const navGroups = [
     items: [
       { label: "Custódia & Performance", icon: Wallet, to: "/custodia" },
       { label: "Importar extrato", icon: UploadCloud, to: "/importar" },
+      { label: "Projeção de caixa", icon: CalendarClock, to: "/projecao" },
       { label: "Sucessão & Tributação", icon: SuccessionIcon, to: "/sucessorio" },
       { label: "Relatórios", icon: FileText, to: "/relatorios" },
     ]
