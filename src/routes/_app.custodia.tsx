@@ -27,7 +27,13 @@ import {
   useAssets,
   isMissingTableError,
 } from "@/hooks/usePatrimonio";
-import { useCreatePosition, useDeletePosition, useRebuildSnapshots } from "@/hooks/useCrud";
+import {
+  useCreatePosition,
+  useDeletePosition,
+  useRebuildSnapshots,
+  useSyncQuotes,
+} from "@/hooks/useCrud";
+import { classifyFreshness, STALE_DAYS } from "@/lib/quotes";
 import type { PositionInput } from "@/lib/validation/schemas";
 import { PositionForm } from "@/components/forms/PositionForm";
 import { CashFlowForm } from "@/components/forms/CashFlowForm";
@@ -69,6 +75,7 @@ function Custodia() {
   const { data: assets } = useAssets();
   const removePosition = useDeletePosition();
   const rebuild = useRebuildSnapshots();
+  const syncQuotes = useSyncQuotes();
 
   const [tab, setTab] = useState<TabId>("visao");
   const [positionOpen, setPositionOpen] = useState(false);
@@ -322,14 +329,25 @@ function Custodia() {
             <h3 className="text-[10px] font-black uppercase tracking-widest">
               {filtered.length} posição(ões)
             </h3>
-            <button
-              onClick={() => rebuild.mutate((entities ?? [])[0]?.id ?? "")}
-              disabled={rebuild.isPending || !entities?.length}
-              className="h-9 px-3 rounded-lg bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-1.5 disabled:opacity-50"
-            >
-              <RefreshCw className={cn("h-3 w-3", rebuild.isPending && "animate-spin")} />
-              Reconstruir série de fechamentos
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => syncQuotes.mutate({ entity_id: (entities ?? [])[0]?.id })}
+                disabled={syncQuotes.isPending}
+                title="Busca o preço de mercado das posições com símbolo (PETR4, HGLG11, USD/BRL) e atualiza data e preço"
+                className="h-9 px-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500/20 transition-all flex items-center gap-1.5 disabled:opacity-50"
+              >
+                <RefreshCw className={cn("h-3 w-3", syncQuotes.isPending && "animate-spin")} />
+                Atualizar cotações
+              </button>
+              <button
+                onClick={() => rebuild.mutate((entities ?? [])[0]?.id ?? "")}
+                disabled={rebuild.isPending || !entities?.length}
+                className="h-9 px-3 rounded-lg bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-1.5 disabled:opacity-50"
+              >
+                <RefreshCw className={cn("h-3 w-3", rebuild.isPending && "animate-spin")} />
+                Reconstruir série de fechamentos
+              </button>
+            </div>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
@@ -353,8 +371,32 @@ function Custodia() {
                     <tr key={position.id} className="hover:bg-white/[0.02] transition-colors">
                       <td className="px-4 py-3">
                         <p className="text-xs font-bold">{position.name}</p>
-                        <p className="text-[9px] font-mono text-muted-foreground/60">
+                        <p className="text-[9px] font-mono text-muted-foreground/60 flex items-center gap-1.5">
                           {position.symbol ?? "—"} · {position.as_of}
+                          {(() => {
+                            const freshness = classifyFreshness(
+                              position.as_of,
+                              Number(position.unit_price ?? 0),
+                            );
+                            if (freshness === "sem-preco") {
+                              return (
+                                <span className="px-1.5 py-0.5 rounded bg-red-500/15 text-red-400 not-italic">
+                                  sem preço
+                                </span>
+                              );
+                            }
+                            if (freshness === "defasado") {
+                              return (
+                                <span
+                                  title={`Preço com mais de ${STALE_DAYS} dias`}
+                                  className="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 not-italic"
+                                >
+                                  defasado
+                                </span>
+                              );
+                            }
+                            return null;
+                          })()}
                         </p>
                       </td>
                       <td className="px-4 py-3">

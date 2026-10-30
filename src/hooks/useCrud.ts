@@ -48,6 +48,7 @@ import {
   deleteImportBatch,
 } from "@/lib/api/crud.functions";
 import { seedDemo } from "@/lib/api/demo.functions";
+import { syncQuotes, type SyncQuotesResult } from "@/lib/api/quotes.functions";
 import type { SeedResult } from "@/lib/demo/seedDemo";
 import type { ImportResult } from "@/lib/import/normalize";
 import type {
@@ -410,3 +411,44 @@ export const useDeleteImportBatch = () =>
     success: "Importação desfeita — lançamentos removidos.",
     error: "Não foi possível desfazer a importação.",
   });
+
+// ---------------------------------------------------------- cotações (wave 6)
+
+/**
+ * Sincroniza preços de mercado e atualiza `positions.unit_price`.
+ * Não é `useInvalidatingMutation` porque o resumo precisa aparecer ao usuário
+ * (quantas posições mudaram, delta em R$, símbolos sem cotação).
+ */
+export const useSyncQuotes = () => {
+  const queryClient = useQueryClient();
+  return useMutation<SyncQuotesResult, Error, { entity_id?: string; provider?: "yahoo" | "brapi" }>({
+    mutationFn: (data) => syncQuotes({ data }),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ["positions"] });
+      queryClient.invalidateQueries({ queryKey: ["quote_runs"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      const updated = result.plan.updates.length;
+      if (updated === 0) {
+        toast.info(
+          result.requested === 0
+            ? "Nenhuma posição com símbolo negociado (ação, FII, moeda) para cotar."
+            : "Preços já estavam atualizados.",
+        );
+        return;
+      }
+      const delta = result.plan.totalDeltaBrl;
+      toast.success(
+        `${updated} posição(ões) reprecificada(s) via ${result.provider} — ${
+          delta >= 0 ? "+" : ""
+        }R$ ${delta.toLocaleString("pt-BR", { maximumFractionDigits: 0 })} em patrimônio.`,
+      );
+      if (result.plan.missing.length > 0) {
+        toast.warning(`Sem cotação para: ${result.plan.missing.join(", ")}.`);
+      }
+    },
+    onError: (error) => {
+      console.error("[quotes]", error);
+      toast.error(error.message || "Não foi possível atualizar as cotações.");
+    },
+  });
+};
