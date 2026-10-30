@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Cancela execuções antigas do mesmo ref (economiza minutos em pushes seguidos).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: tsc · testes · build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      # Build não fala com o Supabase, mas o cliente lê estas variáveis no import.
+      # São valores de placeholder — nenhum segredo real entra no CI.
+      VITE_SUPABASE_URL: https://placeholder.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: placeholder-anon-key
+      VITE_SUPABASE_PROJECT_ID: placeholder
+      SUPABASE_URL: https://placeholder.supabase.co
+      SUPABASE_PUBLISHABLE_KEY: placeholder-anon-key
+      NODE_OPTIONS: --max-old-space-size=4096
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Instalar dependências
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck (tsc --noEmit)
+        run: bun run typecheck
+
+      - name: Testes unitários
+        run: bun test
+
+      - name: Build de produção
+        run: bun run build
+
+      - name: Guardar artefato do build
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: .output
+          retention-days: 3
+          if-no-files-found: ignore
+
+  # Jobs de integração dependem de credenciais que não existem em PR de fork.
+  # Ficam explícitos aqui para não darem a impressão de que o CI os cobre.
+  # - verify:db   → precisa do projeto Supabase real (SUPABASE_URL + anon key)
+  # - verify:llm  → precisa de JARVIS_LLM_* (roda com stub em scripts/verify-llm.ts)
+  # - verify:ui   → precisa de Chromium (playwright install --with-deps chromium)
