@@ -49,6 +49,15 @@ import {
 } from "@/lib/api/crud.functions";
 import { seedDemo } from "@/lib/api/demo.functions";
 import { syncQuotes, type SyncQuotesResult } from "@/lib/api/quotes.functions";
+import {
+  createCommitment,
+  updateCommitment,
+  deleteCommitment,
+  createCapitalEvent,
+  updateCapitalEvent,
+  deleteCapitalEvent,
+  settleCapitalEvent,
+} from "@/lib/api/crud.functions";
 import type { SeedResult } from "@/lib/demo/seedDemo";
 import type { ImportResult } from "@/lib/import/normalize";
 import type {
@@ -72,6 +81,10 @@ import type {
   positionInputSchema,
   positionUpdateSchema,
   importStatementSchema,
+  commitmentInputSchema,
+  commitmentUpdateSchema,
+  capitalEventInputSchema,
+  capitalEventUpdateSchema,
   cashFlowInputSchema,
   snapshotInputSchema,
   taxScenarioInputSchema,
@@ -455,3 +468,49 @@ export const useSyncQuotes = () => {
     },
   });
 };
+
+// ------------------------------------------------------- privados (wave 10)
+
+const PRIVATE_KEYS: QueryKey[] = [["commitments"], ["capital_events"], ["portfolio_snapshots"]];
+
+export const useCreateCommitment = () =>
+  useInvalidatingMutation<z.input<typeof commitmentInputSchema>, unknown>(createCommitment, PRIVATE_KEYS, {
+    success: "Compromisso registrado.",
+    error: "Não foi possível registrar o compromisso.",
+  });
+
+export const useUpdateCommitment = () =>
+  useInvalidatingMutation<z.input<typeof commitmentUpdateSchema>, unknown>(updateCommitment, PRIVATE_KEYS, {
+    success: "Compromisso atualizado.",
+    error: "Não foi possível atualizar o compromisso.",
+  });
+
+export const useDeleteCommitment = () =>
+  useInvalidatingMutation<IdInput, unknown>(deleteCommitment, PRIVATE_KEYS, {
+    success: "Compromisso removido (com os avisos vinculados).",
+    error: "Não foi possível remover o compromisso.",
+  });
+
+export const useCreateCapitalEvent = () =>
+  useInvalidatingMutation<z.input<typeof capitalEventInputSchema>, unknown>(createCapitalEvent, PRIVATE_KEYS, {
+    success: "Aviso do gestor lançado.",
+    error: "Não foi possível lançar o aviso.",
+  });
+
+export const useUpdateCapitalEvent = () =>
+  useInvalidatingMutation<z.input<typeof capitalEventUpdateSchema>, unknown>(updateCapitalEvent, PRIVATE_KEYS, {
+    success: "Aviso atualizado.",
+    error: "Não foi possível atualizar o aviso.",
+  });
+
+export const useDeleteCapitalEvent = () =>
+  useInvalidatingMutation<IdInput, unknown>(deleteCapitalEvent, PRIVATE_KEYS, {
+    success: "Aviso removido.",
+    error: "Não foi possível remover o aviso.",
+  });
+
+export const useSettleCapitalEvent = () =>
+  useInvalidatingMutation<{ id: string; paid_at?: string }, unknown>(settleCapitalEvent, PRIVATE_KEYS, {
+    success: "Baixa registrada.",
+    error: "Não foi possível dar baixa.",
+  });

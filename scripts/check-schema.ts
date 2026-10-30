@@ -29,6 +29,8 @@ const EXPECTED: { table: string; migration: string }[] = [
   { table: "import_batches", migration: "20261030160000_imports.sql" },
   { table: "quotes", migration: "20261030170000_quotes.sql" },
   { table: "quote_runs", migration: "20261030170000_quotes.sql" },
+  { table: "commitments", migration: "20261030190000_private_markets.sql" },
+  { table: "capital_events", migration: "20261030190000_private_markets.sql" },
 ];
 
 /** Colunas que provam que a migration foi aplicada inteira. */

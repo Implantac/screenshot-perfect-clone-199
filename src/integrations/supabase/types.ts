@@ -95,6 +95,108 @@ export type Database = {
         }
         Relationships: []
       }
+      capital_events: {
+        Row: {
+          amount: number
+          commitment_id: string
+          created_at: string | null
+          due_date: string
+          entity_id: string
+          id: string
+          kind: Database["public"]["Enums"]["capital_event_kind"]
+          notice_ref: string | null
+          notes: string | null
+          paid_at: string | null
+          status: Database["public"]["Enums"]["capital_event_status"]
+        }
+        Insert: {
+          amount: number
+          commitment_id: string
+          created_at?: string | null
+          due_date: string
+          entity_id: string
+          id?: string
+          kind: Database["public"]["Enums"]["capital_event_kind"]
+          notice_ref?: string | null
+          notes?: string | null
+          paid_at?: string | null
+          status?: Database["public"]["Enums"]["capital_event_status"]
+        }
+        Update: {
+          amount?: number
+          commitment_id?: string
+          created_at?: string | null
+          due_date?: string
+          entity_id?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["capital_event_kind"]
+          notice_ref?: string | null
+          notes?: string | null
+          paid_at?: string | null
+          status?: Database["public"]["Enums"]["capital_event_status"]
+        }
+        Relationships: []
+      }
+      commitments: {
+        Row: {
+          closed_at: string | null
+          committed: number
+          created_at: string | null
+          currency: string
+          entity_id: string
+          id: string
+          is_active: boolean
+          manager: string | null
+          name: string
+          nav: number
+          nav_as_of: string | null
+          notice_days: number | null
+          notes: string | null
+          strategy: Database["public"]["Enums"]["private_strategy"]
+          term_years: number | null
+          updated_at: string | null
+          vintage: number | null
+        }
+        Insert: {
+          closed_at?: string | null
+          committed: number
+          created_at?: string | null
+          currency?: string
+          entity_id: string
+          id?: string
+          is_active?: boolean
+          manager?: string | null
+          name: string
+          nav?: number
+          nav_as_of?: string | null
+          notice_days?: number | null
+          notes?: string | null
+          strategy?: Database["public"]["Enums"]["private_strategy"]
+          term_years?: number | null
+          updated_at?: string | null
+          vintage?: number | null
+        }
+        Update: {
+          closed_at?: string | null
+          committed?: number
+          created_at?: string | null
+          currency?: string
+          entity_id?: string
+          id?: string
+          is_active?: boolean
+          manager?: string | null
+          name?: string
+          nav?: number
+          nav_as_of?: string | null
+          notice_days?: number | null
+          notes?: string | null
+          strategy?: Database["public"]["Enums"]["private_strategy"]
+          term_years?: number | null
+          updated_at?: string | null
+          vintage?: number | null
+        }
+        Relationships: []
+      }
       custodians: {
         Row: {
           code: string | null
@@ -1072,6 +1174,9 @@ export type Database = {
       legal_case_type: "civel" | "tributario" | "ambiental" | "trabalhista" | "societario" | "imobiliario"
       risk_severity: "low" | "medium" | "high" | "critical"
       supplier_status: "homologado" | "em_analise" | "risco_critico" | "inativo"
+      capital_event_kind: "call" | "distribution"
+      capital_event_status: "previsto" | "pago" | "atrasado" | "cancelado"
+      private_strategy: "private_equity" | "venture_capital" | "infraestrutura" | "real_estate" | "agro" | "credito_privado" | "outro"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1210,6 +1315,9 @@ export const Constants = {
       legal_case_type: ["civel", "tributario", "ambiental", "trabalhista", "societario", "imobiliario"],
       risk_severity: ["low", "medium", "high", "critical"],
       supplier_status: ["homologado", "em_analise", "risco_critico", "inativo"],
+      capital_event_kind: ["call", "distribution"],
+      capital_event_status: ["previsto", "pago", "atrasado", "cancelado"],
+      private_strategy: ["private_equity", "venture_capital", "infraestrutura", "real_estate", "agro", "credito_privado", "outro"],
     },
   },
 } as const

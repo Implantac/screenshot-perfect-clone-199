@@ -33,6 +33,10 @@ import {
   snapshotInputSchema,
   taxScenarioInputSchema,
   importStatementSchema,
+  commitmentInputSchema,
+  commitmentUpdateSchema,
+  capitalEventInputSchema,
+  capitalEventUpdateSchema,
 } from "@/lib/validation/schemas";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -644,3 +648,92 @@ export const deleteImportBatch = authed.inputValidator(idSchema).handler(async (
   if (batchError) throw new Error(batchError.message);
   return { ok: true as const, id: data.id };
 });
+
+// ================================================= privados (capital calls)
+
+export const createCommitment = authed.validator(commitmentInputSchema).handler(async ({ data, context }) => {
+  const payload = nullify(data) as Tables["commitments"]["Insert"];
+  const { data: row, error } = await context.supabase
+    .from("commitments")
+    .insert({ ...payload, entity_id: data.entity_id })
+    .select("id")
+    .single();
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: row.id };
+});
+
+export const updateCommitment = authed.validator(commitmentUpdateSchema).handler(async ({ data, context }) => {
+  const { id, ...rest } = data;
+  const { error } = await context.supabase
+    .from("commitments")
+    .update({ ...(nullify(rest) as Tables["commitments"]["Update"]), updated_at: new Date().toISOString() })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id };
+});
+
+export const deleteCommitment = authed.validator(idSchema).handler(async ({ data, context }) => {
+  const { error } = await context.supabase.from("commitments").delete().eq("id", data.id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: data.id };
+});
+
+/**
+ * Registra um aviso do gestor (capital call ou distribuição).
+ *
+ * `entity_id` vem do compromisso, não do cliente: evita gravar evento apontando
+ * para entidade de outro tenant (a RLS também barraria, mas o erro ficaria obscuro).
+ */
+export const createCapitalEvent = authed.validator(capitalEventInputSchema).handler(async ({ data, context }) => {
+  const { data: commitment, error: commitmentError } = await context.supabase
+    .from("commitments")
+    .select("id, entity_id")
+    .eq("id", data.commitment_id)
+    .maybeSingle();
+  if (commitmentError) throw new Error(commitmentError.message);
+  if (!commitment) throw new Error("Compromisso não encontrado nesta carteira.");
+
+  const payload = nullify(data) as Tables["capital_events"]["Insert"];
+  const { data: row, error } = await context.supabase
+    .from("capital_events")
+    .insert({ ...payload, entity_id: commitment.entity_id })
+    .select("id")
+    .single();
+  if (error) {
+    // 23505 = o mesmo aviso já foi lançado (veículo + tipo + data + valor).
+    if (error.code === "23505") throw new Error("Este aviso já está lançado (mesmo tipo, data e valor).");
+    throw new Error(error.message);
+  }
+  return { ok: true as const, id: row.id };
+});
+
+export const updateCapitalEvent = authed.validator(capitalEventUpdateSchema).handler(async ({ data, context }) => {
+  const { id, ...rest } = data;
+  const { error } = await context.supabase
+    .from("capital_events")
+    .update(nullify(rest) as Tables["capital_events"]["Update"])
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id };
+});
+
+export const deleteCapitalEvent = authed.validator(idSchema).handler(async ({ data, context }) => {
+  const { error } = await context.supabase.from("capital_events").delete().eq("id", data.id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: data.id };
+});
+
+/** Dá baixa numa chamada/distribuição: marca pago e grava a data do caixa. */
+export const settleCapitalEvent = authed
+  .validator(z.object({ id: z.string().uuid(), paid_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() }))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("capital_events")
+      .update({
+        status: "pago",
+        paid_at: data.paid_at ?? new Date().toISOString().slice(0, 10),
+      })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true as const, id: data.id };
+  });

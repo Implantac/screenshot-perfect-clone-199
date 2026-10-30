@@ -25,6 +25,7 @@ import { Route as AppInteligenciaRouteImport } from './routes/_app.inteligencia'
 import { Route as AppJarvisRouteImport } from './routes/_app.jarvis'
 import { Route as AppLegalRouteImport } from './routes/_app.legal'
 import { Route as AppMapaRouteImport } from './routes/_app.mapa'
+import { Route as AppPrivadosRouteImport } from './routes/_app.privados'
 import { Route as AppProjecaoRouteImport } from './routes/_app.projecao'
 import { Route as AppRegularizacaoRouteImport } from './routes/_app.regularizacao'
 import { Route as AppRelatoriosRouteImport } from './routes/_app.relatorios'
@@ -119,6 +120,11 @@ const AppMapaRoute = AppMapaRouteImport.update({
   path: '/mapa',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPrivadosRoute = AppPrivadosRouteImport.update({
+  id: '/privados',
+  path: '/privados',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProjecaoRoute = AppProjecaoRouteImport.update({
   id: '/projecao',
   path: '/projecao',
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/jarvis': typeof AppJarvisRouteWithChildren
   '/legal': typeof AppLegalRoute
   '/mapa': typeof AppMapaRoute
+  '/privados': typeof AppPrivadosRoute
   '/projecao': typeof AppProjecaoRoute
   '/regularizacao': typeof AppRegularizacaoRoute
   '/relatorios': typeof AppRelatoriosRoute
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/inteligencia': typeof AppInteligenciaRoute
   '/legal': typeof AppLegalRoute
   '/mapa': typeof AppMapaRoute
+  '/privados': typeof AppPrivadosRoute
   '/projecao': typeof AppProjecaoRoute
   '/regularizacao': typeof AppRegularizacaoRoute
   '/relatorios': typeof AppRelatoriosRoute
@@ -269,6 +277,7 @@ export interface FileRoutesById {
   '/_app/jarvis': typeof AppJarvisRouteWithChildren
   '/_app/legal': typeof AppLegalRoute
   '/_app/mapa': typeof AppMapaRoute
+  '/_app/privados': typeof AppPrivadosRoute
   '/_app/projecao': typeof AppProjecaoRoute
   '/_app/regularizacao': typeof AppRegularizacaoRoute
   '/_app/relatorios': typeof AppRelatoriosRoute
@@ -302,6 +311,7 @@ export interface FileRouteTypes {
     | '/jarvis'
     | '/legal'
     | '/mapa'
+    | '/privados'
     | '/projecao'
     | '/regularizacao'
     | '/relatorios'
@@ -332,6 +342,7 @@ export interface FileRouteTypes {
     | '/inteligencia'
     | '/legal'
     | '/mapa'
+    | '/privados'
     | '/projecao'
     | '/regularizacao'
     | '/relatorios'
@@ -364,6 +375,7 @@ export interface FileRouteTypes {
     | '/_app/jarvis'
     | '/_app/legal'
     | '/_app/mapa'
+    | '/_app/privados'
     | '/_app/projecao'
     | '/_app/regularizacao'
     | '/_app/relatorios'
@@ -498,6 +510,13 @@ declare module '@tanstack/react-router' {
       path: '/mapa'
       fullPath: '/mapa'
       preLoaderRoute: typeof AppMapaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/privados': {
+      id: '/_app/privados'
+      path: '/privados'
+      fullPath: '/privados'
+      preLoaderRoute: typeof AppPrivadosRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/projecao': {
@@ -639,6 +658,7 @@ interface AppRouteChildren {
   AppJarvisRoute: typeof AppJarvisRouteWithChildren
   AppLegalRoute: typeof AppLegalRoute
   AppMapaRoute: typeof AppMapaRoute
+  AppPrivadosRoute: typeof AppPrivadosRoute
   AppProjecaoRoute: typeof AppProjecaoRoute
   AppRegularizacaoRoute: typeof AppRegularizacaoRoute
   AppRelatoriosRoute: typeof AppRelatoriosRoute
@@ -662,6 +682,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppJarvisRoute: AppJarvisRouteWithChildren,
   AppLegalRoute: AppLegalRoute,
   AppMapaRoute: AppMapaRoute,
+  AppPrivadosRoute: AppPrivadosRoute,
   AppProjecaoRoute: AppProjecaoRoute,
   AppRegularizacaoRoute: AppRegularizacaoRoute,
   AppRelatoriosRoute: AppRelatoriosRoute,

@@ -305,3 +305,47 @@ export const importStatementSchema = z.object({
 });
 export type ImportStatementInput = z.input<typeof importStatementSchema>;
 export type ImportRowInput = z.input<typeof importRowSchema>;
+
+// ------------------------------------------------ privados (wave 10)
+export const privateStrategyEnum = z.enum([
+  "private_equity",
+  "venture_capital",
+  "infraestrutura",
+  "real_estate",
+  "agro",
+  "credito_privado",
+  "outro",
+]);
+export const capitalEventKindEnum = z.enum(["call", "distribution"]);
+export const capitalEventStatusEnum = z.enum(["previsto", "pago", "atrasado", "cancelado"]);
+
+export const commitmentInputSchema = z.object({
+  entity_id: uuid,
+  name: text(120),
+  manager: z.string().trim().max(80).optional().or(z.literal("")),
+  strategy: privateStrategyEnum.default("private_equity"),
+  committed: money.refine((value) => value > 0, "O capital assinado deve ser maior que zero."),
+  currency: z.string().trim().length(3).default("BRL"),
+  vintage: z.coerce.number().int().min(1980).max(2100).optional(),
+  closed_at: optionalDate,
+  term_years: z.coerce.number().min(0).max(50).optional(),
+  nav: z.coerce.number().min(0).default(0),
+  nav_as_of: optionalDate,
+  notice_days: z.coerce.number().int().min(0).max(365).default(15),
+  notes: z.string().trim().max(300).optional().or(z.literal("")),
+});
+export type CommitmentInput = z.input<typeof commitmentInputSchema>;
+export const commitmentUpdateSchema = commitmentInputSchema.partial().extend({ id: uuid });
+
+export const capitalEventInputSchema = z.object({
+  commitment_id: uuid,
+  kind: capitalEventKindEnum.default("call"),
+  due_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Informe a data do aviso."),
+  amount: money.refine((value) => value > 0, "O valor deve ser maior que zero."),
+  status: capitalEventStatusEnum.default("previsto"),
+  paid_at: optionalDate,
+  notice_ref: z.string().trim().max(60).optional().or(z.literal("")),
+  notes: z.string().trim().max(300).optional().or(z.literal("")),
+});
+export type CapitalEventInput = z.input<typeof capitalEventInputSchema>;
+export const capitalEventUpdateSchema = capitalEventInputSchema.partial().extend({ id: uuid });

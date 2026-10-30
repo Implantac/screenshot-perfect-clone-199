@@ -22,7 +22,15 @@ import {
   Repeat,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { usePositions, useCashFlows, useEntities } from "@/hooks/usePatrimonio";
+import {
+  usePositions,
+  useCashFlows,
+  useEntities,
+  useCommitments,
+  useCapitalEvents,
+  isMissingTableError,
+} from "@/hooks/usePatrimonio";
+import { callsToScheduled, summarizePortfolio } from "@/lib/private-markets";
 import {
   projectCashFlow,
   type ForecastFlow,
@@ -56,6 +64,10 @@ function Projecao() {
   const { data: positions, isLoading } = usePositions();
   const { data: flows } = useCashFlows();
   const { data: entities } = useEntities();
+  // Privados: capital calls são saídas de caixa com data marcada. Se a migration
+  // ainda não foi aplicada, a projeção simplesmente ignora (não quebra).
+  const commitmentsQuery = useCommitments();
+  const capitalEventsQuery = useCapitalEvents();
 
   const [horizon, setHorizon] = useState<number>(24);
   const [annualYield, setAnnualYield] = useState<number>(11);
@@ -80,6 +92,24 @@ function Projecao() {
     [flows, entityFilter],
   );
 
+  const pendingCalls = useMemo(() => {
+    if (isMissingTableError(commitmentsQuery.error) || isMissingTableError(capitalEventsQuery.error)) {
+      return { scheduled: [], unfunded: 0, count: 0 };
+    }
+    const commitments = (commitmentsQuery.data ?? []).filter(
+      (item) => entityFilter === "todas" || item.entity_id === entityFilter,
+    );
+    const events = (capitalEventsQuery.data ?? []).filter((event) =>
+      commitments.some((commitment) => commitment.id === event.commitment_id),
+    );
+    const summary = summarizePortfolio(commitments, events);
+    return {
+      scheduled: callsToScheduled(summary, { horizonDays: horizon * 31 }),
+      unfunded: summary.totals.unfunded,
+      count: summary.schedule.length,
+    };
+  }, [commitmentsQuery.data, commitmentsQuery.error, capitalEventsQuery.data, capitalEventsQuery.error, entityFilter, horizon]);
+
   const result = useMemo(() => {
     const forecastPositions: ForecastPosition[] = filteredPositions.map((position) => ({
       asset_class: position.asset_class,
@@ -95,10 +125,10 @@ function Projecao() {
       description: flow.description,
     }));
     return projectCashFlow(
-      { positions: forecastPositions, flows: forecastFlows },
+      { positions: forecastPositions, flows: forecastFlows, scheduled: pendingCalls.scheduled },
       { months: horizon, annualYield, inflation, adjustRecurringToInflation: adjustToInflation, includeD30 },
     );
-  }, [filteredPositions, filteredFlows, horizon, annualYield, inflation, adjustToInflation, includeD30]);
+  }, [filteredPositions, filteredFlows, horizon, annualYield, inflation, adjustToInflation, includeD30, pendingCalls.scheduled]);
 
   const { stats } = result;
   const hasData = filteredPositions.length > 0 || filteredFlows.length > 0;
@@ -437,6 +467,15 @@ function Projecao() {
               </div>
             </section>
           </div>
+
+          {pendingCalls.count > 0 ? (
+            <div className="flex items-center gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-[11px] text-amber-400">
+              <AlertTriangle className="h-4 w-4 shrink-0" />
+              {pendingCalls.count} capital call(s) já estão descontados desta projeção. Capital não
+              integralizado total: {brl(pendingCalls.unfunded)} — veja em{" "}
+              <span className="font-mono">Capital calls &amp; privados</span>.
+            </div>
+          ) : null}
 
           <p className="px-2 text-[10px] leading-relaxed text-muted-foreground/60">
             Projeção determinística a partir do que já está lançado: recorrências com intervalo de 25

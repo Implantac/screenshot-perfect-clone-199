@@ -304,3 +304,37 @@ export function useImportedTransactionIds() {
     },
   });
 }
+
+// -------------------------------------------------- privados (wave 10)
+
+/** Compromissos de fundos fechados (PE, VC, infra, agro, RE). */
+export function useCommitments() {
+  return useQuery({
+    queryKey: ["commitments"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("commitments")
+        .select("*")
+        .order("committed", { ascending: false });
+      if (error) ensureTable(error, "commitments", "20261030190000_private_markets.sql");
+      return data ?? [];
+    },
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+  });
+}
+
+/** Avisos do gestor: capital calls e distribuições. */
+export function useCapitalEvents() {
+  return useQuery({
+    queryKey: ["capital_events"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("capital_events")
+        .select("*")
+        .order("due_date", { ascending: true });
+      if (error) ensureTable(error, "capital_events", "20261030190000_private_markets.sql");
+      return data ?? [];
+    },
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+  });
+}
