@@ -49,6 +49,12 @@ function addDays(days: number): string {
   return d.toISOString();
 }
 
+/** Último dia do mês N meses atrás (0 = mês corrente). */
+function monthEnd(monthsAgo: number): Date {
+  const today = new Date();
+  return new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - monthsAgo + 1, 0));
+}
+
 /** Data de um mês atrás (0 = mês corrente), no dia indicado. */
 function monthsAgo(days: number, day: number): string {
   const d = new Date();
@@ -96,6 +102,10 @@ export async function seedDemoData(
     await supabase.from("jarvis_insights").delete().not("id", "is", null);
     await supabase.from("jarvis_health_scores").delete().not("id", "is", null);
     await supabase.from("legal_cases").delete().not("id", "is", null);
+    await supabase.from("portfolio_snapshots").delete().not("id", "is", null);
+    await supabase.from("cash_flows").delete().not("id", "is", null);
+    await supabase.from("positions").delete().not("id", "is", null);
+    await supabase.from("accounts").delete().not("id", "is", null);
     await supabase.from("suppliers").delete().not("id", "is", null);
     await supabase.from("transactions").delete().not("id", "is", null);
     await supabase.from("risks").delete().not("id", "is", null);
@@ -308,6 +318,90 @@ export async function seedDemoData(
   counts.jarvis_health_scores = demo.healthScores.length;
 
   const skipped: string[] = [];
+
+  // 13-15. Custódia: contas, posições, fluxos e série de fechamentos
+  // (tabelas da migration 20261030150000_wealth_core.sql)
+  const accountId = new Map<string, string>();
+  const { data: insertedAccounts, error: accountsError } = await supabase
+    .from("accounts")
+    .insert(
+      demo.accounts.map((account) => ({
+        entity_id: entityRef(account.entity)!,
+        name: account.name,
+        kind: account.kind,
+        currency: account.currency,
+        account_number: account.accountNumber,
+      })),
+    )
+    .select("id, name");
+
+  if (accountsError) {
+    if (isMissingTable(accountsError)) skipped.push("accounts");
+    else throw accountsError;
+  } else {
+    for (const row of insertedAccounts ?? []) accountId.set(row.name, row.id);
+    counts.accounts = insertedAccounts?.length ?? 0;
+  }
+
+  if (!skipped.includes("accounts")) {
+    const { error: positionsError } = await supabase.from("positions").insert(
+      demo.positions.map((position) => ({
+        entity_id: entityRef(position.entity)!,
+        account_id: accountId.get(position.account) ?? null,
+        asset_class: position.asset_class,
+        liquidity: position.liquidity,
+        symbol: position.symbol,
+        name: position.name,
+        quantity: position.quantity,
+        unit_price: position.unit_price,
+        cost_basis: position.cost_basis,
+        currency: position.currency,
+        is_offshore: position.is_offshore ?? false,
+        as_of: isoDate(new Date()),
+      })),
+    );
+    if (positionsError) {
+      if (isMissingTable(positionsError)) skipped.push("positions");
+      else throw positionsError;
+    } else {
+      counts.positions = demo.positions.length;
+    }
+
+    const { error: flowsError } = await supabase.from("cash_flows").insert(
+      demo.cashFlows.map((flow) => ({
+        entity_id: entityRef(flow.entity)!,
+        account_id: accountId.get(flow.account) ?? null,
+        kind: flow.kind,
+        amount: flow.amount,
+        currency: "BRL",
+        flow_date: isoDate(new Date(addDays(flow.daysAgo))),
+        description: flow.description,
+      })),
+    );
+    if (flowsError) {
+      if (isMissingTable(flowsError)) skipped.push("cash_flows");
+      else throw flowsError;
+    } else {
+      counts.cash_flows = demo.cashFlows.length;
+    }
+
+    const { error: snapshotsError } = await supabase.from("portfolio_snapshots").insert(
+      demo.snapshots.map((snapshot) => ({
+        entity_id: entityRef(snapshot.entity)!,
+        as_of: isoDate(monthEnd(snapshot.monthOffset)),
+        market_value: snapshot.marketValue,
+        cost_basis: snapshot.costBasis,
+        net_flow: snapshot.netFlow,
+        source: "demo",
+      })),
+    );
+    if (snapshotsError) {
+      if (isMissingTable(snapshotsError)) skipped.push("portfolio_snapshots");
+      else throw snapshotsError;
+    } else {
+      counts.portfolio_snapshots = demo.snapshots.length;
+    }
+  }
 
   // 11. Fornecedores (tabela criada na migration 20261030140000)
   const { error: suppliersError } = await supabase.from("suppliers").insert(

@@ -133,6 +133,41 @@ export type DemoLegalCase = {
   notes: string;
 };
 
+/** Conta de custódia da demonstração. */
+export type DemoAccount = {
+  entity: string;
+  custodian: string;
+  name: string;
+  kind: "corretora" | "banco" | "fundo" | "previdencia" | "cripto" | "outro";
+  currency: string;
+  accountNumber: string;
+};
+
+/** Posição financeira; `account` referencia DemoAccount.name. */
+export type DemoPosition = {
+  entity: string;
+  account: string;
+  asset_class: "caixa" | "renda_fixa" | "renda_variavel" | "fundos" | "imoveis" | "internacional" | "alternativos" | "cripto";
+  liquidity: "d0" | "d1" | "d30" | "longo_prazo" | "iliquido";
+  symbol: string;
+  name: string;
+  quantity: number;
+  unit_price: number;
+  cost_basis: number;
+  currency: string;
+  is_offshore?: boolean;
+};
+
+export type DemoCashFlow = {
+  entity: string;
+  account: string;
+  kind: "aporte" | "resgate" | "provento" | "taxa" | "imposto";
+  amount: number;
+  /** Dias atrás (negativo = passado). */
+  daysAgo: number;
+  description: string;
+};
+
 export type DemoDataset = {
   entities: DemoEntity[];
   members: DemoMember[];
@@ -145,6 +180,11 @@ export type DemoDataset = {
   healthScores: DemoHealthScore[];
   suppliers: DemoSupplier[];
   legalCases: DemoLegalCase[];
+  accounts: DemoAccount[];
+  positions: DemoPosition[];
+  cashFlows: DemoCashFlow[];
+  /** Série mensal de fechamento; `monthOffset` 5 = cinco meses atrás. */
+  snapshots: { entity: string; monthOffset: number; marketValue: number; costBasis: number; netFlow: number }[];
 };
 
 const HOLDING = "Alencar Participações S.A.";
@@ -1144,6 +1184,92 @@ export function buildDemoDataset(): DemoDataset {
     },
   ];
 
+  // ------------------------------------------------------------ custódia
+  const accounts: DemoAccount[] = [
+    {
+      entity: HOLDING,
+      custodian: "XP Investimentos",
+      name: "XP Private — Holding",
+      kind: "corretora",
+      currency: "BRL",
+      accountNumber: "XP-4410293",
+    },
+    {
+      entity: HOLDING,
+      custodian: "BTG Pactual",
+      name: "BTG Core — Holding",
+      kind: "corretora",
+      currency: "BRL",
+      accountNumber: "BTG-88120-4",
+    },
+    {
+      entity: AGRO,
+      custodian: "Itaú Private Bank",
+      name: "Itaú Private — Agro",
+      kind: "banco",
+      currency: "BRL",
+      accountNumber: "ITA-0091-338",
+    },
+    {
+      entity: RE,
+      custodian: "Interactive Brokers",
+      name: "IBKR — Internacional",
+      kind: "corretora",
+      currency: "USD",
+      accountNumber: "U7741029",
+    },
+  ];
+
+  const positions: DemoPosition[] = [
+    // Holding — renda fixa e caixa (liquidez do grupo)
+    { entity: HOLDING, account: "XP Private — Holding", asset_class: "caixa", liquidity: "d0", symbol: "CDB-LIQ", name: "CDB Liquidez Diária XP", quantity: 1_200_000, unit_price: 1, cost_basis: 1_200_000, currency: "BRL" },
+    { entity: HOLDING, account: "XP Private — Holding", asset_class: "renda_fixa", liquidity: "d1", symbol: "TESOURO-IPCA-2035", name: "Tesouro IPCA+ 2035", quantity: 1_500, unit_price: 3_180, cost_basis: 4_500_000, currency: "BRL" },
+    { entity: HOLDING, account: "BTG Core — Holding", asset_class: "renda_fixa", liquidity: "longo_prazo", symbol: "DEB-AGRO", name: "Debênture Agronegócio BTG", quantity: 800, unit_price: 1_050, cost_basis: 800_000, currency: "BRL" },
+    { entity: HOLDING, account: "BTG Core — Holding", asset_class: "renda_variavel", liquidity: "d1", symbol: "ITUB4", name: "Itaú Unibanco PN", quantity: 40_000, unit_price: 38.4, cost_basis: 1_180_000, currency: "BRL" },
+    { entity: HOLDING, account: "BTG Core — Holding", asset_class: "renda_variavel", liquidity: "d1", symbol: "PETR4", name: "Petrobras PN", quantity: 30_000, unit_price: 41.2, cost_basis: 1_020_000, currency: "BRL" },
+    { entity: HOLDING, account: "XP Private — Holding", asset_class: "fundos", liquidity: "d30", symbol: "FIM-MULTI", name: "Fundo Multimercado Alencar", quantity: 4_000, unit_price: 620, cost_basis: 2_100_000, currency: "BRL" },
+    // Agro — capital de giro e fundo de investimento em cadeia produtiva
+    { entity: AGRO, account: "Itaú Private — Agro", asset_class: "caixa", liquidity: "d0", symbol: "CC-AGRO", name: "Conta corrente Agro", quantity: 680_000, unit_price: 1, cost_basis: 680_000, currency: "BRL" },
+    { entity: AGRO, account: "Itaú Private — Agro", asset_class: "alternativos", liquidity: "iliquido", symbol: "FIAGRO", name: "Fundo de investimento agro (FIAGRO)", quantity: 25_000, unit_price: 112, cost_basis: 2_400_000, currency: "BRL" },
+    // Real Estate — participação em SPE
+    { entity: RE, account: "BTG Core — Holding", asset_class: "alternativos", liquidity: "iliquido", symbol: "SPE-CORP", name: "SPE Edifício Corporate (participação)", quantity: 1, unit_price: 12_400_000, cost_basis: 9_800_000, currency: "BRL" },
+    // Internacional — offshore
+    { entity: RE, account: "IBKR — Internacional", asset_class: "internacional", liquidity: "d1", symbol: "VT", name: "Vanguard Total World ETF", quantity: 1_800, unit_price: 128.5, cost_basis: 190_000, currency: "USD", is_offshore: true },
+    { entity: RE, account: "IBKR — Internacional", asset_class: "internacional", liquidity: "d30", symbol: "BND", name: "Vanguard Total Bond ETF", quantity: 900, unit_price: 72.4, cost_basis: 62_000, currency: "USD", is_offshore: true },
+    { entity: HOLDING, account: "XP Private — Holding", asset_class: "cripto", liquidity: "d1", symbol: "BTC", name: "Bitcoin (custódia XP)", quantity: 0.85, unit_price: 512_000, cost_basis: 260_000, currency: "BRL" },
+  ];
+
+  const cashFlows: DemoCashFlow[] = [
+    { entity: HOLDING, account: "XP Private — Holding", kind: "aporte", amount: 500_000, daysAgo: -420, description: "Aporte mensal programado" },
+    { entity: HOLDING, account: "XP Private — Holding", kind: "provento", amount: 48_000, daysAgo: -300, description: "Cupom semestral Tesouro IPCA+" },
+    { entity: AGRO, account: "Itaú Private — Agro", kind: "aporte", amount: 350_000, daysAgo: -210, description: "Capital de giro para safra" },
+    { entity: HOLDING, account: "BTG Core — Holding", kind: "resgate", amount: 120_000, daysAgo: -150, description: "Resgate para aquisição de imóvel" },
+    { entity: RE, account: "IBKR — Internacional", kind: "aporte", amount: 60_000, daysAgo: -90, description: "Aporte em ETF global (USD)" },
+    { entity: HOLDING, account: "XP Private — Holding", kind: "provento", amount: 32_500, daysAgo: -30, description: "Dividendos ITUB4/PETR4" },
+  ];
+
+  // Série mensal: patrimônio crescendo com um vale em M3 (retrata drawdown real).
+  const snapshots = [
+    { entity: HOLDING, monthOffset: 5, marketValue: 14_200_000, costBasis: 13_100_000, netFlow: 0 },
+    { entity: HOLDING, monthOffset: 4, marketValue: 14_680_000, costBasis: 13_100_000, netFlow: 0 },
+    { entity: HOLDING, monthOffset: 3, marketValue: 14_120_000, costBasis: 13_600_000, netFlow: 500_000 },
+    { entity: HOLDING, monthOffset: 2, marketValue: 14_950_000, costBasis: 13_600_000, netFlow: 0 },
+    { entity: HOLDING, monthOffset: 1, marketValue: 15_340_000, costBasis: 13_600_000, netFlow: 0 },
+    { entity: HOLDING, monthOffset: 0, marketValue: 15_820_000, costBasis: 13_600_000, netFlow: 0 },
+    { entity: AGRO, monthOffset: 5, marketValue: 3_050_000, costBasis: 3_050_000, netFlow: 0 },
+    { entity: AGRO, monthOffset: 4, marketValue: 3_140_000, costBasis: 3_050_000, netFlow: 0 },
+    { entity: AGRO, monthOffset: 3, marketValue: 3_210_000, costBasis: 3_400_000, netFlow: 350_000 },
+    { entity: AGRO, monthOffset: 2, marketValue: 3_260_000, costBasis: 3_400_000, netFlow: 0 },
+    { entity: AGRO, monthOffset: 1, marketValue: 3_305_000, costBasis: 3_400_000, netFlow: 0 },
+    { entity: AGRO, monthOffset: 0, marketValue: 3_380_000, costBasis: 3_400_000, netFlow: 0 },
+    { entity: RE, monthOffset: 5, marketValue: 11_900_000, costBasis: 9_800_000, netFlow: 0 },
+    { entity: RE, monthOffset: 4, marketValue: 12_050_000, costBasis: 9_860_000, netFlow: 60_000 },
+    { entity: RE, monthOffset: 3, marketValue: 12_180_000, costBasis: 9_860_000, netFlow: 0 },
+    { entity: RE, monthOffset: 2, marketValue: 12_420_000, costBasis: 9_860_000, netFlow: 0 },
+    { entity: RE, monthOffset: 1, marketValue: 12_690_000, costBasis: 9_860_000, netFlow: 0 },
+    { entity: RE, monthOffset: 0, marketValue: 12_880_000, costBasis: 9_860_000, netFlow: 0 },
+  ];
+
   return {
     entities,
     members,
@@ -1156,5 +1282,9 @@ export function buildDemoDataset(): DemoDataset {
     healthScores,
     suppliers,
     legalCases,
+    accounts,
+    positions,
+    cashFlows,
+    snapshots,
   };
 }

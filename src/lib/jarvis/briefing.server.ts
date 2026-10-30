@@ -6,6 +6,8 @@
  * dados respeita RLS — o JARVIS só enxerga o patrimônio de quem perguntou.
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { summarizeAllocation } from "@/lib/wealth/allocation";
+import { summarizePerformance } from "@/lib/wealth/performance";
 import type { Database } from "@/integrations/supabase/types";
 import type {
   BriefingAsset,
@@ -14,6 +16,7 @@ import type {
   BriefingEntity,
   BriefingInsight,
   BriefingRisk,
+  BriefingCustody,
   PortfolioBriefing,
 } from "./types";
 
@@ -48,6 +51,9 @@ export async function buildBriefing(
     insightsRes,
     txRes,
     membersRes,
+    positionsRes,
+    snapshotsRes,
+    flowsRes,
   ] = await Promise.all([
     supabase.auth.getUser(),
     supabase.from("entities").select("id, name, type, compliance_score"),
@@ -63,6 +69,11 @@ export async function buildBriefing(
         new Date(new Date().setMonth(new Date().getMonth() - 6)).toISOString().slice(0, 10),
       ),
     supabase.from("members").select("id, full_name, role"),
+    supabase
+      .from("positions")
+      .select("name, asset_class, liquidity, quantity, unit_price, is_offshore"),
+    supabase.from("portfolio_snapshots").select("as_of, market_value, cost_basis, net_flow"),
+    supabase.from("cash_flows").select("flow_date, amount, kind"),
   ]);
 
   const entities = entitiesRes.data ?? [];
@@ -161,7 +172,62 @@ export async function buildBriefing(
     .filter((t) => t.type === "expense")
     .reduce((s, t) => s + valueOf(t.amount), 0);
 
+  // ---------------------------------------------------------- custódia (wave 4)
+  // Se a migration 20261030150000 não estiver aplicada, os selects falham e
+  // `positionRows` fica vazio: o briefing continua funcionando sem a seção.
+  const positionRows = (positionsRes.data ?? []) as {
+    name: string;
+    asset_class: string;
+    liquidity: string | null;
+    quantity: number | string | null;
+    unit_price: number | string | null;
+    is_offshore: boolean | null;
+  }[];
+  const snapshotRows = (snapshotsRes.data ?? []) as {
+    as_of: string;
+    market_value: number | string | null;
+    cost_basis: number | string | null;
+    net_flow: number | string | null;
+  }[];
+  const flowRows = (flowsRes.data ?? []) as { flow_date: string; amount: number | string | null; kind: string }[];
+
+  let custody: BriefingCustody | undefined;
+  if (positionRows.length > 0) {
+    const allocation = summarizeAllocation(positionRows);
+    const performance = summarizePerformance(
+      snapshotRows.map((row) => ({
+        as_of: row.as_of,
+        market_value: Number(row.market_value ?? 0),
+        cost_basis: Number(row.cost_basis ?? 0),
+        net_flow: Number(row.net_flow ?? 0),
+      })),
+      flowRows.map((row) => ({
+        flow_date: row.flow_date,
+        amount: Number(row.amount ?? 0),
+        kind: row.kind,
+      })),
+    );
+
+    custody = {
+      positions: allocation.positionsCount,
+      financialValue: allocation.total,
+      byClass: allocation.byClass.map((bucket) => ({
+        asset_class: bucket.label,
+        value: bucket.value,
+        percentage: bucket.percentage,
+      })),
+      liquidPercentage: allocation.liquidPercentage,
+      offshorePercentage: allocation.offshorePercentage,
+      concentration: allocation.concentration,
+      twr: performance.twr.periods > 0 ? performance.twr.cumulative : null,
+      mwr: performance.mwr,
+      benchmarkExcess: performance.twr.periods > 0 ? performance.benchmark.excess : null,
+      topPosition: allocation.top[0] ? { name: allocation.top[0].name, percentage: allocation.top[0].percentage } : null,
+    };
+  }
+
   return {
+    custody,
     generatedAt: new Date().toISOString(),
     userEmail: auth?.user?.email ?? null,
     totals: {

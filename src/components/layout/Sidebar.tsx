@@ -20,7 +20,10 @@ import {
   Scale,
   Map as MapIcon,
   LogOut,
-  Cpu
+  Cpu,
+  Wallet,
+  Landmark as SuccessionIcon,
+  FileText
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -43,6 +46,14 @@ const navGroups = [
       { label: "Mapa Patrimonial", icon: MapIcon, to: "/mapa" },
       { label: "Holdings & Societário", icon: Boxes, to: "/holdings" },
       { label: "Family Office", icon: Users2, to: "/family-office" },
+    ]
+  },
+  {
+    label: "Investimentos",
+    items: [
+      { label: "Custódia & Performance", icon: Wallet, to: "/custodia" },
+      { label: "Sucessão & Tributação", icon: SuccessionIcon, to: "/sucessorio" },
+      { label: "Relatórios", icon: FileText, to: "/relatorios" },
     ]
   },
   {

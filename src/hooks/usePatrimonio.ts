@@ -178,3 +178,94 @@ export function useDocuments() {
     },
   });
 }
+
+// ------------------------------------------------------------ custódia (wave 4)
+
+/** Contas de custódia com o nome da instituição resolvido. */
+export function useAccounts() {
+  return useQuery({
+    queryKey: ["accounts"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("accounts")
+        .select("*, custodians(name, code), entities(name)")
+        .order("name");
+      if (error) ensureTable(error, "accounts", "20261030150000_wealth_core.sql");
+      return data;
+    },
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+  });
+}
+
+/** Posições financeiras — a base de alocação e performance. */
+export function usePositions() {
+  return useQuery({
+    queryKey: ["positions"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("positions")
+        .select("*, accounts(name, custodians(name)), entities(name)")
+        .order("as_of", { ascending: false });
+      if (error) ensureTable(error, "positions", "20261030150000_wealth_core.sql");
+      return data;
+    },
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+  });
+}
+
+export function useCashFlows() {
+  return useQuery({
+    queryKey: ["cash_flows"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("cash_flows")
+        .select("*")
+        .order("flow_date", { ascending: true });
+      if (error) ensureTable(error, "cash_flows", "20261030150000_wealth_core.sql");
+      return data;
+    },
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+  });
+}
+
+export function usePortfolioSnapshots() {
+  return useQuery({
+    queryKey: ["portfolio_snapshots"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("portfolio_snapshots")
+        .select("*")
+        .order("as_of", { ascending: true });
+      if (error) ensureTable(error, "portfolio_snapshots", "20261030150000_wealth_core.sql");
+      return data;
+    },
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+  });
+}
+
+export function useTaxScenarios() {
+  return useQuery({
+    queryKey: ["tax_scenarios"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("tax_scenarios")
+        .select("*, entities(name)")
+        .order("created_at", { ascending: false });
+      if (error) ensureTable(error, "tax_scenarios", "20261030150000_wealth_core.sql");
+      return data;
+    },
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+  });
+}
+
+export function useCustodians() {
+  return useQuery({
+    queryKey: ["custodians"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("custodians").select("*").order("name");
+      if (error) ensureTable(error, "custodians", "20261030150000_wealth_core.sql");
+      return data;
+    },
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+  });
+}

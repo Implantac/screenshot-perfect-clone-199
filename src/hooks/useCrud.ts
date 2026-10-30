@@ -33,6 +33,17 @@ import {
   upsertShare,
   deleteShare,
   updateDocument,
+  createAccount,
+  deleteAccount,
+  createPosition,
+  updatePosition,
+  deletePosition,
+  createCashFlow,
+  deleteCashFlow,
+  upsertSnapshot,
+  rebuildSnapshots,
+  createTaxScenario,
+  deleteTaxScenario,
 } from "@/lib/api/crud.functions";
 import { seedDemo } from "@/lib/api/demo.functions";
 import type { SeedResult } from "@/lib/demo/seedDemo";
@@ -53,6 +64,12 @@ import type {
   supplierUpdateSchema,
   legalCaseUpdateSchema,
   memberUpdateSchema,
+  accountInputSchema,
+  positionInputSchema,
+  positionUpdateSchema,
+  cashFlowInputSchema,
+  snapshotInputSchema,
+  taxScenarioInputSchema,
 } from "@/lib/validation/schemas";
 import type { z } from "zod";
 import type { actionPlanUpdateSchema } from "@/lib/validation/schemas";
@@ -286,4 +303,89 @@ export const useUpdateDocument = () =>
   useInvalidatingMutation<DocumentUpdateInput, unknown>(updateDocument, [["documents"], ["risks"]], {
     success: "Documento atualizado.",
     error: "Não foi possível atualizar o documento.",
+  });
+
+// ------------------------------------------------------------ custódia (wave 4)
+
+const CUSTODY_KEYS: QueryKey[] = [
+  ["positions"],
+  ["accounts"],
+  ["cash_flows"],
+  ["portfolio_snapshots"],
+  ["audit_logs"],
+];
+
+export const useCreateAccount = () =>
+  useInvalidatingMutation<z.input<typeof accountInputSchema>, unknown>(createAccount, CUSTODY_KEYS, {
+    success: "Conta de custódia criada.",
+    error: "Não foi possível criar a conta.",
+  });
+
+export const useDeleteAccount = () =>
+  useInvalidatingMutation<IdInput, unknown>(deleteAccount, CUSTODY_KEYS, {
+    success: "Conta removida.",
+    error: "Não foi possível remover a conta.",
+  });
+
+export const useCreatePosition = () =>
+  useInvalidatingMutation<z.input<typeof positionInputSchema>, unknown>(createPosition, CUSTODY_KEYS, {
+    success: "Posição lançada.",
+    error: "Não foi possível lançar a posição.",
+  });
+
+export const useUpdatePosition = () =>
+  useInvalidatingMutation<z.input<typeof positionUpdateSchema>, unknown>(updatePosition, CUSTODY_KEYS, {
+    success: "Posição atualizada.",
+    error: "Não foi possível atualizar a posição.",
+  });
+
+export const useDeletePosition = () =>
+  useInvalidatingMutation<IdInput, unknown>(deletePosition, CUSTODY_KEYS, {
+    success: "Posição removida.",
+    error: "Não foi possível remover a posição.",
+  });
+
+export const useCreateCashFlow = () =>
+  useInvalidatingMutation<z.input<typeof cashFlowInputSchema>, unknown>(createCashFlow, CUSTODY_KEYS, {
+    success: "Fluxo registrado.",
+    error: "Não foi possível registrar o fluxo.",
+  });
+
+export const useDeleteCashFlow = () =>
+  useInvalidatingMutation<IdInput, unknown>(deleteCashFlow, CUSTODY_KEYS, {
+    success: "Fluxo removido.",
+    error: "Não foi possível remover o fluxo.",
+  });
+
+export const useUpsertSnapshot = () =>
+  useInvalidatingMutation<z.input<typeof snapshotInputSchema>, unknown>(upsertSnapshot, CUSTODY_KEYS, {
+    success: "Fechamento salvo.",
+    error: "Não foi possível salvar o fechamento.",
+  });
+
+export const useRebuildSnapshots = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (entityId: string) => rebuildSnapshots({ data: { entity_id: entityId } }),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ["portfolio_snapshots"] });
+      toast.success(`Série reconstruída: ${result.count} fechamentos.`);
+    },
+    onError: (error: Error) => {
+      console.error("[snapshots]", error);
+      toast.error(error.message || "Não foi possível reconstruir a série.");
+    },
+  });
+};
+
+export const useCreateTaxScenario = () =>
+  useInvalidatingMutation<z.input<typeof taxScenarioInputSchema>, unknown>(createTaxScenario, [["tax_scenarios"]], {
+    success: "Cenário salvo.",
+    error: "Não foi possível salvar o cenário.",
+  });
+
+export const useDeleteTaxScenario = () =>
+  useInvalidatingMutation<IdInput, unknown>(deleteTaxScenario, [["tax_scenarios"]], {
+    success: "Cenário removido.",
+    error: "Não foi possível remover o cenário.",
   });

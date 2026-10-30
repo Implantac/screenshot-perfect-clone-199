@@ -201,3 +201,78 @@ export function firstZodError(error: z.ZodError): string {
   const issue = error.issues[0];
   return issue?.message ?? "Dados inválidos.";
 }
+
+// ------------------------------------------------------------- custódia (wave 4)
+export const assetClassEnum = z.enum([
+  "caixa",
+  "renda_fixa",
+  "renda_variavel",
+  "fundos",
+  "imoveis",
+  "internacional",
+  "alternativos",
+  "cripto",
+]);
+
+export const assetLiquidityEnum = z.enum(["d0", "d1", "d30", "longo_prazo", "iliquido"]);
+export const flowKindEnum = z.enum(["aporte", "resgate", "provento", "taxa", "imposto"]);
+export const accountKindEnum = z.enum(["corretora", "banco", "fundo", "previdencia", "cripto", "outro"]);
+
+export const accountInputSchema = z.object({
+  entity_id: uuid,
+  custodian_id: optionalUuid,
+  name: text(120),
+  kind: accountKindEnum.default("corretora"),
+  currency: z.string().trim().length(3).default("BRL"),
+  account_number: z.string().trim().max(40).optional().or(z.literal("")),
+  notes: z.string().trim().max(300).optional().or(z.literal("")),
+});
+export type AccountInput = z.input<typeof accountInputSchema>;
+
+export const positionInputSchema = z.object({
+  entity_id: uuid,
+  account_id: optionalUuid,
+  asset_class: assetClassEnum.default("renda_fixa"),
+  liquidity: assetLiquidityEnum.default("d1"),
+  symbol: z.string().trim().max(24).optional().or(z.literal("")),
+  name: text(120),
+  quantity: z.coerce.number().min(0, "Quantidade não pode ser negativa."),
+  unit_price: z.coerce.number().min(0, "Preço não pode ser negativo."),
+  cost_basis: z.coerce.number().min(0).default(0),
+  currency: z.string().trim().length(3).default("BRL"),
+  as_of: optionalDate,
+  is_offshore: z.boolean().default(false),
+  notes: z.string().trim().max(300).optional().or(z.literal("")),
+});
+export type PositionInput = z.input<typeof positionInputSchema>;
+export const positionUpdateSchema = positionInputSchema.partial().extend({ id: uuid });
+
+export const cashFlowInputSchema = z.object({
+  entity_id: uuid,
+  account_id: optionalUuid,
+  kind: flowKindEnum.default("aporte"),
+  amount: money.refine((v) => v > 0, "O valor deve ser maior que zero."),
+  currency: z.string().trim().length(3).default("BRL"),
+  flow_date: optionalDate,
+  description: z.string().trim().max(200).optional().or(z.literal("")),
+});
+export type CashFlowInput = z.input<typeof cashFlowInputSchema>;
+
+export const snapshotInputSchema = z.object({
+  entity_id: uuid,
+  as_of: z.string().min(8, "Informe a data do fechamento."),
+  market_value: z.coerce.number().min(0),
+  cost_basis: z.coerce.number().min(0).default(0),
+  net_flow: z.coerce.number().default(0),
+});
+export type SnapshotInput = z.input<typeof snapshotInputSchema>;
+
+export const taxScenarioInputSchema = z.object({
+  entity_id: optionalUuid,
+  name: text(120),
+  state_code: z.string().trim().length(2).default("PR"),
+  assumptions: z.record(z.any()).default({}),
+  results: z.record(z.any()).default({}),
+  total_cost: z.coerce.number().min(0).default(0),
+});
+export type TaxScenarioInput = z.input<typeof taxScenarioInputSchema>;

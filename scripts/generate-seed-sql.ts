@@ -252,6 +252,43 @@ for (const c of demo.legalCases) {
 }
 lines.push(``);
 
+// Custódia: contas, posições, fluxos e fechamentos
+lines.push(`  -- Contas de custódia`);
+for (const a of demo.accounts) {
+  const entityVar = a.entity === DEMO_ENTITY_NAMES[0] ? "v_holding" : a.entity === DEMO_ENTITY_NAMES[1] ? "v_agro" : "v_re";
+  lines.push(
+    `  INSERT INTO public.accounts (entity_id, custodian_id, name, kind, currency, account_number) VALUES (${entityVar}, (SELECT id FROM public.custodians WHERE name = ${q(a.custodian)} LIMIT 1), ${q(a.name)}, ${q(a.kind)}::public.account_kind, ${q(a.currency)}, ${q(a.accountNumber)});`,
+  );
+}
+lines.push(``);
+
+lines.push(`  -- Posições financeiras`);
+for (const p of demo.positions) {
+  const entityVar = p.entity === DEMO_ENTITY_NAMES[0] ? "v_holding" : p.entity === DEMO_ENTITY_NAMES[1] ? "v_agro" : "v_re";
+  lines.push(
+    `  INSERT INTO public.positions (entity_id, account_id, asset_class, liquidity, symbol, name, quantity, unit_price, cost_basis, currency, is_offshore, as_of) VALUES (${entityVar}, (SELECT id FROM public.accounts WHERE name = ${q(p.account)} AND entity_id = ${entityVar} LIMIT 1), ${q(p.asset_class)}::public.asset_class, ${q(p.liquidity)}::public.asset_liquidity, ${q(p.symbol)}, ${q(p.name)}, ${n(p.quantity)}, ${n(p.unit_price)}, ${n(p.cost_basis)}, ${q(p.currency)}, ${p.is_offshore ? "true" : "false"}, CURRENT_DATE);`,
+  );
+}
+lines.push(``);
+
+lines.push(`  -- Fluxos de caixa (aportes/resgates/proventos)`);
+for (const f of demo.cashFlows) {
+  const entityVar = f.entity === DEMO_ENTITY_NAMES[0] ? "v_holding" : f.entity === DEMO_ENTITY_NAMES[1] ? "v_agro" : "v_re";
+  lines.push(
+    `  INSERT INTO public.cash_flows (entity_id, account_id, kind, amount, currency, flow_date, description) VALUES (${entityVar}, (SELECT id FROM public.accounts WHERE name = ${q(f.account)} AND entity_id = ${entityVar} LIMIT 1), ${q(f.kind)}::public.flow_kind, ${n(f.amount)}, 'BRL', CURRENT_DATE + (${f.daysAgo}), ${q(f.description)});`,
+  );
+}
+lines.push(``);
+
+lines.push(`  -- Fechamentos mensais (série de TWR)`);
+for (const s of demo.snapshots) {
+  const entityVar = s.entity === DEMO_ENTITY_NAMES[0] ? "v_holding" : s.entity === DEMO_ENTITY_NAMES[1] ? "v_agro" : "v_re";
+  lines.push(
+    `  INSERT INTO public.portfolio_snapshots (entity_id, as_of, market_value, cost_basis, net_flow, source) VALUES (${entityVar}, (date_trunc('month', CURRENT_DATE) - interval '${s.monthOffset} months' + interval '1 month - 1 day')::date, ${n(s.marketValue)}, ${n(s.costBasis)}, ${n(s.netFlow)}, 'demo');`,
+  );
+}
+lines.push(``);
+
 lines.push(`  -- Histórico de health score (12 meses)`);
 for (const h of demo.healthScores) {
   lines.push(
@@ -270,4 +307,7 @@ writeFileSync(out, lines.join("\n"), "utf8");
 console.log(`✅ supabase/seed.sql gerado (${lines.length} linhas) para ${email}`);
 console.log(
   `   ${demo.entities.length} holdings · ${demo.assets.length} ativos · ${demo.documents.length} documentos · ${demo.risks.length} riscos · ${demo.transactions.length} transações · ${demo.insights.length} insights`,
+);
+console.log(
+  `   ${demo.accounts.length} contas · ${demo.positions.length} posições · ${demo.cashFlows.length} fluxos · ${demo.snapshots.length} fechamentos`,
 );

@@ -26,6 +26,12 @@ import {
   memberUpdateSchema,
   shareInputSchema,
   documentUpdateSchema,
+  accountInputSchema,
+  positionInputSchema,
+  positionUpdateSchema,
+  cashFlowInputSchema,
+  snapshotInputSchema,
+  taxScenarioInputSchema,
 } from "@/lib/validation/schemas";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -371,3 +377,135 @@ export const updateDocument = authed
     if (error) throw new Error(error.message);
     return row;
   });
+
+// ====================================================== custódia (wave 4)
+
+export const createAccount = authed.inputValidator(accountInputSchema).handler(async ({ data, context }) => {
+  const { data: row, error } = await context.supabase
+    .from("accounts")
+    .insert(nullify(data) as Tables["accounts"]["Insert"])
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return row;
+});
+
+export const deleteAccount = authed.inputValidator(idSchema).handler(async ({ data, context }) => {
+  const { error } = await context.supabase.from("accounts").delete().eq("id", data.id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: data.id };
+});
+
+export const createPosition = authed.inputValidator(positionInputSchema).handler(async ({ data, context }) => {
+  const { data: row, error } = await context.supabase
+    .from("positions")
+    .insert(nullify(data) as Tables["positions"]["Insert"])
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return row;
+});
+
+export const updatePosition = authed.inputValidator(positionUpdateSchema).handler(async ({ data, context }) => {
+  const { id, ...rest } = data;
+  const { data: row, error } = await context.supabase
+    .from("positions")
+    .update(nullify(rest) as Tables["positions"]["Update"])
+    .eq("id", id)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return row;
+});
+
+export const deletePosition = authed.inputValidator(idSchema).handler(async ({ data, context }) => {
+  const { error } = await context.supabase.from("positions").delete().eq("id", data.id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: data.id };
+});
+
+export const createCashFlow = authed.inputValidator(cashFlowInputSchema).handler(async ({ data, context }) => {
+  const { data: row, error } = await context.supabase
+    .from("cash_flows")
+    .insert(nullify(data) as Tables["cash_flows"]["Insert"])
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return row;
+});
+
+export const deleteCashFlow = authed.inputValidator(idSchema).handler(async ({ data, context }) => {
+  const { error } = await context.supabase.from("cash_flows").delete().eq("id", data.id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: data.id };
+});
+
+/** Snapshot é idempotente por (entity_id, as_of): reenviar o mesmo mês atualiza. */
+export const upsertSnapshot = authed.inputValidator(snapshotInputSchema).handler(async ({ data, context }) => {
+  const { data: row, error } = await context.supabase
+    .from("portfolio_snapshots")
+    .upsert(data as Tables["portfolio_snapshots"]["Insert"], { onConflict: "entity_id,as_of" })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return row;
+});
+
+/**
+ * Gera a série de snapshots a partir das posições atuais, um ponto por mês.
+ * Serve para o TWR ter base histórica sem integração de custódia.
+ */
+export const rebuildSnapshots = authed
+  .inputValidator(z.object({ entity_id: z.string().uuid() }))
+  .handler(async ({ data, context }) => {
+    const { data: positions, error: positionsError } = await context.supabase
+      .from("positions")
+      .select("quantity, unit_price, cost_basis")
+      .eq("entity_id", data.entity_id);
+    if (positionsError) throw new Error(positionsError.message);
+
+    const marketValue = (positions ?? []).reduce(
+      (sum, p) => sum + Number(p.quantity ?? 0) * Number(p.unit_price ?? 0),
+      0,
+    );
+    const costBasis = (positions ?? []).reduce((sum, p) => sum + Number(p.cost_basis ?? 0), 0);
+
+    const today = new Date();
+    const rows: Tables["portfolio_snapshots"]["Insert"][] = [];
+    for (let i = 5; i >= 0; i -= 1) {
+      const date = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - i + 1, 0));
+      rows.push({
+        entity_id: data.entity_id,
+        as_of: date.toISOString().slice(0, 10),
+        // Sem histórico de preço, repetimos o valor atual (série plana e honesta).
+        market_value: Math.round(marketValue * 100) / 100,
+        cost_basis: Math.round(costBasis * 100) / 100,
+        net_flow: 0,
+        source: "rebuild",
+      });
+    }
+
+    const { error } = await context.supabase
+      .from("portfolio_snapshots")
+      .upsert(rows, { onConflict: "entity_id,as_of" });
+    if (error) throw new Error(error.message);
+    return { ok: true as const, count: rows.length };
+  });
+
+export const createTaxScenario = authed
+  .inputValidator(taxScenarioInputSchema)
+  .handler(async ({ data, context }) => {
+    const { data: row, error } = await context.supabase
+      .from("tax_scenarios")
+      .insert(nullify(data) as Tables["tax_scenarios"]["Insert"])
+      .select("*")
+      .single();
+    if (error) throw new Error(error.message);
+    return row;
+  });
+
+export const deleteTaxScenario = authed.inputValidator(idSchema).handler(async ({ data, context }) => {
+  const { error } = await context.supabase.from("tax_scenarios").delete().eq("id", data.id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: data.id };
+});

@@ -72,6 +72,22 @@ export type PortfolioBriefing = {
   documentsExpiring: BriefingDocument[];
   insights: BriefingInsight[];
   categories: BriefingCategory[];
+  /** Custódia financeira (wave 4) — ausente/zero quando a migration não foi aplicada. */
+  custody?: BriefingCustody;
+};
+
+/** Resumo de custódia/performance usado pelo analista local. */
+export type BriefingCustody = {
+  positions: number;
+  financialValue: number;
+  byClass: { asset_class: string; value: number; percentage: number }[];
+  liquidPercentage: number;
+  offshorePercentage: number;
+  concentration: number;
+  twr: number | null;
+  mwr: number | null;
+  benchmarkExcess: number | null;
+  topPosition: { name: string; percentage: number } | null;
 };
 
 export type JarvisProvider = "openai" | "anthropic" | "gemini" | "local";
@@ -115,4 +131,5 @@ export const EMPTY_BRIEFING: PortfolioBriefing = {
   documentsExpiring: [],
   insights: [],
   categories: [],
+  custody: undefined,
 };

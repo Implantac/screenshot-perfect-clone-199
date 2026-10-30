@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
+import { Route as AppCustodiaRouteImport } from './routes/_app.custodia'
 import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
 import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
 import { Route as AppFinanceiroRouteImport } from './routes/_app.financeiro'
@@ -24,9 +25,11 @@ import { Route as AppJarvisRouteImport } from './routes/_app.jarvis'
 import { Route as AppLegalRouteImport } from './routes/_app.legal'
 import { Route as AppMapaRouteImport } from './routes/_app.mapa'
 import { Route as AppRegularizacaoRouteImport } from './routes/_app.regularizacao'
+import { Route as AppRelatoriosRouteImport } from './routes/_app.relatorios'
 import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
 import { Route as AppSaudeDocumentalRouteImport } from './routes/_app.saude-documental'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
+import { Route as AppSucessorioRouteImport } from './routes/_app.sucessorio'
 import { Route as AppJarvisIndexRouteImport } from './routes/_app.jarvis.index'
 import { Route as AppJarvisAcoesRouteImport } from './routes/_app.jarvis.acoes'
 import { Route as AppJarvisAlertasRouteImport } from './routes/_app.jarvis.alertas'
@@ -52,6 +55,11 @@ const LoginRoute = LoginRouteImport.update({
 const AppComplianceRoute = AppComplianceRouteImport.update({
   id: '/compliance',
   path: '/compliance',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCustodiaRoute = AppCustodiaRouteImport.update({
+  id: '/custodia',
+  path: '/custodia',
   getParentRoute: () => AppRoute,
 } as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
@@ -109,6 +117,11 @@ const AppRegularizacaoRoute = AppRegularizacaoRouteImport.update({
   path: '/regularizacao',
   getParentRoute: () => AppRoute,
 } as any)
+const AppRelatoriosRoute = AppRelatoriosRouteImport.update({
+  id: '/relatorios',
+  path: '/relatorios',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppRiscosRoute = AppRiscosRouteImport.update({
   id: '/riscos',
   path: '/riscos',
@@ -122,6 +135,11 @@ const AppSaudeDocumentalRoute = AppSaudeDocumentalRouteImport.update({
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSucessorioRoute = AppSucessorioRouteImport.update({
+  id: '/sucessorio',
+  path: '/sucessorio',
   getParentRoute: () => AppRoute,
 } as any)
 const AppJarvisIndexRoute = AppJarvisIndexRouteImport.update({
@@ -164,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/compliance': typeof AppComplianceRoute
+  '/custodia': typeof AppCustodiaRoute
   '/dashboard': typeof AppDashboardRoute
   '/family-office': typeof AppFamilyOfficeRoute
   '/financeiro': typeof AppFinanceiroRoute
@@ -175,9 +194,11 @@ export interface FileRoutesByFullPath {
   '/legal': typeof AppLegalRoute
   '/mapa': typeof AppMapaRoute
   '/regularizacao': typeof AppRegularizacaoRoute
+  '/relatorios': typeof AppRelatoriosRoute
   '/riscos': typeof AppRiscosRoute
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/settings': typeof AppSettingsRoute
+  '/sucessorio': typeof AppSucessorioRoute
   '/jarvis/acoes': typeof AppJarvisAcoesRoute
   '/jarvis/alertas': typeof AppJarvisAlertasRoute
   '/jarvis/chat': typeof AppJarvisChatRoute
@@ -190,6 +211,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/compliance': typeof AppComplianceRoute
+  '/custodia': typeof AppCustodiaRoute
   '/dashboard': typeof AppDashboardRoute
   '/family-office': typeof AppFamilyOfficeRoute
   '/financeiro': typeof AppFinanceiroRoute
@@ -200,9 +222,11 @@ export interface FileRoutesByTo {
   '/legal': typeof AppLegalRoute
   '/mapa': typeof AppMapaRoute
   '/regularizacao': typeof AppRegularizacaoRoute
+  '/relatorios': typeof AppRelatoriosRoute
   '/riscos': typeof AppRiscosRoute
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/settings': typeof AppSettingsRoute
+  '/sucessorio': typeof AppSucessorioRoute
   '/jarvis/acoes': typeof AppJarvisAcoesRoute
   '/jarvis/alertas': typeof AppJarvisAlertasRoute
   '/jarvis/chat': typeof AppJarvisChatRoute
@@ -217,6 +241,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/_app/compliance': typeof AppComplianceRoute
+  '/_app/custodia': typeof AppCustodiaRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/family-office': typeof AppFamilyOfficeRoute
   '/_app/financeiro': typeof AppFinanceiroRoute
@@ -228,9 +253,11 @@ export interface FileRoutesById {
   '/_app/legal': typeof AppLegalRoute
   '/_app/mapa': typeof AppMapaRoute
   '/_app/regularizacao': typeof AppRegularizacaoRoute
+  '/_app/relatorios': typeof AppRelatoriosRoute
   '/_app/riscos': typeof AppRiscosRoute
   '/_app/saude-documental': typeof AppSaudeDocumentalRoute
   '/_app/settings': typeof AppSettingsRoute
+  '/_app/sucessorio': typeof AppSucessorioRoute
   '/_app/jarvis/acoes': typeof AppJarvisAcoesRoute
   '/_app/jarvis/alertas': typeof AppJarvisAlertasRoute
   '/_app/jarvis/chat': typeof AppJarvisChatRoute
@@ -245,6 +272,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/compliance'
+    | '/custodia'
     | '/dashboard'
     | '/family-office'
     | '/financeiro'
@@ -256,9 +284,11 @@ export interface FileRouteTypes {
     | '/legal'
     | '/mapa'
     | '/regularizacao'
+    | '/relatorios'
     | '/riscos'
     | '/saude-documental'
     | '/settings'
+    | '/sucessorio'
     | '/jarvis/acoes'
     | '/jarvis/alertas'
     | '/jarvis/chat'
@@ -271,6 +301,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/compliance'
+    | '/custodia'
     | '/dashboard'
     | '/family-office'
     | '/financeiro'
@@ -281,9 +312,11 @@ export interface FileRouteTypes {
     | '/legal'
     | '/mapa'
     | '/regularizacao'
+    | '/relatorios'
     | '/riscos'
     | '/saude-documental'
     | '/settings'
+    | '/sucessorio'
     | '/jarvis/acoes'
     | '/jarvis/alertas'
     | '/jarvis/chat'
@@ -297,6 +330,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/login'
     | '/_app/compliance'
+    | '/_app/custodia'
     | '/_app/dashboard'
     | '/_app/family-office'
     | '/_app/financeiro'
@@ -308,9 +342,11 @@ export interface FileRouteTypes {
     | '/_app/legal'
     | '/_app/mapa'
     | '/_app/regularizacao'
+    | '/_app/relatorios'
     | '/_app/riscos'
     | '/_app/saude-documental'
     | '/_app/settings'
+    | '/_app/sucessorio'
     | '/_app/jarvis/acoes'
     | '/_app/jarvis/alertas'
     | '/_app/jarvis/chat'
@@ -354,6 +390,13 @@ declare module '@tanstack/react-router' {
       path: '/compliance'
       fullPath: '/compliance'
       preLoaderRoute: typeof AppComplianceRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/custodia': {
+      id: '/_app/custodia'
+      path: '/custodia'
+      fullPath: '/custodia'
+      preLoaderRoute: typeof AppCustodiaRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/dashboard': {
@@ -433,6 +476,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRegularizacaoRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/relatorios': {
+      id: '/_app/relatorios'
+      path: '/relatorios'
+      fullPath: '/relatorios'
+      preLoaderRoute: typeof AppRelatoriosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/riscos': {
       id: '/_app/riscos'
       path: '/riscos'
@@ -452,6 +502,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/sucessorio': {
+      id: '/_app/sucessorio'
+      path: '/sucessorio'
+      fullPath: '/sucessorio'
+      preLoaderRoute: typeof AppSucessorioRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/jarvis/': {
@@ -532,6 +589,7 @@ const AppJarvisRouteWithChildren = AppJarvisRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppComplianceRoute: typeof AppComplianceRoute
+  AppCustodiaRoute: typeof AppCustodiaRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppFamilyOfficeRoute: typeof AppFamilyOfficeRoute
   AppFinanceiroRoute: typeof AppFinanceiroRoute
@@ -543,13 +601,16 @@ interface AppRouteChildren {
   AppLegalRoute: typeof AppLegalRoute
   AppMapaRoute: typeof AppMapaRoute
   AppRegularizacaoRoute: typeof AppRegularizacaoRoute
+  AppRelatoriosRoute: typeof AppRelatoriosRoute
   AppRiscosRoute: typeof AppRiscosRoute
   AppSaudeDocumentalRoute: typeof AppSaudeDocumentalRoute
   AppSettingsRoute: typeof AppSettingsRoute
+  AppSucessorioRoute: typeof AppSucessorioRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppComplianceRoute: AppComplianceRoute,
+  AppCustodiaRoute: AppCustodiaRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppFamilyOfficeRoute: AppFamilyOfficeRoute,
   AppFinanceiroRoute: AppFinanceiroRoute,
@@ -561,9 +622,11 @@ const AppRouteChildren: AppRouteChildren = {
   AppLegalRoute: AppLegalRoute,
   AppMapaRoute: AppMapaRoute,
   AppRegularizacaoRoute: AppRegularizacaoRoute,
+  AppRelatoriosRoute: AppRelatoriosRoute,
   AppRiscosRoute: AppRiscosRoute,
   AppSaudeDocumentalRoute: AppSaudeDocumentalRoute,
   AppSettingsRoute: AppSettingsRoute,
+  AppSucessorioRoute: AppSucessorioRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

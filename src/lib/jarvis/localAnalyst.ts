@@ -7,6 +7,7 @@
  * útil (e honesta sobre o modo) mesmo sem chave de API.
  */
 import type { PortfolioBriefing } from "./types";
+import { DEFAULT_STATE, ITCMD_TABLE, simulateSuccession } from "@/lib/wealth/succession";
 
 export type LocalAnalysis = {
   answer: string;
@@ -210,10 +211,81 @@ type Intent =
   | "risco"
   | "documento"
   | "patrimonio"
+  | "performance"
+  | "sucessao"
   | "compliance"
   | "financeiro"
   | "estrutura"
   | "geral";
+
+/** Custódia + performance: TWR/MWR, líquidez, offshore e concentração. */
+function performanceSection(b: PortfolioBriefing): LocalAnalysis {
+  const custody = b.custody;
+  if (!custody) {
+    return {
+      answer:
+        "Ainda não há posições financeiras cadastradas, então não consigo calcular rentabilidade. " +
+        "Lance as posições em **Custódia & Performance** (ou popule a demonstração) que eu passo a responder TWR, MWR e comparação com o CDI.",
+      followUps: ["Como lançar minhas posições?", "Qual é o meu patrimônio total?"],
+    };
+  }
+
+  const classes = custody.byClass
+    .map((bucket) => `${bucket.asset_class}: ${money(bucket.value)} (${bucket.percentage.toFixed(1)}%)`)
+    .join(" · ");
+
+  const twr = custody.twr === null ? "sem série de fechamentos" : `${custody.twr.toFixed(2)}%`;
+  const mwr = custody.mwr === null ? "não calculável (sem fluxos)" : `${custody.mwr.toFixed(2)}% a.a.`;
+  const excess =
+    custody.benchmarkExcess === null
+      ? "sem base de comparação"
+      : `${custody.benchmarkExcess >= 0 ? "+" : ""}${custody.benchmarkExcess.toFixed(2)} p.p. vs CDI`;
+
+  return {
+    answer:
+      `Seu patrimônio **financeiro** é de **${money(custody.financialValue)}** em ${custody.positions} posição(ões).\n\n` +
+      `**Retorno:** TWR ${twr} (estratégia, já descontando aportes) · MWR ${mwr} (seu retorno como investidor) · ${excess}.\n\n` +
+      `**Alocação:** ${classes || "sem classes"}.\n\n` +
+      `**Liquidez:** ${custody.liquidPercentage.toFixed(1)}% disponível em até D+1 · ` +
+      `${custody.offshorePercentage.toFixed(1)}% offshore · concentração (HHI) ${custody.concentration.toFixed(3)}` +
+      (custody.topPosition
+        ? ` · maior posição: ${custody.topPosition.name} (${custody.topPosition.percentage.toFixed(1)}%).`
+        : "."),
+    followUps: ["Como estou em relação ao CDI?", "Quanto tenho disponível em D+1?"],
+  };
+}
+
+/** Sucessão: ordem de grandeza do custo de transmissão, sem substituir o simulador. */
+function successionSection(b: PortfolioBriefing): LocalAnalysis {
+  const custody = b.custody;
+  const base = custody?.financialValue ?? b.totals.aum;
+  if (base <= 0) {
+    return {
+      answer:
+        "Não tenho patrimônio consolidado para simular sucessão. Cadastre posições ou ativos e eu estimo o custo de transmissão.",
+      followUps: ["O que é ITCMD?", "Como funciona a holding familiar?"],
+    };
+  }
+
+  const simulation = simulateSuccession({
+    patrimony: base,
+    regime: "comunhao_parcial",
+    state: DEFAULT_STATE,
+    heirs: Math.max(1, b.totals.members),
+  });
+
+  return {
+    answer:
+      `Com **${money(base)}** e comunhão parcial de bens em ${ITCMD_TABLE[DEFAULT_STATE].name}, o espólio seria de ` +
+      `${money(simulation.estate)} e o custo total de transmissão (ITCMD + inventário + honorários) cerca de ` +
+      `**${money(simulation.totalCost)}** — ${simulation.effectiveCost.toFixed(1)}% do patrimônio (alíquota efetiva de ITCMD: ` +
+      `${simulation.itcmd.effectiveRate.toFixed(2)}%).\n\n` +
+      `Sobram aproximadamente ${money(simulation.perHeir)} por herdeiro (${Math.max(1, b.totals.members)} considerados).\n\n` +
+      `Rode a comparação completa em **Sucessão & Tributação** para ver doação em vida e holding familiar lado a lado. ` +
+      `Não substitui parecer jurídico.`,
+    followUps: ["Quanto custa doar em vida?", "Vale a pena a holding familiar?"],
+  };
+}
 
 function detectIntent(question: string): Intent {
   const q = question
@@ -221,6 +293,9 @@ function detectIntent(question: string): Intent {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
 
+  if (/(sucess|heranca|herdeir|itcmd|inventario|doacao|testamento)/.test(q)) return "sucessao";
+  if (/(rentabilidade|performance|twr|mwr|xirr|cdi|benchmark|retorno|drawdown|liquidez|offshore)/.test(q))
+    return "performance";
   if (/(risco|riscos|critico|criticos|alerta|urgencia|exposicao)/.test(q)) return "risco";
   if (/(document|venc|prazo|matricula|certidao|car\b|itr|cnd)/.test(q)) return "documento";
   if (/(compliance|conformidade|score|governanca)/.test(q)) return "compliance";
@@ -234,7 +309,9 @@ function detectIntent(question: string): Intent {
 
 /** Responde a pergunta usando apenas os dados do briefing. */
 export function analyzeLocally(question: string, briefing: PortfolioBriefing): LocalAnalysis {
-  if (briefing.totals.assets === 0 && briefing.totals.entities === 0) {
+  // Tenant vazio de verdade: nem posição financeira, nem ativo registral.
+  const hasCustody = (briefing.custody?.positions ?? 0) > 0;
+  if (briefing.totals.assets === 0 && briefing.totals.entities === 0 && !hasCustody) {
     return {
       answer:
         "Ainda não há patrimônio cadastrado na sua conta, então não tenho base para analisar. Popule a demonstração (ou cadastre sua primeira holding e seus ativos) e eu passo a responder com números reais.",
@@ -249,6 +326,10 @@ export function analyzeLocally(question: string, briefing: PortfolioBriefing): L
       return documentSection(briefing);
     case "patrimonio":
       return patrimonySection(briefing);
+    case "performance":
+      return performanceSection(briefing);
+    case "sucessao":
+      return successionSection(briefing);
     case "compliance":
       return complianceSection(briefing);
     case "financeiro":

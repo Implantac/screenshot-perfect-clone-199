@@ -14,6 +14,243 @@ export type Database = {
   }
   public: {
     Tables: {
+      accounts: {
+        Row: {
+          account_number: string | null
+          created_at: string | null
+          currency: string
+          custodian_id: string | null
+          entity_id: string
+          id: string
+          is_active: boolean
+          kind: Database["public"]["Enums"]["account_kind"]
+          name: string
+          notes: string | null
+          opened_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_number?: string | null
+          created_at?: string | null
+          currency?: string
+          custodian_id?: string | null
+          entity_id: string
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["account_kind"]
+          name: string
+          notes?: string | null
+          opened_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_number?: string | null
+          created_at?: string | null
+          currency?: string
+          custodian_id?: string | null
+          entity_id?: string
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["account_kind"]
+          name?: string
+          notes?: string | null
+          opened_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      cash_flows: {
+        Row: {
+          account_id: string | null
+          amount: number
+          created_at: string | null
+          currency: string
+          description: string | null
+          entity_id: string
+          flow_date: string
+          id: string
+          kind: Database["public"]["Enums"]["flow_kind"]
+        }
+        Insert: {
+          account_id?: string | null
+          amount: number
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          entity_id: string
+          flow_date?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["flow_kind"]
+        }
+        Update: {
+          account_id?: string | null
+          amount?: number
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          entity_id?: string
+          flow_date?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["flow_kind"]
+        }
+        Relationships: []
+      }
+      custodians: {
+        Row: {
+          code: string | null
+          country: string | null
+          created_at: string | null
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          code?: string | null
+          country?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          code?: string | null
+          country?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      positions: {
+        Row: {
+          account_id: string | null
+          as_of: string
+          asset_class: Database["public"]["Enums"]["asset_class"]
+          cost_basis: number
+          created_at: string | null
+          currency: string
+          entity_id: string
+          id: string
+          is_offshore: boolean
+          liquidity: Database["public"]["Enums"]["asset_liquidity"]
+          name: string
+          notes: string | null
+          quantity: number
+          symbol: string | null
+          unit_price: number
+          updated_at: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          as_of?: string
+          asset_class?: Database["public"]["Enums"]["asset_class"]
+          cost_basis?: number
+          created_at?: string | null
+          currency?: string
+          entity_id: string
+          id?: string
+          is_offshore?: boolean
+          liquidity?: Database["public"]["Enums"]["asset_liquidity"]
+          name: string
+          notes?: string | null
+          quantity?: number
+          symbol?: string | null
+          unit_price?: number
+          updated_at?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          as_of?: string
+          asset_class?: Database["public"]["Enums"]["asset_class"]
+          cost_basis?: number
+          created_at?: string | null
+          currency?: string
+          entity_id?: string
+          id?: string
+          is_offshore?: boolean
+          liquidity?: Database["public"]["Enums"]["asset_liquidity"]
+          name?: string
+          notes?: string | null
+          quantity?: number
+          symbol?: string | null
+          unit_price?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      portfolio_snapshots: {
+        Row: {
+          as_of: string
+          cost_basis: number
+          created_at: string | null
+          entity_id: string
+          id: string
+          market_value: number
+          net_flow: number
+          source: string | null
+        }
+        Insert: {
+          as_of: string
+          cost_basis?: number
+          created_at?: string | null
+          entity_id: string
+          id?: string
+          market_value?: number
+          net_flow?: number
+          source?: string | null
+        }
+        Update: {
+          as_of?: string
+          cost_basis?: number
+          created_at?: string | null
+          entity_id?: string
+          id?: string
+          market_value?: number
+          net_flow?: number
+          source?: string | null
+        }
+        Relationships: []
+      }
+      tax_scenarios: {
+        Row: {
+          assumptions: Json
+          created_at: string | null
+          created_by: string | null
+          entity_id: string | null
+          id: string
+          name: string
+          results: Json
+          state_code: string
+          total_cost: number
+          updated_at: string | null
+        }
+        Insert: {
+          assumptions?: Json
+          created_at?: string | null
+          created_by?: string | null
+          entity_id?: string | null
+          id?: string
+          name: string
+          results?: Json
+          state_code?: string
+          total_cost?: number
+          updated_at?: string | null
+        }
+        Update: {
+          assumptions?: Json
+          created_at?: string | null
+          created_by?: string | null
+          entity_id?: string | null
+          id?: string
+          name?: string
+          results?: Json
+          state_code?: string
+          total_cost?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       assets: {
         Row: {
           area: string | null
@@ -692,7 +929,11 @@ export type Database = {
       owns_entity: { Args: { _entity_id: string }; Returns: boolean }
     }
     Enums: {
+      account_kind: "corretora" | "banco" | "fundo" | "previdencia" | "cripto" | "outro"
       app_role: "admin" | "user"
+      asset_class: "caixa" | "renda_fixa" | "renda_variavel" | "fundos" | "imoveis" | "internacional" | "alternativos" | "cripto"
+      asset_liquidity: "d0" | "d1" | "d30" | "longo_prazo" | "iliquido"
+      flow_kind: "aporte" | "resgate" | "provento" | "taxa" | "imposto"
       asset_type: "urbano" | "rural" | "veiculo" | "outro"
       compliance_status: "regular" | "pendente" | "alerta" | "critico"
       legal_case_status: "em_andamento" | "suspenso" | "acordo" | "encerrado"
@@ -826,7 +1067,11 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      account_kind: ["corretora", "banco", "fundo", "previdencia", "cripto", "outro"],
       app_role: ["admin", "user"],
+      asset_class: ["caixa", "renda_fixa", "renda_variavel", "fundos", "imoveis", "internacional", "alternativos", "cripto"],
+      asset_liquidity: ["d0", "d1", "d30", "longo_prazo", "iliquido"],
+      flow_kind: ["aporte", "resgate", "provento", "taxa", "imposto"],
       asset_type: ["urbano", "rural", "veiculo", "outro"],
       compliance_status: ["regular", "pendente", "alerta", "critico"],
       legal_case_status: ["em_andamento", "suspenso", "acordo", "encerrado"],

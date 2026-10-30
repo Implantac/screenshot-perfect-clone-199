@@ -26,7 +26,8 @@ jobs:
       VITE_SUPABASE_PROJECT_ID: placeholder
       SUPABASE_URL: https://placeholder.supabase.co
       SUPABASE_PUBLISHABLE_KEY: placeholder-anon-key
-      NODE_OPTIONS: --max-old-space-size=4096
+      # 1 GB é suficiente e evita que runners menores morram no minify do Vite.
+      NODE_OPTIONS: --max-old-space-size=1024
 
     steps:
       - uses: actions/checkout@v4
