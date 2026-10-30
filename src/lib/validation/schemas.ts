@@ -10,6 +10,16 @@ export const riskSeverityEnum = z.enum(["low", "medium", "high", "critical"]);
 export const transactionTypeEnum = z.enum(["income", "expense"]);
 export const actionPlanPriorityEnum = z.enum(["P1", "P2", "P3"]);
 export const actionPlanStatusEnum = z.enum(["pending", "in_progress", "completed"]);
+export const supplierStatusEnum = z.enum(["homologado", "em_analise", "risco_critico", "inativo"]);
+export const legalCaseStatusEnum = z.enum(["em_andamento", "suspenso", "acordo", "encerrado"]);
+export const legalCaseTypeEnum = z.enum([
+  "civel",
+  "tributario",
+  "ambiental",
+  "trabalhista",
+  "societario",
+  "imobiliario",
+]);
 
 const uuid = z.string().uuid("Selecione um registro válido.");
 const optionalUuid = z
@@ -93,6 +103,75 @@ export const transactionInputSchema = z.object({
   transaction_date: optionalDate,
 });
 export type TransactionInput = z.input<typeof transactionInputSchema>;
+
+// ---------------------------------------------------------------------- suppliers
+export const supplierInputSchema = z.object({
+  name: text(120),
+  entity_id: uuid,
+  tax_id: z.string().trim().max(24).optional().or(z.literal("")),
+  category: z.string().trim().max(60).optional().or(z.literal("")),
+  contact_email: z
+    .union([z.string().trim().email("E-mail inválido."), z.literal("")])
+    .optional()
+    .transform((v) => (v === "" ? undefined : v)),
+  contact_phone: z.string().trim().max(24).optional().or(z.literal("")),
+  status: supplierStatusEnum.default("em_analise"),
+  compliance_score: z.coerce.number().min(0).max(100).optional(),
+  contract_value: money.optional(),
+  contract_expiry: optionalDate,
+  notes: z.string().trim().max(500).optional().or(z.literal("")),
+});
+export type SupplierInput = z.input<typeof supplierInputSchema>;
+export const supplierUpdateSchema = supplierInputSchema.partial().extend({ id: uuid });
+
+// ------------------------------------------------------------------- legal cases
+export const legalCaseInputSchema = z.object({
+  case_number: text(60),
+  title: text(160),
+  entity_id: uuid,
+  asset_id: optionalUuid,
+  type: legalCaseTypeEnum.default("civel"),
+  status: legalCaseStatusEnum.default("em_andamento"),
+  court: z.string().trim().max(120).optional().or(z.literal("")),
+  risk_level: riskSeverityEnum.default("medium"),
+  value_at_stake: money.optional(),
+  next_hearing: optionalDate,
+  responsible_id: optionalUuid,
+  notes: z.string().trim().max(600).optional().or(z.literal("")),
+});
+export type LegalCaseInput = z.input<typeof legalCaseInputSchema>;
+export const legalCaseUpdateSchema = legalCaseInputSchema.partial().extend({ id: uuid });
+
+// ------------------------------------------------------------------------ members
+export const memberInputSchema = z.object({
+  full_name: text(120),
+  email: z
+    .union([z.string().trim().email("E-mail inválido."), z.literal("")])
+    .optional()
+    .transform((v) => (v === "" ? undefined : v)),
+  tax_id: z.string().trim().max(20).optional().or(z.literal("")),
+  role: z.string().trim().max(40).optional().or(z.literal("")),
+});
+export type MemberInput = z.input<typeof memberInputSchema>;
+export const memberUpdateSchema = memberInputSchema.partial().extend({ id: uuid });
+
+export const shareInputSchema = z.object({
+  entity_id: uuid,
+  member_id: uuid,
+  share_percentage: z.coerce
+    .number()
+    .min(0, "Percentual mínimo 0%.")
+    .max(100, "Percentual máximo 100%."),
+});
+export type ShareInput = z.input<typeof shareInputSchema>;
+
+// ------------------------------------------------------------ document workflow
+export const documentUpdateSchema = z.object({
+  id: uuid,
+  status: complianceStatusEnum.optional(),
+  expiry_date: optionalDate,
+});
+export type DocumentUpdateInput = z.input<typeof documentUpdateSchema>;
 
 // ---------------------------------------------------------------------- action plans
 export const actionPlanUpdateSchema = z.object({

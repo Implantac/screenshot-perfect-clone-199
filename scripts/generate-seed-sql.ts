@@ -229,6 +229,29 @@ for (const p of demo.actionPlans) {
 lines.push(``);
 
 // Health scores
+// Fornecedores
+lines.push(`  -- Fornecedores`);
+for (const sup of demo.suppliers) {
+  const entityVar = sup.entity === DEMO_ENTITY_NAMES[0] ? "v_holding" : sup.entity === DEMO_ENTITY_NAMES[1] ? "v_agro" : "v_re";
+  lines.push(
+    `  INSERT INTO public.suppliers (name, entity_id, tax_id, category, contact_email, status, compliance_score, contract_value, contract_expiry, notes) VALUES (${q(sup.name)}, ${entityVar}, ${q(sup.tax_id)}, ${q(sup.category)}, ${q(sup.contact_email)}, ${q(sup.status)}::public.supplier_status, ${n(sup.compliance_score)}, ${n(sup.contract_value)}, ${d(sup.contractExpiryInDays)}, ${q(sup.notes)});`,
+  );
+}
+lines.push(``);
+
+// Processos jurídicos
+lines.push(`  -- Processos jurídicos`);
+for (const c of demo.legalCases) {
+  const entityVar = c.entity === DEMO_ENTITY_NAMES[0] ? "v_holding" : c.entity === DEMO_ENTITY_NAMES[1] ? "v_agro" : "v_re";
+  const assetLookup = c.asset
+    ? `(SELECT id FROM public.assets WHERE name = ${q(c.asset)} AND entity_id = ${entityVar} LIMIT 1)`
+    : "NULL";
+  lines.push(
+    `  INSERT INTO public.legal_cases (case_number, title, entity_id, asset_id, type, status, court, risk_level, value_at_stake, next_hearing, responsible_id, notes) VALUES (${q(c.case_number)}, ${q(c.title)}, ${entityVar}, ${assetLookup}, ${q(c.type)}::public.legal_case_type, ${q(c.status)}::public.legal_case_status, ${q(c.court)}, ${q(c.risk_level)}::public.risk_severity, ${n(c.value_at_stake)}, ${ts(c.hearingInDays)}, (SELECT id FROM public.members WHERE email = ${q(demo.members.find((m) => m.full_name === c.responsible)?.email ?? "")} AND owner_user_id = v_user LIMIT 1), ${q(c.notes)});`,
+  );
+}
+lines.push(``);
+
 lines.push(`  -- Histórico de health score (12 meses)`);
 for (const h of demo.healthScores) {
   lines.push(

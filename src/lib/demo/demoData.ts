@@ -103,6 +103,36 @@ export type DemoHealthScore = {
   monthsAgo: number;
 };
 
+export type DemoSupplier = {
+  name: string;
+  entity: string;
+  tax_id: string;
+  category: string;
+  contact_email: string;
+  status: "homologado" | "em_analise" | "risco_critico" | "inativo";
+  compliance_score: number;
+  contract_value: number;
+  /** Dias a partir de hoje (negativo = vencido). */
+  contractExpiryInDays: number;
+  notes: string;
+};
+
+export type DemoLegalCase = {
+  case_number: string;
+  title: string;
+  entity: string;
+  asset: string | null;
+  type: "civel" | "tributario" | "ambiental" | "trabalhista" | "societario" | "imobiliario";
+  status: "em_andamento" | "suspenso" | "acordo" | "encerrado";
+  court: string;
+  risk_level: "low" | "medium" | "high" | "critical";
+  value_at_stake: number;
+  /** Dias a partir de hoje para a próxima audiência. */
+  hearingInDays: number;
+  responsible: string;
+  notes: string;
+};
+
 export type DemoDataset = {
   entities: DemoEntity[];
   members: DemoMember[];
@@ -113,6 +143,8 @@ export type DemoDataset = {
   insights: DemoInsight[];
   actionPlans: DemoActionPlan[];
   healthScores: DemoHealthScore[];
+  suppliers: DemoSupplier[];
+  legalCases: DemoLegalCase[];
 };
 
 const HOLDING = "Alencar Participações S.A.";
@@ -938,6 +970,180 @@ export function buildDemoDataset(): DemoDataset {
     },
   ];
 
+  const suppliers: DemoSupplier[] = [
+    {
+      name: "AgroInsumos Paraná Ltda.",
+      entity: AGRO,
+      tax_id: "45.678.901/0001-23",
+      category: "Insumos",
+      contact_email: "comercial@agroinsumospr.com.br",
+      status: "homologado",
+      compliance_score: 98,
+      contract_value: 1_850_000,
+      contractExpiryInDays: 210,
+      notes: "Fornecedor de fertilizantes e defensivos. Contrato com reajuste anual pelo IPCA.",
+    },
+    {
+      name: "Topografia Vale do Ivaí",
+      entity: AGRO,
+      tax_id: "56.789.012/0001-34",
+      category: "Serviços Técnicos",
+      contact_email: "contato@topovale.com.br",
+      status: "em_analise",
+      compliance_score: 82,
+      contract_value: 148_000,
+      contractExpiryInDays: 45,
+      notes: "Responsável pela recertificação INCRA da matrícula 12.884.",
+    },
+    {
+      name: "Alencar & Prado Advogados",
+      entity: HOLDING,
+      tax_id: "67.890.123/0001-45",
+      category: "Jurídico",
+      contact_email: "socios@alencarprado.adv.br",
+      status: "homologado",
+      compliance_score: 96,
+      contract_value: 420_000,
+      contractExpiryInDays: 320,
+      notes: "Assessoria societária e contencioso estratégico.",
+    },
+    {
+      name: "Construtora Horizonte Sul",
+      entity: RE,
+      tax_id: "78.901.234/0001-56",
+      category: "Obras",
+      contact_email: "obras@horizontesul.com.br",
+      status: "risco_critico",
+      compliance_score: 41,
+      contract_value: 3_200_000,
+      contractExpiryInDays: -12,
+      notes: "Certidões trabalhistas vencidas e atraso na entrega da reforma do Corporate Prime.",
+    },
+    {
+      name: "Seguros Atlântico Sul",
+      entity: HOLDING,
+      tax_id: "89.012.345/0001-67",
+      category: "Seguros",
+      contact_email: "corporate@atlanticosul.com.br",
+      status: "homologado",
+      compliance_score: 94,
+      contract_value: 640_000,
+      contractExpiryInDays: 92,
+      notes: "Apólice patrimonial e de frota. Revisão de cobertura em andamento.",
+    },
+    {
+      name: "TechPatrimônio Sistemas",
+      entity: HOLDING,
+      tax_id: "90.123.456/0001-78",
+      category: "TI",
+      contact_email: "sucesso@techpatrimonio.com.br",
+      status: "em_analise",
+      compliance_score: 76,
+      contract_value: 96_000,
+      contractExpiryInDays: 30,
+      notes: "Integração de dados agronômicos. LGPD em revisão pelo jurídico.",
+    },
+    {
+      name: "Transportes Boa Safra",
+      entity: AGRO,
+      tax_id: "01.234.567/0001-89",
+      category: "Logística",
+      contact_email: "operacoes@boasafra.com.br",
+      status: "inativo",
+      compliance_score: 58,
+      contract_value: 380_000,
+      contractExpiryInDays: -180,
+      notes: "Contrato encerrado após incidente de sinistralidade em carga.",
+    },
+  ];
+
+  const legalCases: DemoLegalCase[] = [
+    {
+      case_number: "5001234-56.2024.8.16.0001",
+      title: "Ação de retificação de área — Fazenda Santa Fé",
+      entity: AGRO,
+      asset: FAZENDA,
+      type: "imobiliario",
+      status: "em_andamento",
+      court: "2ª Vara Cível de Apucarana/PR",
+      risk_level: "high",
+      value_at_stake: 4_800_000,
+      hearingInDays: 12,
+      responsible: "Lucia Prado",
+      notes: "Divergência de 42 ha entre matrícula e georreferenciamento do INCRA.",
+    },
+    {
+      case_number: "5009876-12.2025.8.16.0001",
+      title: "Auto de infração ambiental — Rio Verde",
+      entity: AGRO,
+      asset: RIO_VERDE,
+      type: "ambiental",
+      status: "em_andamento",
+      court: "Vara Ambiental de Goiânia/GO",
+      risk_level: "critical",
+      value_at_stake: 1_420_000,
+      hearingInDays: 5,
+      responsible: "Lucia Prado",
+      notes: "Embargo parcial de 118 ha por sobreposição de reserva legal.",
+    },
+    {
+      case_number: "1002345-67.2023.8.26.0100",
+      title: "Execução fiscal de IPTU — Galpão Anhanguera",
+      entity: RE,
+      asset: GALPAO,
+      type: "tributario",
+      status: "acordo",
+      court: "Vara da Fazenda Pública de Osasco/SP",
+      risk_level: "medium",
+      value_at_stake: 320_000,
+      hearingInDays: 40,
+      responsible: "Roberto Alencar",
+      notes: "Parcelamento em 24x homologado; acompanhar pagamento das parcelas.",
+    },
+    {
+      case_number: "1008765-43.2025.8.26.0100",
+      title: "Reclamação trabalhista — obra Corporate Prime",
+      entity: RE,
+      asset: CORPORATE,
+      type: "trabalhista",
+      status: "em_andamento",
+      court: "17ª Vara do Trabalho de São Paulo/SP",
+      risk_level: "high",
+      value_at_stake: 780_000,
+      hearingInDays: 21,
+      responsible: "Lucia Prado",
+      notes: "Responsabilidade subsidiária da tomadora; envolve a Construtora Horizonte Sul.",
+    },
+    {
+      case_number: "5003456-78.2022.8.16.0001",
+      title: "Inventário e partilha — sucessão do patriarca",
+      entity: HOLDING,
+      asset: null,
+      type: "societario",
+      status: "em_andamento",
+      court: "1ª Vara de Família e Sucessões de Apucarana/PR",
+      risk_level: "critical",
+      value_at_stake: 68_500_000,
+      hearingInDays: 30,
+      responsible: "Roberto Alencar",
+      notes: "Definir doação com usufruto antes da sentença para reduzir custo de ITCMD.",
+    },
+    {
+      case_number: "5007654-32.2021.8.16.0001",
+      title: "Ação de despejo — Sala Comercial Centro",
+      entity: HOLDING,
+      asset: SALA,
+      type: "civel",
+      status: "encerrado",
+      court: "1ª Vara Cível de Londrina/PR",
+      risk_level: "low",
+      value_at_stake: 96_000,
+      hearingInDays: -120,
+      responsible: "Roberto Alencar",
+      notes: "Acordo cumprido; imóvel reocupado por novo locatário.",
+    },
+  ];
+
   return {
     entities,
     members,
@@ -948,5 +1154,7 @@ export function buildDemoDataset(): DemoDataset {
     insights,
     actionPlans,
     healthScores,
+    suppliers,
+    legalCases,
   };
 }

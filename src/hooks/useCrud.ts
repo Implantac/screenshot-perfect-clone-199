@@ -20,6 +20,19 @@ import {
   createTransaction,
   updateActionPlan,
   resolveInsight,
+  createSupplier,
+  updateSupplier,
+  deleteSupplier,
+  toggleSupplierStatus,
+  createLegalCase,
+  updateLegalCase,
+  deleteLegalCase,
+  createMember,
+  updateMember,
+  deleteMember,
+  upsertShare,
+  deleteShare,
+  updateDocument,
 } from "@/lib/api/crud.functions";
 import { seedDemo } from "@/lib/api/demo.functions";
 import type { SeedResult } from "@/lib/demo/seedDemo";
@@ -32,6 +45,14 @@ import type {
   DocumentInput,
   TransactionInput,
   ActionPlanUpdateInput,
+  SupplierInput,
+  LegalCaseInput,
+  MemberInput,
+  ShareInput,
+  DocumentUpdateInput,
+  supplierUpdateSchema,
+  legalCaseUpdateSchema,
+  memberUpdateSchema,
 } from "@/lib/validation/schemas";
 import type { z } from "zod";
 import type { actionPlanUpdateSchema } from "@/lib/validation/schemas";
@@ -179,3 +200,90 @@ export const useSeedDemo = () => {
     },
   });
 };
+
+const SUPPLIER_KEYS: QueryKey[] = [["suppliers"], ["audit_logs"]];
+
+export const useCreateSupplier = () =>
+  useInvalidatingMutation<SupplierInput, unknown>(createSupplier, SUPPLIER_KEYS, {
+    success: "Fornecedor cadastrado.",
+    error: "Não foi possível cadastrar o fornecedor.",
+  });
+
+export const useUpdateSupplier = () =>
+  useInvalidatingMutation<z.input<typeof supplierUpdateSchema>, unknown>(updateSupplier, SUPPLIER_KEYS, {
+    success: "Fornecedor atualizado.",
+    error: "Não foi possível atualizar o fornecedor.",
+  });
+
+export const useToggleSupplierStatus = () =>
+  useInvalidatingMutation<
+    { id: string; status: "homologado" | "em_analise" | "risco_critico" | "inativo" },
+    unknown
+  >(toggleSupplierStatus, SUPPLIER_KEYS, {
+    success: "Status do fornecedor atualizado.",
+    error: "Não foi possível alterar o status.",
+  });
+
+export const useDeleteSupplier = () =>
+  useInvalidatingMutation<IdInput, unknown>(deleteSupplier, SUPPLIER_KEYS, {
+    success: "Fornecedor removido.",
+    error: "Não foi possível remover o fornecedor.",
+  });
+
+const LEGAL_KEYS: QueryKey[] = [["legal_cases"], ["audit_logs"]];
+
+export const useCreateLegalCase = () =>
+  useInvalidatingMutation<LegalCaseInput, unknown>(createLegalCase, LEGAL_KEYS, {
+    success: "Processo registrado.",
+    error: "Não foi possível registrar o processo.",
+  });
+
+export const useUpdateLegalCase = () =>
+  useInvalidatingMutation<z.input<typeof legalCaseUpdateSchema>, unknown>(updateLegalCase, LEGAL_KEYS, {
+    success: "Processo atualizado.",
+    error: "Não foi possível atualizar o processo.",
+  });
+
+export const useDeleteLegalCase = () =>
+  useInvalidatingMutation<IdInput, unknown>(deleteLegalCase, LEGAL_KEYS, {
+    success: "Processo removido.",
+    error: "Não foi possível remover o processo.",
+  });
+
+const MEMBER_KEYS: QueryKey[] = [["members"], ["entity_shares"], ["entities"], ["audit_logs"]];
+
+export const useCreateMember = () =>
+  useInvalidatingMutation<MemberInput, unknown>(createMember, MEMBER_KEYS, {
+    success: "Sócio adicionado à estrutura.",
+    error: "Não foi possível adicionar o sócio.",
+  });
+
+export const useUpdateMember = () =>
+  useInvalidatingMutation<z.input<typeof memberUpdateSchema>, unknown>(updateMember, MEMBER_KEYS, {
+    success: "Sócio atualizado.",
+    error: "Não foi possível atualizar o sócio.",
+  });
+
+export const useDeleteMember = () =>
+  useInvalidatingMutation<IdInput, unknown>(deleteMember, MEMBER_KEYS, {
+    success: "Sócio removido.",
+    error: "Não foi possível remover o sócio.",
+  });
+
+export const useUpsertShare = () =>
+  useInvalidatingMutation<ShareInput, unknown>(upsertShare, MEMBER_KEYS, {
+    success: "Participação atualizada.",
+    error: "Não foi possível atualizar a participação.",
+  });
+
+export const useDeleteShare = () =>
+  useInvalidatingMutation<IdInput, unknown>(deleteShare, MEMBER_KEYS, {
+    success: "Participação removida.",
+    error: "Não foi possível remover a participação.",
+  });
+
+export const useUpdateDocument = () =>
+  useInvalidatingMutation<DocumentUpdateInput, unknown>(updateDocument, [["documents"], ["risks"]], {
+    success: "Documento atualizado.",
+    error: "Não foi possível atualizar o documento.",
+  });

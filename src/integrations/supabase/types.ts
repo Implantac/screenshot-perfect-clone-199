@@ -69,6 +69,7 @@ export type Database = {
       }
       audit_logs: {
         Row: {
+          owner_user_id: string | null
           action: string
           created_at: string | null
           id: string
@@ -79,6 +80,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          owner_user_id?: string | null
           action: string
           created_at?: string | null
           id?: string
@@ -89,6 +91,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          owner_user_id?: string | null
           action?: string
           created_at?: string | null
           id?: string
@@ -497,6 +500,111 @@ export type Database = {
           },
         ]
       }
+      suppliers: {
+        Row: {
+          category: string | null
+          compliance_score: number | null
+          contact_email: string | null
+          contact_phone: string | null
+          contract_expiry: string | null
+          contract_value: number | null
+          created_at: string
+          entity_id: string | null
+          id: string
+          name: string
+          notes: string | null
+          status: Database["public"]["Enums"]["supplier_status"]
+          tax_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          compliance_score?: number | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          contract_expiry?: string | null
+          contract_value?: number | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["supplier_status"]
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          compliance_score?: number | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          contract_expiry?: string | null
+          contract_value?: number | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["supplier_status"]
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      legal_cases: {
+        Row: {
+          asset_id: string | null
+          case_number: string
+          court: string | null
+          created_at: string
+          entity_id: string | null
+          id: string
+          next_hearing: string | null
+          notes: string | null
+          responsible_id: string | null
+          risk_level: Database["public"]["Enums"]["risk_severity"]
+          status: Database["public"]["Enums"]["legal_case_status"]
+          title: string
+          type: Database["public"]["Enums"]["legal_case_type"]
+          updated_at: string
+          value_at_stake: number | null
+        }
+        Insert: {
+          asset_id?: string | null
+          case_number: string
+          court?: string | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          next_hearing?: string | null
+          notes?: string | null
+          responsible_id?: string | null
+          risk_level?: Database["public"]["Enums"]["risk_severity"]
+          status?: Database["public"]["Enums"]["legal_case_status"]
+          title: string
+          type?: Database["public"]["Enums"]["legal_case_type"]
+          updated_at?: string
+          value_at_stake?: number | null
+        }
+        Update: {
+          asset_id?: string | null
+          case_number?: string
+          court?: string | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          next_hearing?: string | null
+          notes?: string | null
+          responsible_id?: string | null
+          risk_level?: Database["public"]["Enums"]["risk_severity"]
+          status?: Database["public"]["Enums"]["legal_case_status"]
+          title?: string
+          type?: Database["public"]["Enums"]["legal_case_type"]
+          updated_at?: string
+          value_at_stake?: number | null
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount: number
@@ -587,7 +695,10 @@ export type Database = {
       app_role: "admin" | "user"
       asset_type: "urbano" | "rural" | "veiculo" | "outro"
       compliance_status: "regular" | "pendente" | "alerta" | "critico"
+      legal_case_status: "em_andamento" | "suspenso" | "acordo" | "encerrado"
+      legal_case_type: "civel" | "tributario" | "ambiental" | "trabalhista" | "societario" | "imobiliario"
       risk_severity: "low" | "medium" | "high" | "critical"
+      supplier_status: "homologado" | "em_analise" | "risco_critico" | "inativo"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -718,7 +829,10 @@ export const Constants = {
       app_role: ["admin", "user"],
       asset_type: ["urbano", "rural", "veiculo", "outro"],
       compliance_status: ["regular", "pendente", "alerta", "critico"],
+      legal_case_status: ["em_andamento", "suspenso", "acordo", "encerrado"],
+      legal_case_type: ["civel", "tributario", "ambiental", "trabalhista", "societario", "imobiliario"],
       risk_severity: ["low", "medium", "high", "critical"],
+      supplier_status: ["homologado", "em_analise", "risco_critico", "inativo"],
     },
   },
 } as const

@@ -18,6 +18,14 @@ import {
   documentInputSchema,
   transactionInputSchema,
   actionPlanUpdateSchema,
+  supplierInputSchema,
+  supplierUpdateSchema,
+  legalCaseInputSchema,
+  legalCaseUpdateSchema,
+  memberInputSchema,
+  memberUpdateSchema,
+  shareInputSchema,
+  documentUpdateSchema,
 } from "@/lib/validation/schemas";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -203,3 +211,163 @@ export const resolveInsight = authed.validator(idSchema).handler(async ({ data, 
   if (error) throw new Error(error.message);
   return row;
 });
+
+// ===================================================================== suppliers
+export const createSupplier = authed.inputValidator(supplierInputSchema).handler(async ({ data, context }) => {
+  const { data: row, error } = await context.supabase
+    .from("suppliers")
+    .insert(nullify(data) as Tables["suppliers"]["Insert"])
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return row;
+});
+
+export const updateSupplier = authed.inputValidator(supplierUpdateSchema).handler(async ({ data, context }) => {
+  const { id, ...rest } = data;
+  const { data: row, error } = await context.supabase
+    .from("suppliers")
+    .update(nullify(rest) as Tables["suppliers"]["Update"])
+    .eq("id", id)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return row;
+});
+
+/** Alterna a homologação do fornecedor em um clique (homologado <-> em_analise). */
+export const toggleSupplierStatus = authed
+  .inputValidator(z.object({ id: z.string().uuid(), status: z.enum(["homologado", "em_analise", "risco_critico", "inativo"]) }))
+  .handler(async ({ data, context }) => {
+    const { data: row, error } = await context.supabase
+      .from("suppliers")
+      .update({ status: data.status })
+      .eq("id", data.id)
+      .select("*")
+      .single();
+    if (error) throw new Error(error.message);
+    return row;
+  });
+
+export const deleteSupplier = authed.inputValidator(idSchema).handler(async ({ data, context }) => {
+  const { error } = await context.supabase.from("suppliers").delete().eq("id", data.id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: data.id };
+});
+
+// ================================================================== legal cases
+export const createLegalCase = authed
+  .inputValidator(legalCaseInputSchema)
+  .handler(async ({ data, context }) => {
+    const { data: row, error } = await context.supabase
+      .from("legal_cases")
+      .insert(nullify(data) as Tables["legal_cases"]["Insert"])
+      .select("*")
+      .single();
+    if (error) throw new Error(error.message);
+    return row;
+  });
+
+export const updateLegalCase = authed
+  .inputValidator(legalCaseUpdateSchema)
+  .handler(async ({ data, context }) => {
+    const { id, ...rest } = data;
+    const { data: row, error } = await context.supabase
+      .from("legal_cases")
+      .update(nullify(rest) as Tables["legal_cases"]["Update"])
+      .eq("id", id)
+      .select("*")
+      .single();
+    if (error) throw new Error(error.message);
+    return row;
+  });
+
+export const deleteLegalCase = authed.inputValidator(idSchema).handler(async ({ data, context }) => {
+  const { error } = await context.supabase.from("legal_cases").delete().eq("id", data.id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: data.id };
+});
+
+// ====================================================================== members
+export const createMember = authed.inputValidator(memberInputSchema).handler(async ({ data, context }) => {
+  const { data: row, error } = await context.supabase
+    .from("members")
+    .insert({ ...(nullify(data) as Tables["members"]["Insert"]), owner_user_id: context.userId })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return row;
+});
+
+export const updateMember = authed.inputValidator(memberUpdateSchema).handler(async ({ data, context }) => {
+  const { id, ...rest } = data;
+  const { data: row, error } = await context.supabase
+    .from("members")
+    .update(nullify(rest) as Tables["members"]["Update"])
+    .eq("id", id)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return row;
+});
+
+export const deleteMember = authed.inputValidator(idSchema).handler(async ({ data, context }) => {
+  const { error } = await context.supabase.from("members").delete().eq("id", data.id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: data.id };
+});
+
+/** Define (upsert) a participação de um sócio em uma entidade. */
+export const upsertShare = authed.inputValidator(shareInputSchema).handler(async ({ data, context }) => {
+  const { data: existing, error: readError } = await context.supabase
+    .from("entity_shares")
+    .select("id")
+    .eq("entity_id", data.entity_id)
+    .eq("member_id", data.member_id)
+    .maybeSingle();
+  if (readError) throw new Error(readError.message);
+
+  if (existing) {
+    const { data: row, error } = await context.supabase
+      .from("entity_shares")
+      .update({ share_percentage: data.share_percentage })
+      .eq("id", existing.id)
+      .select("*")
+      .single();
+    if (error) throw new Error(error.message);
+    return row;
+  }
+
+  const { data: row, error } = await context.supabase
+    .from("entity_shares")
+    .insert({
+      entity_id: data.entity_id,
+      member_id: data.member_id,
+      share_percentage: data.share_percentage,
+    })
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return row;
+});
+
+export const deleteShare = authed.inputValidator(idSchema).handler(async ({ data, context }) => {
+  const { error } = await context.supabase.from("entity_shares").delete().eq("id", data.id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: data.id };
+});
+
+// ======================================================= document workflow
+export const updateDocument = authed
+  .inputValidator(documentUpdateSchema)
+  .handler(async ({ data, context }) => {
+    const { id, ...rest } = data;
+    const { data: row, error } = await context.supabase
+      .from("documents")
+      .update(nullify(rest) as Tables["documents"]["Update"])
+      .eq("id", id)
+      .select("*")
+      .single();
+    if (error) throw new Error(error.message);
+    return row;
+  });

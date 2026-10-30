@@ -21,7 +21,23 @@ export type SeedResult = {
   seeded: boolean;
   message: string;
   counts?: Record<string, number>;
+  /** Tabelas opcionais ausentes (migrations não aplicadas) — o seed segue sem elas. */
+  skipped?: string[];
 };
+
+/**
+ * Erro de tabela inexistente: acontece quando o banco ainda não recebeu a
+ * migration que cria `suppliers` / `legal_cases`. Não deve derrubar o seed.
+ */
+function isMissingTable(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const { code, message } = error as { code?: string; message?: string };
+  return (
+    code === "PGRST205" ||
+    code === "42P01" ||
+    /could not find the table|does not exist/i.test(message ?? "")
+  );
+}
 
 function isoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -79,6 +95,8 @@ export async function seedDemoData(
     await supabase.from("jarvis_action_plans").delete().not("id", "is", null);
     await supabase.from("jarvis_insights").delete().not("id", "is", null);
     await supabase.from("jarvis_health_scores").delete().not("id", "is", null);
+    await supabase.from("legal_cases").delete().not("id", "is", null);
+    await supabase.from("suppliers").delete().not("id", "is", null);
     await supabase.from("transactions").delete().not("id", "is", null);
     await supabase.from("risks").delete().not("id", "is", null);
     await supabase.from("documents").delete().not("id", "is", null);
@@ -289,10 +307,63 @@ export async function seedDemoData(
   if (healthError) throw healthError;
   counts.jarvis_health_scores = demo.healthScores.length;
 
+  const skipped: string[] = [];
+
+  // 11. Fornecedores (tabela criada na migration 20261030140000)
+  const { error: suppliersError } = await supabase.from("suppliers").insert(
+    demo.suppliers.map((sup) => ({
+      name: sup.name,
+      entity_id: entityRef(sup.entity),
+      tax_id: sup.tax_id,
+      category: sup.category,
+      contact_email: sup.contact_email,
+      status: sup.status,
+      compliance_score: sup.compliance_score,
+      contract_value: sup.contract_value,
+      contract_expiry: isoDate(new Date(addDays(sup.contractExpiryInDays))),
+      notes: sup.notes,
+    })),
+  );
+  if (suppliersError) {
+    if (isMissingTable(suppliersError)) skipped.push("suppliers");
+    else throw suppliersError;
+  } else {
+    counts.suppliers = demo.suppliers.length;
+  }
+
+  // 12. Processos jurídicos
+  const { error: legalError } = await supabase.from("legal_cases").insert(
+    demo.legalCases.map((c) => ({
+      case_number: c.case_number,
+      title: c.title,
+      entity_id: entityRef(c.entity),
+      asset_id: assetRef(c.asset),
+      type: c.type,
+      status: c.status,
+      court: c.court,
+      risk_level: c.risk_level,
+      value_at_stake: c.value_at_stake,
+      next_hearing: addDays(c.hearingInDays),
+      responsible_id: memberId.get(c.responsible) ?? null,
+      notes: c.notes,
+    })),
+  );
+  if (legalError) {
+    if (isMissingTable(legalError)) skipped.push("legal_cases");
+    else throw legalError;
+  } else {
+    counts.legal_cases = demo.legalCases.length;
+  }
+
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  const base = `Demonstração criada: ${total} registros em ${Object.keys(counts).length} tabelas.`;
   return {
     seeded: true,
-    message: `Demonstração criada: ${total} registros em ${Object.keys(counts).length} tabelas.`,
+    message:
+      skipped.length > 0
+        ? `${base} Faltam as tabelas ${skipped.join(", ")} — aplique a migration 20261030140000 para incluí-las.`
+        : base,
     counts,
+    skipped,
   };
 }
