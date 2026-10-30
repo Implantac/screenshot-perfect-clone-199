@@ -1,1 +1,6 @@
 project_id = "gxmgjuzjohqgtzglerpt"
+# `supabase db reset` / `supabase start` aplicam o dataset de demonstração.
+# O seed é gerado a partir de src/lib/demo/demoData.ts (bun run seed:sql).
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
