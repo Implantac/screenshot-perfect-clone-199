@@ -349,3 +349,61 @@ export const capitalEventInputSchema = z.object({
 });
 export type CapitalEventInput = z.input<typeof capitalEventInputSchema>;
 export const capitalEventUpdateSchema = capitalEventInputSchema.partial().extend({ id: uuid });
+
+// ------------------------------------------- balanço: passivos e metas (wave 11)
+export const liabilityKindEnum = z.enum([
+  "financiamento_imobiliario",
+  "credito_rural",
+  "emprestimo",
+  "consignado",
+  "cartao",
+  "debenture",
+  "divida_societaria",
+  "outro",
+]);
+export const amortizationEnum = z.enum(["price", "sac", "bullet"]);
+export const goalKindEnum = z.enum([
+  "liquidez",
+  "sucessao",
+  "imovel",
+  "educacao",
+  "filantropia",
+  "reserva_oportunidade",
+  "meta_patrimonial",
+  "outro",
+]);
+
+export const liabilityInputSchema = z.object({
+  entity_id: uuid,
+  name: text(120),
+  kind: liabilityKindEnum.default("emprestimo"),
+  creditor: z.string().trim().max(80).optional().or(z.literal("")),
+  principal: z.coerce.number().min(0).default(0),
+  outstanding: z.coerce.number().min(0, "Saldo devedor não pode ser negativo."),
+  currency: z.string().trim().length(3).default("BRL"),
+  rate_annual: z.coerce.number().min(0).max(1000).default(0),
+  amortization: amortizationEnum.default("price"),
+  term_months: z.coerce.number().int().min(0).max(600).optional(),
+  start_date: optionalDate,
+  due_date: optionalDate,
+  collateral: z.string().trim().max(160).optional().or(z.literal("")),
+  is_offshore: z.boolean().default(false),
+  notes: z.string().trim().max(300).optional().or(z.literal("")),
+});
+export type LiabilityInput = z.input<typeof liabilityInputSchema>;
+export const liabilityUpdateSchema = liabilityInputSchema.partial().extend({ id: uuid });
+
+export const goalInputSchema = z.object({
+  entity_id: uuid,
+  name: text(120),
+  kind: goalKindEnum.default("meta_patrimonial"),
+  target_amount: money.refine((value) => value > 0, "O alvo deve ser maior que zero."),
+  allocated: z.coerce.number().min(0).default(0),
+  target_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Informe a data-alvo."),
+  priority: z.coerce.number().int().min(1).max(3).default(2),
+  expected_return: z.coerce.number().min(-50).max(100).default(8),
+  is_active: z.boolean().default(true),
+  notes: z.string().trim().max(300).optional().or(z.literal("")),
+});
+export type GoalInput = z.input<typeof goalInputSchema>;
+export const goalUpdateSchema = goalInputSchema.partial().extend({ id: uuid });

@@ -37,6 +37,10 @@ import {
   commitmentUpdateSchema,
   capitalEventInputSchema,
   capitalEventUpdateSchema,
+  liabilityInputSchema,
+  liabilityUpdateSchema,
+  goalInputSchema,
+  goalUpdateSchema,
 } from "@/lib/validation/schemas";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -737,3 +741,61 @@ export const settleCapitalEvent = authed
     if (error) throw new Error(error.message);
     return { ok: true as const, id: data.id };
   });
+
+// ============================================ balanço: passivos e metas
+
+/** Passivos: dívida com saldo devedor informado (o contrato é a verdade). */
+export const createLiability = authed.validator(liabilityInputSchema).handler(async ({ data, context }) => {
+  const payload = nullify(data) as Tables["liabilities"]["Insert"];
+  const { data: row, error } = await context.supabase
+    .from("liabilities")
+    .insert({ ...payload, entity_id: data.entity_id })
+    .select("id")
+    .single();
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: row.id };
+});
+
+export const updateLiability = authed.validator(liabilityUpdateSchema).handler(async ({ data, context }) => {
+  const { id, ...rest } = data;
+  const { error } = await context.supabase
+    .from("liabilities")
+    .update({ ...(nullify(rest) as Tables["liabilities"]["Update"]), updated_at: new Date().toISOString() })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id };
+});
+
+export const deleteLiability = authed.validator(idSchema).handler(async ({ data, context }) => {
+  const { error } = await context.supabase.from("liabilities").delete().eq("id", data.id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: data.id };
+});
+
+/** Metas: alvo, prazo e prioridade. O aporte mensal é derivado, não digitado. */
+export const createGoal = authed.validator(goalInputSchema).handler(async ({ data, context }) => {
+  const payload = nullify(data) as Tables["goals"]["Insert"];
+  const { data: row, error } = await context.supabase
+    .from("goals")
+    .insert({ ...payload, entity_id: data.entity_id })
+    .select("id")
+    .single();
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: row.id };
+});
+
+export const updateGoal = authed.validator(goalUpdateSchema).handler(async ({ data, context }) => {
+  const { id, ...rest } = data;
+  const { error } = await context.supabase
+    .from("goals")
+    .update({ ...(nullify(rest) as Tables["goals"]["Update"]), updated_at: new Date().toISOString() })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id };
+});
+
+export const deleteGoal = authed.validator(idSchema).handler(async ({ data, context }) => {
+  const { error } = await context.supabase.from("goals").delete().eq("id", data.id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: data.id };
+});

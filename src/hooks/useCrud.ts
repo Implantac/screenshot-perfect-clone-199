@@ -57,6 +57,12 @@ import {
   updateCapitalEvent,
   deleteCapitalEvent,
   settleCapitalEvent,
+  createLiability,
+  updateLiability,
+  deleteLiability,
+  createGoal,
+  updateGoal,
+  deleteGoal,
 } from "@/lib/api/crud.functions";
 import type { SeedResult } from "@/lib/demo/seedDemo";
 import type { ImportResult } from "@/lib/import/normalize";
@@ -85,6 +91,10 @@ import type {
   commitmentUpdateSchema,
   capitalEventInputSchema,
   capitalEventUpdateSchema,
+  liabilityInputSchema,
+  liabilityUpdateSchema,
+  goalInputSchema,
+  goalUpdateSchema,
   cashFlowInputSchema,
   snapshotInputSchema,
   taxScenarioInputSchema,
@@ -513,4 +523,44 @@ export const useSettleCapitalEvent = () =>
   useInvalidatingMutation<{ id: string; paid_at?: string }, unknown>(settleCapitalEvent, PRIVATE_KEYS, {
     success: "Baixa registrada.",
     error: "Não foi possível dar baixa.",
+  });
+
+// ------------------------------------------ balanço: passivos e metas (wave 11)
+
+const BALANCE_KEYS: QueryKey[] = [["liabilities"], ["goals"], ["positions"], ["assets"]];
+
+export const useCreateLiability = () =>
+  useInvalidatingMutation<z.input<typeof liabilityInputSchema>, unknown>(createLiability, BALANCE_KEYS, {
+    success: "Passivo registrado.",
+    error: "Não foi possível registrar o passivo.",
+  });
+
+export const useUpdateLiability = () =>
+  useInvalidatingMutation<z.input<typeof liabilityUpdateSchema>, unknown>(updateLiability, BALANCE_KEYS, {
+    success: "Passivo atualizado.",
+    error: "Não foi possível atualizar o passivo.",
+  });
+
+export const useDeleteLiability = () =>
+  useInvalidatingMutation<IdInput, unknown>(deleteLiability, BALANCE_KEYS, {
+    success: "Passivo removido.",
+    error: "Não foi possível remover o passivo.",
+  });
+
+export const useCreateGoal = () =>
+  useInvalidatingMutation<z.input<typeof goalInputSchema>, unknown>(createGoal, BALANCE_KEYS, {
+    success: "Meta criada.",
+    error: "Não foi possível criar a meta.",
+  });
+
+export const useUpdateGoal = () =>
+  useInvalidatingMutation<z.input<typeof goalUpdateSchema>, unknown>(updateGoal, BALANCE_KEYS, {
+    success: "Meta atualizada.",
+    error: "Não foi possível atualizar a meta.",
+  });
+
+export const useDeleteGoal = () =>
+  useInvalidatingMutation<IdInput, unknown>(deleteGoal, BALANCE_KEYS, {
+    success: "Meta removida.",
+    error: "Não foi possível remover a meta.",
   });

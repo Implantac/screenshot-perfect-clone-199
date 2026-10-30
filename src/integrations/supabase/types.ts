@@ -738,6 +738,117 @@ export type Database = {
           },
         ]
       }
+      goals: {
+        Row: {
+          allocated: number
+          created_at: string | null
+          entity_id: string
+          expected_return: number
+          id: string
+          is_active: boolean
+          kind: Database["public"]["Enums"]["goal_kind"]
+          name: string
+          notes: string | null
+          priority: number
+          target_amount: number
+          target_date: string
+          updated_at: string | null
+        }
+        Insert: {
+          allocated?: number
+          created_at?: string | null
+          entity_id: string
+          expected_return?: number
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["goal_kind"]
+          name: string
+          notes?: string | null
+          priority?: number
+          target_amount: number
+          target_date: string
+          updated_at?: string | null
+        }
+        Update: {
+          allocated?: number
+          created_at?: string | null
+          entity_id?: string
+          expected_return?: number
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["goal_kind"]
+          name?: string
+          notes?: string | null
+          priority?: number
+          target_amount?: number
+          target_date?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      liabilities: {
+        Row: {
+          amortization: Database["public"]["Enums"]["amortization_kind"]
+          collateral: string | null
+          created_at: string | null
+          creditor: string | null
+          currency: string
+          due_date: string | null
+          entity_id: string
+          id: string
+          is_offshore: boolean
+          kind: Database["public"]["Enums"]["liability_kind"]
+          name: string
+          notes: string | null
+          outstanding: number
+          principal: number
+          rate_annual: number
+          start_date: string | null
+          term_months: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          amortization?: Database["public"]["Enums"]["amortization_kind"]
+          collateral?: string | null
+          created_at?: string | null
+          creditor?: string | null
+          currency?: string
+          due_date?: string | null
+          entity_id: string
+          id?: string
+          is_offshore?: boolean
+          kind?: Database["public"]["Enums"]["liability_kind"]
+          name: string
+          notes?: string | null
+          outstanding?: number
+          principal?: number
+          rate_annual?: number
+          start_date?: string | null
+          term_months?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          amortization?: Database["public"]["Enums"]["amortization_kind"]
+          collateral?: string | null
+          created_at?: string | null
+          creditor?: string | null
+          currency?: string
+          due_date?: string | null
+          entity_id?: string
+          id?: string
+          is_offshore?: boolean
+          kind?: Database["public"]["Enums"]["liability_kind"]
+          name?: string
+          notes?: string | null
+          outstanding?: number
+          principal?: number
+          rate_annual?: number
+          start_date?: string | null
+          term_months?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       import_batches: {
         Row: {
           created_at: string | null
@@ -1177,6 +1288,9 @@ export type Database = {
       capital_event_kind: "call" | "distribution"
       capital_event_status: "previsto" | "pago" | "atrasado" | "cancelado"
       private_strategy: "private_equity" | "venture_capital" | "infraestrutura" | "real_estate" | "agro" | "credito_privado" | "outro"
+      liability_kind: "financiamento_imobiliario" | "credito_rural" | "emprestimo" | "consignado" | "cartao" | "debenture" | "divida_societaria" | "outro"
+      amortization_kind: "price" | "sac" | "bullet"
+      goal_kind: "liquidez" | "sucessao" | "imovel" | "educacao" | "filantropia" | "reserva_oportunidade" | "meta_patrimonial" | "outro"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1318,6 +1432,9 @@ export const Constants = {
       capital_event_kind: ["call", "distribution"],
       capital_event_status: ["previsto", "pago", "atrasado", "cancelado"],
       private_strategy: ["private_equity", "venture_capital", "infraestrutura", "real_estate", "agro", "credito_privado", "outro"],
+      liability_kind: ["financiamento_imobiliario", "credito_rural", "emprestimo", "consignado", "cartao", "debenture", "divida_societaria", "outro"],
+      amortization_kind: ["price", "sac", "bullet"],
+      goal_kind: ["liquidez", "sucessao", "imovel", "educacao", "filantropia", "reserva_oportunidade", "meta_patrimonial", "outro"],
     },
   },
 } as const

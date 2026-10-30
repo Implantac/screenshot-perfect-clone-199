@@ -338,3 +338,35 @@ export function useCapitalEvents() {
     retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
   });
 }
+
+// --------------------------------------- balanço: passivos e metas (wave 11)
+
+export function useLiabilities() {
+  return useQuery({
+    queryKey: ["liabilities"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("liabilities")
+        .select("*")
+        .order("outstanding", { ascending: false });
+      if (error) ensureTable(error, "liabilities", "20261030200000_balance_sheet.sql");
+      return data ?? [];
+    },
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+  });
+}
+
+export function useGoals() {
+  return useQuery({
+    queryKey: ["goals"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("goals")
+        .select("*")
+        .order("target_date", { ascending: true });
+      if (error) ensureTable(error, "goals", "20261030200000_balance_sheet.sql");
+      return data ?? [];
+    },
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+  });
+}

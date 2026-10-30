@@ -57,6 +57,7 @@ const navGroups = [
       { label: "Importar extrato", icon: UploadCloud, to: "/importar" },
       { label: "Projeção de caixa", icon: CalendarClock, to: "/projecao" },
       { label: "Capital calls & privados", icon: Building2, to: "/privados" },
+      { label: "Balanço & metas", icon: Scale, to: "/balanco" },
       { label: "Sucessão & Tributação", icon: SuccessionIcon, to: "/sucessorio" },
       { label: "Relatórios", icon: FileText, to: "/relatorios" },
     ]
