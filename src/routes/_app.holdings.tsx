@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { 
   Boxes, 
@@ -15,6 +16,8 @@ import {
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useEntities, useAssets } from "@/hooks/usePatrimonio";
+import { EntityForm, type EntityRecord } from "@/components/forms/EntityForm";
+import { Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/_app/holdings")({
   component: HoldingsSocietario,
@@ -23,6 +26,8 @@ export const Route = createFileRoute("/_app/holdings")({
 function HoldingsSocietario() {
   const { data: entities, isLoading: entitiesLoading } = useEntities();
   const { data: assets, isLoading: assetsLoading } = useAssets();
+  const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState<EntityRecord | null>(null);
 
   if (entitiesLoading || assetsLoading) {
     return (
@@ -43,9 +48,15 @@ function HoldingsSocietario() {
           <p className="text-muted-foreground mt-2">Visão 360° de Holdings, controladas e participações diretas.</p>
         </div>
         <div className="flex gap-3">
-          <button className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2">
+          <button
+            onClick={() => {
+              setEditing(null);
+              setFormOpen(true);
+            }}
+            className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2"
+          >
             <Plus className="h-4 w-4" />
-            Nova Estrutura
+            Nova Holding
           </button>
         </div>
       </div>
@@ -151,12 +162,30 @@ function HoldingsSocietario() {
                         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Controle</p>
                         <p className="text-sm font-black text-primary mt-0.5">100%</p>
                      </div>
+                     <button
+                        onClick={() => {
+                          setEditing(h as unknown as EntityRecord);
+                          setFormOpen(true);
+                        }}
+                        title="Editar holding"
+                        className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors shrink-0"
+                     >
+                        <Pencil className="h-3.5 w-3.5" />
+                     </button>
                   </div>
                </div>
             ))}
          </div>
       </div>
 
+      <EntityForm
+        open={formOpen}
+        onClose={() => {
+          setFormOpen(false);
+          setEditing(null);
+        }}
+        editing={editing}
+      />
     </div>
   );
 }

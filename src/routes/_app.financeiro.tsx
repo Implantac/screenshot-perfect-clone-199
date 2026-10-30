@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { 
   DollarSign, 
@@ -26,24 +27,50 @@ import {
   ResponsiveContainer
 } from "recharts";
 import { useTransactions, useAssets } from "@/hooks/usePatrimonio";
+import { TransactionForm } from "@/components/forms/TransactionForm";
 
 export const Route = createFileRoute("/_app/financeiro")({
   component: FluxoFinanceiro,
 });
 
 
-const cashflowData = [
-  { name: "Jan", entrada: 420, saida: 180 },
-  { name: "Fev", entrada: 380, saida: 210 },
-  { name: "Mar", entrada: 510, saida: 190 },
-  { name: "Abr", entrada: 490, saida: 250 },
-  { name: "Mai", entrada: 620, saida: 200 },
-  { name: "Jun", entrada: 580, saida: 230 },
-];
+/** Série de fluxo de caixa dos últimos 6 meses, derivada das transações reais. */
+function buildCashflow(
+  transactions: { amount: number | string; type: string | null; transaction_date: string | null }[] | undefined,
+) {
+  const months: { key: string; name: string; entrada: number; saida: number }[] = [];
+  const now = new Date();
+  for (let i = 5; i >= 0; i -= 1) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({
+      key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
+      name: d.toLocaleDateString("pt-BR", { month: "short" }).replace(".", ""),
+      entrada: 0,
+      saida: 0,
+    });
+  }
+  const index = new Map(months.map((m) => [m.key, m]));
+  for (const t of transactions ?? []) {
+    if (!t.transaction_date) continue;
+    const key = t.transaction_date.slice(0, 7);
+    const bucket = index.get(key);
+    if (!bucket) continue;
+    const value = Number(t.amount) || 0;
+    if (t.type === "income") bucket.entrada += value;
+    else bucket.saida += Math.abs(value);
+  }
+  return months.map((m) => ({
+    name: m.name,
+    entrada: Number((m.entrada / 1000).toFixed(0)),
+    saida: Number((m.saida / 1000).toFixed(0)),
+  }));
+}
 
 function FluxoFinanceiro() {
   const { data: transactions, isLoading: transLoading } = useTransactions();
   const { data: assets, isLoading: assetsLoading } = useAssets();
+  const [formOpen, setFormOpen] = useState(false);
+  const cashflowData = buildCashflow(transactions);
 
   if (transLoading || assetsLoading) {
     return (
@@ -70,7 +97,10 @@ function FluxoFinanceiro() {
             <Download className="h-4 w-4" />
             Exportar Relatório
           </button>
-          <button className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2">
+          <button
+            onClick={() => setFormOpen(true)}
+            className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2"
+          >
             <DollarSign className="h-4 w-4" />
             Novo Registro
           </button>
@@ -188,18 +218,23 @@ function FluxoFinanceiro() {
                  key={t.id}
                  title={t.title} 
                  target={(t.entities as any)?.name || (t.assets as any)?.name} 
-                 val={`${t.type === 'income' ? '+' : '-'}R$ ${Math.abs(Number(t.amount)).toLocaleString()}`} 
+                 val={`${t.type === 'income' ? '+' : '-'}R$ ${Math.abs(Number(t.amount)).toLocaleString("pt-BR")}`} 
                  type={t.type === 'income' ? 'in' : 'out'} 
                  icon={t.category === 'Aluguel' ? Building2 : t.category === 'Dividendos' ? Boxes : FileText}
                />
              ))}
           </div>
 
-          <button className="w-full py-4 bg-white/5 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all">
-            Ver Extrato Consolidado
+          <button
+            onClick={() => setFormOpen(true)}
+            className="w-full py-4 bg-white/5 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all"
+          >
+            + Novo lançamento
           </button>
         </div>
       </div>
+
+      <TransactionForm open={formOpen} onClose={() => setFormOpen(false)} />
     </div>
   );
 }

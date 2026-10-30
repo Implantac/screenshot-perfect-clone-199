@@ -1,8 +1,12 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { FileSearch, Sparkles, Filter, Search, FileText, CheckCircle2, AlertTriangle, ArrowUpRight, CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { DocumentForm } from "@/components/forms/DocumentForm";
+import { useDeleteDocument } from "@/hooks/useCrud";
+import { Plus, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/_app/saude-documental")({
   component: SaudeDocumental,
@@ -10,6 +14,9 @@ export const Route = createFileRoute("/_app/saude-documental")({
 
 
 function SaudeDocumental() {
+  const [formOpen, setFormOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const removeDocument = useDeleteDocument();
   const { data: docs, isLoading } = useQuery({
     queryKey: ["documents"],
     queryFn: async () => {
@@ -36,16 +43,24 @@ function SaudeDocumental() {
             Análise automática de validade, integridade e conformidade de documentos patrimoniais.
           </p>
         </div>
-        <button className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2">
-          <Sparkles className="h-4 w-4" />
-          OCR & Extração IA
+        <button
+          onClick={() => setFormOpen(true)}
+          className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          Arquivar documento
         </button>
       </div>
 
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          <MetricCard label="Documentos Digitais" val={docs?.length.toString() || "0"} detail={`${docs?.filter(d => d.ocr_processed).length} OCR Concluído`} />
-         <MetricCard label="Saúde Média" val="94.2%" detail="+1.2% este mês" color="text-emerald-500" />
+         <MetricCard
+           label="Documentos Vencidos"
+           val={(docs?.filter((d) => d.expiry_date && new Date(d.expiry_date) < new Date()).length ?? 0).toString()}
+           detail="Requerem ação imediata"
+           color="text-emerald-500"
+         />
          <MetricCard label="Pendências IA" val={docs?.filter(d => d.status === 'pendente' || d.status === 'critico').length.toString() || "0"} detail="Requerem revisão humana" color="text-orange-500" />
 
       </div>
@@ -56,7 +71,13 @@ function SaudeDocumental() {
             <div className="flex gap-3">
                <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <input type="text" placeholder="Pesquisar documentos..." className="bg-background border-white/10 rounded-xl py-2 pl-10 pr-4 text-xs w-64" />
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Pesquisar documentos..."
+                    className="bg-background border-white/10 rounded-xl py-2 pl-10 pr-4 text-xs w-64"
+                  />
                </div>
                <button className="p-2 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all">
                   <Filter className="h-4 w-4 text-muted-foreground" />
@@ -65,7 +86,7 @@ function SaudeDocumental() {
          </div>
 
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {docs?.map((doc) => (
+            {(docs ?? []).filter((doc) => !query || doc.title.toLowerCase().includes(query.toLowerCase())).map((doc) => (
               <DocCard 
                 key={doc.id}
                 title={doc.title} 
@@ -81,6 +102,8 @@ function SaudeDocumental() {
 
          </div>
       </div>
+
+      <DocumentForm open={formOpen} onClose={() => setFormOpen(false)} />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { 
   Building2, 
@@ -16,6 +17,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAssets } from "@/hooks/usePatrimonio";
+import { AssetForm, type AssetRecord } from "@/components/forms/AssetForm";
+import { useDeleteAsset } from "@/hooks/useCrud";
+import { Pencil, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/_app/imoveis")({
   component: GovernancaImobiliaria,
@@ -23,6 +27,11 @@ export const Route = createFileRoute("/_app/imoveis")({
 
 function GovernancaImobiliaria() {
   const { data: assets, isLoading } = useAssets();
+  const removeAsset = useDeleteAsset();
+  const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState<AssetRecord | null>(null);
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<"todos" | "urbano" | "rural" | "pendencia">("todos");
 
   if (isLoading) {
     return (
@@ -33,6 +42,29 @@ function GovernancaImobiliaria() {
   }
 
   const totalVgv = assets?.reduce((sum, a) => sum + (Number(a.value) || 0), 0) || 0;
+  const totalAreaRural = assets
+    ?.filter((a) => a.type === "rural")
+    .reduce((sum, a) => {
+      const match = String(a.area ?? "").match(/[\d.]+/);
+      return sum + (match ? Number(match[0].replace(/\./g, "")) : 0);
+    }, 0) || 0;
+
+  const visibleAssets = (assets ?? []).filter((a) => {
+    const matchesQuery =
+      !query || `${a.name} ${a.location ?? ""}`.toLowerCase().includes(query.toLowerCase());
+    const matchesFilter =
+      filter === "todos"
+        ? true
+        : filter === "pendencia"
+          ? a.status !== "regular"
+          : a.type === filter;
+    return matchesQuery && matchesFilter;
+  });
+
+  const openCreate = () => {
+    setEditing(null);
+    setFormOpen(true);
+  };
 
   return (
     <div className="space-y-8 lg:space-y-10 animate-in fade-in duration-700 overflow-x-hidden max-w-[1800px] mx-auto w-full">
@@ -47,7 +79,10 @@ function GovernancaImobiliaria() {
             <MapIcon className="h-4 w-4" />
             Mapa Global
           </button>
-          <button className="h-11 lg:h-12 px-6 bg-primary text-primary-foreground rounded-xl lg:rounded-2xl font-bold text-xs lg:text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center justify-center gap-2">
+          <button
+            onClick={openCreate}
+            className="h-11 lg:h-12 px-6 bg-primary text-primary-foreground rounded-xl lg:rounded-2xl font-bold text-xs lg:text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
+          >
             <Plus className="h-4 w-4" />
             Cadastrar Ativo
           </button>
@@ -57,7 +92,7 @@ function GovernancaImobiliaria() {
       {/* Stats Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
          <AssetStat label="Total de Ativos" value={assets?.length.toString() || "0"} icon={Building2} />
-         <AssetStat label="Área Total (Rural)" value="1.2k ha" icon={Trees} />
+         <AssetStat label="Área Total (Rural)" value={`${(totalAreaRural / 1000).toFixed(1)}k ha`} icon={Trees} />
          <AssetStat label="VGV Estimado" value={`R$ ${(totalVgv / 1000000).toFixed(1)}M`} icon={ArrowUpRight} />
          <AssetStat label="Pendências Téc." value={assets?.filter(a => a.status !== 'regular').length.toString() || "0"} icon={AlertCircle} color="text-orange-500" />
       </div>
@@ -66,32 +101,82 @@ function GovernancaImobiliaria() {
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 glass-card p-4 rounded-2xl lg:rounded-3xl border-white/5 bg-white/5">
         <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input 
-            type="text" 
-            placeholder="Buscar..." 
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Buscar por nome ou cidade..."
             className="w-full bg-background border-white/10 rounded-xl lg:rounded-2xl py-2.5 lg:py-3 pl-11 pr-4 text-sm focus:ring-primary/50"
           />
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-none">
-           <FilterButton label="Todos" active />
-           <FilterButton label="Urbanos" />
-           <FilterButton label="Rurais" />
-           <FilterButton label="Pendência" />
+           <FilterButton label="Todos" active={filter === "todos"} onClick={() => setFilter("todos")} />
+           <FilterButton label="Urbanos" active={filter === "urbano"} onClick={() => setFilter("urbano")} />
+           <FilterButton label="Rurais" active={filter === "rural"} onClick={() => setFilter("rural")} />
+           <FilterButton label="Pendência" active={filter === "pendencia"} onClick={() => setFilter("pendencia")} />
         </div>
       </div>
 
       {/* Property Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
-        {assets?.map((prop) => (
-          <PropertyCard key={prop.id} property={{
-            ...prop,
-            type: prop.type === 'rural' ? 'Rural' : 'Urbano',
-            status: prop.status === 'regular' ? 'Regular' : 'Pendência',
-            health: prop.health_score,
-            value: `R$ ${(Number(prop.value) / 1000000).toFixed(1)}M`
-          }} />
+        {visibleAssets.map((prop) => (
+          <div key={prop.id} className="relative group/card">
+            <PropertyCard property={{
+              ...prop,
+              type: prop.type === 'rural' ? 'Rural' : 'Urbano',
+              status: prop.status === 'regular' ? 'Regular' : 'Pendência',
+              health: prop.health_score,
+              value: `R$ ${(Number(prop.value) / 1000000).toFixed(1)}M`
+            }} />
+            <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover/card:opacity-100 transition-opacity z-20">
+              <button
+                onClick={() => {
+                  setEditing(prop as unknown as AssetRecord);
+                  setFormOpen(true);
+                }}
+                title="Editar ativo"
+                className="h-9 w-9 rounded-xl bg-black/70 backdrop-blur border border-white/10 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
+              >
+                <Pencil className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => {
+                  if (confirm(`Remover o ativo "${prop.name}"? Os riscos e documentos vinculados também saem.`)) {
+                    removeAsset.mutate({ id: prop.id });
+                  }
+                }}
+                title="Remover ativo"
+                className="h-9 w-9 rounded-xl bg-black/70 backdrop-blur border border-white/10 flex items-center justify-center text-muted-foreground hover:text-red-400 transition-colors"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
         ))}
+        {visibleAssets.length === 0 && (
+          <div className="xl:col-span-2 glass-card rounded-[2rem] p-12 text-center border-white/5">
+            <p className="text-sm font-bold text-foreground">Nenhum ativo encontrado</p>
+            <p className="text-xs text-muted-foreground mt-2">
+              Ajuste os filtros ou cadastre o primeiro ativo da estrutura.
+            </p>
+            <button
+              onClick={openCreate}
+              className="mt-6 h-11 px-6 rounded-xl bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest inline-flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" /> Cadastrar ativo
+            </button>
+          </div>
+        )}
       </div>
+
+      <AssetForm
+        open={formOpen}
+        onClose={() => {
+          setFormOpen(false);
+          setEditing(null);
+        }}
+        editing={editing}
+      />
     </div>
   );
 }
@@ -110,9 +195,9 @@ function AssetStat({ label, value, icon: Icon, color = "text-foreground" }: any)
   );
 }
 
-function FilterButton({ label, active }: any) {
+function FilterButton({ label, active, onClick }: any) {
   return (
-    <button className={cn(
+    <button onClick={onClick} className={cn(
       "px-4 py-2 rounded-xl text-[10px] lg:text-xs font-bold transition-all border whitespace-nowrap",
       active 
         ? "bg-primary text-primary-foreground border-primary" 

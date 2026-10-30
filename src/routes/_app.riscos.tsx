@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { 
   ShieldAlert, 
   AlertTriangle, 
@@ -13,10 +14,14 @@ import {
   History,
   Zap,
   Sparkles,
-  Loader2
+  Loader2,
+  Plus,
+  Check
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRisks, useEntities } from "@/hooks/usePatrimonio";
+import { useResolveRisk } from "@/hooks/useCrud";
+import { RiskForm } from "@/components/forms/RiskForm";
 
 export const Route = createFileRoute("/_app/riscos")({
   component: CentralDeRiscos,
@@ -26,6 +31,8 @@ export const Route = createFileRoute("/_app/riscos")({
 function CentralDeRiscos() {
   const { data: risks, isLoading: risksLoading } = useRisks();
   const { data: entities, isLoading: entitiesLoading } = useEntities();
+  const resolveRisk = useResolveRisk();
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   if (risksLoading || entitiesLoading) {
     return (
@@ -35,7 +42,13 @@ function CentralDeRiscos() {
     );
   }
 
-  const criticalCount = risks?.filter(r => r.severity === 'critical').length || 0;
+  const openRisks = risks?.filter((r) => r.status !== "resolved") ?? [];
+  const criticalCount = openRisks.filter((r) => r.severity === "critical").length;
+  const dueCount = openRisks.filter((r) => Boolean(r.due_date)).length;
+  const inconsistencyCount = openRisks.filter((r) => r.severity === "critical" || r.severity === "high").length;
+  const regulatoryCount = openRisks.filter((r) =>
+    /car|itr|avcb|licen|ambient|anac|incra|georreferenciamento|cnd/i.test(`${r.title} ${r.description ?? ""}`),
+  ).length;
   const avgCompliance = entities && entities.length > 0 
     ? entities.reduce((sum, ent) => sum + (Number(ent.compliance_score) || 0), 0) / entities.length 
     : 0;
@@ -53,9 +66,19 @@ function CentralDeRiscos() {
             <Zap className="h-4 w-4 animate-pulse" />
             {criticalCount} Alertas Críticos
           </div>
-          <button className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2">
-            <Sparkles className="h-4 w-4" />
+          <Link
+            to="/jarvis/chat"
+            className="h-12 px-6 bg-white/5 border border-white/10 rounded-2xl font-bold text-sm hover:bg-white/10 transition-all flex items-center gap-2"
+          >
+            <Sparkles className="h-4 w-4 text-primary" />
             Análise IA
+          </Link>
+          <button
+            onClick={() => setIsFormOpen(true)}
+            className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Registrar risco
           </button>
         </div>
       </div>
@@ -66,21 +89,21 @@ function CentralDeRiscos() {
         <RiskCategoryCard 
           icon={Calendar} 
           title="Vencimentos" 
-          count={8} 
+          count={dueCount} 
           color="text-orange-500"
           description="Certidões, Contratos, Procurações"
         />
         <RiskCategoryCard 
           icon={FileWarning} 
           title="Inconsistências" 
-          count={4} 
+          count={inconsistencyCount} 
           color="text-red-500"
           description="Matrículas, Escrituras, Ônus"
         />
         <RiskCategoryCard 
           icon={MapPin} 
           title="Regulatórios" 
-          count={2} 
+          count={regulatoryCount} 
           color="text-yellow-500"
           description="AVCB, CAR, ITR, Licenças"
         />
@@ -121,14 +144,16 @@ function CentralDeRiscos() {
         </div>
         
         <div className="divide-y divide-white/5">
-          {risks?.map((risk) => (
-            <RiskRow 
+          {openRisks.map((risk) => (
+            <RiskRow
               key={risk.id}
               title={risk.title}
               type={risk.description?.split(':')[0] || "Alerta"}
               severity={risk.severity}
               date={risk.due_date ? new Date(risk.due_date).toLocaleDateString() : "Contínuo"}
-              owner="IA Patrium"
+              owner={(risk as unknown as { members?: { full_name?: string } | null }).members?.full_name ?? "Não atribuído"}
+              onResolve={() => resolveRisk.mutate({ id: risk.id })}
+              resolving={resolveRisk.isPending && resolveRisk.variables?.id === risk.id}
             />
           ))}
           {(!risks || risks.length === 0) && (
@@ -138,11 +163,13 @@ function CentralDeRiscos() {
         </div>
 
         <div className="p-6 bg-white/[0.01] text-center">
-           <button className="text-xs font-bold text-muted-foreground hover:text-primary uppercase tracking-[0.2em] transition-all">
-              Ver histórico completo de incidentes
-           </button>
+           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+              {risks?.length ?? 0} risco(s) no total · {openRisks.length} aberto(s) · toda alteração vai para a trilha de auditoria
+           </p>
         </div>
       </div>
+
+      <RiskForm open={isFormOpen} onClose={() => setIsFormOpen(false)} />
     </div>
   );
 }
@@ -166,7 +193,7 @@ function RiskCategoryCard({ icon: Icon, title, count, color, description, isScor
   );
 }
 
-function RiskRow({ title, type, severity, date, owner }: any) {
+function RiskRow({ title, type, severity, date, owner, onResolve, resolving }: any) {
   const severities: Record<string, string> = {
     critical: "bg-red-500/10 text-red-500 border-red-500/20",
     high: "bg-orange-500/10 text-orange-500 border-orange-500/20",
@@ -198,9 +225,17 @@ function RiskRow({ title, type, severity, date, owner }: any) {
           <p className="text-sm font-black text-foreground">{date}</p>
           <p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-1 font-bold whitespace-nowrap">Status: Pendente</p>
         </div>
-        <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all group-hover:translate-x-1">
-           <ChevronRight className="h-5 w-5" />
-        </div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onResolve?.();
+          }}
+          disabled={resolving}
+          title="Marcar como resolvido"
+          className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-emerald-500/20 hover:text-emerald-400 transition-all disabled:opacity-50"
+        >
+          {resolving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-5 w-5" />}
+        </button>
       </div>
     </div>
   );
