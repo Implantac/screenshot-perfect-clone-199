@@ -105,6 +105,33 @@ try {
   log(`✅ validação Zod na UI: ${/ao menos 2 caracteres|Selecione um registro/.test(validation)}`);
   await page.screenshot({ path: `${shots}/05-form-validacao.png` });
 
+  // 7. telas convertidas para dados reais (wave 2)
+  const screens: [string, RegExp][] = [
+    ["/fornecedores", /Fornecedores|Homologar/i],
+    ["/legal", /Assessoria Jurídica/i],
+    ["/family-office", /Family Office/i],
+    ["/regularizacao", /Regularização/i],
+    ["/jarvis/historico", /Histórico/i],
+    ["/jarvis/alertas", /Alertas/i],
+    ["/jarvis/grafo", /Rede patrimonial/i],
+    ["/settings", /Configurações/i],
+    ["/mapa", /Cartografia Patrimonial/i],
+  ];
+  for (const [route, pattern] of screens) {
+    const errorsBefore = consoleErrors.length;
+    await page.goto(`${BASE}${route}`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(700);
+    const text = await page.locator("body").innerText();
+    const rendered = pattern.test(text);
+    const crashed = /Something went wrong|Application error|Erro inesperado/i.test(text);
+    const fresh = consoleErrors.length - errorsBefore;
+    log(
+      `${rendered && !crashed && fresh === 0 ? "✅" : "❌"} ${route.padEnd(18)} render=${rendered} erros=${fresh}`,
+    );
+    if (!rendered || crashed || fresh > 0) process.exitCode = 1;
+  }
+  await page.screenshot({ path: `${shots}/06-fornecedores.png` });
+
   log(`\nErros de console: ${consoleErrors.length}`);
   for (const e of consoleErrors.slice(0, 12)) log(`   · ${e}`);
 } catch (error) {
