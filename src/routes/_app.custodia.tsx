@@ -15,6 +15,7 @@ import {
   Trash2,
   ArrowUpRight,
   ArrowDownRight,
+  ArrowLeftRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -25,6 +26,7 @@ import {
   usePositions,
   useDocuments,
   useAssets,
+  useTransactions,
   isMissingTableError,
 } from "@/hooks/usePatrimonio";
 import {
@@ -37,6 +39,7 @@ import { classifyFreshness, STALE_DAYS } from "@/lib/quotes";
 import type { PositionInput } from "@/lib/validation/schemas";
 import { PositionForm } from "@/components/forms/PositionForm";
 import { CashFlowForm } from "@/components/forms/CashFlowForm";
+import { ReconciliationPanel } from "@/components/custody/ReconciliationPanel";
 import {
   summarizeAllocation,
   computeDrift,
@@ -59,6 +62,7 @@ const pct = (v: number) => `${v.toFixed(2).replace(".", ",")}%`;
 const TABS = [
   { id: "visao", label: "Visão geral", icon: Layers },
   { id: "posicoes", label: "Posições", icon: Wallet },
+  { id: "conciliacao", label: "Conciliação", icon: ArrowLeftRight },
   { id: "politica", label: "Política & drift", icon: Target },
   { id: "qualidade", label: "Qualidade do dado", icon: AlertTriangle },
 ] as const;
@@ -73,6 +77,7 @@ function Custodia() {
   const { data: entities } = useEntities();
   const { data: documents } = useDocuments();
   const { data: assets } = useAssets();
+  const { data: transactions } = useTransactions();
   const removePosition = useDeletePosition();
   const rebuild = useRebuildSnapshots();
   const syncQuotes = useSyncQuotes();
@@ -445,6 +450,15 @@ function Custodia() {
             )}
           </div>
         </div>
+      )}
+
+      {tab === "conciliacao" && (
+        <ReconciliationPanel
+          transactions={transactions ?? []}
+          flows={flows ?? []}
+          entities={entities ?? []}
+          entityFilter={entityFilter}
+        />
       )}
 
       {tab === "politica" && (
