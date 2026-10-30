@@ -20,6 +20,7 @@ import { Route as AppFinanceiroRouteImport } from './routes/_app.financeiro'
 import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
 import { Route as AppHoldingsRouteImport } from './routes/_app.holdings'
 import { Route as AppImoveisRouteImport } from './routes/_app.imoveis'
+import { Route as AppImportarRouteImport } from './routes/_app.importar'
 import { Route as AppInteligenciaRouteImport } from './routes/_app.inteligencia'
 import { Route as AppJarvisRouteImport } from './routes/_app.jarvis'
 import { Route as AppLegalRouteImport } from './routes/_app.legal'
@@ -90,6 +91,11 @@ const AppHoldingsRoute = AppHoldingsRouteImport.update({
 const AppImoveisRoute = AppImoveisRouteImport.update({
   id: '/imoveis',
   path: '/imoveis',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppImportarRoute = AppImportarRouteImport.update({
+  id: '/importar',
+  path: '/importar',
   getParentRoute: () => AppRoute,
 } as any)
 const AppInteligenciaRoute = AppInteligenciaRouteImport.update({
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/fornecedores': typeof AppFornecedoresRoute
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
+  '/importar': typeof AppImportarRoute
   '/inteligencia': typeof AppInteligenciaRoute
   '/jarvis': typeof AppJarvisRouteWithChildren
   '/legal': typeof AppLegalRoute
@@ -218,6 +225,7 @@ export interface FileRoutesByTo {
   '/fornecedores': typeof AppFornecedoresRoute
   '/holdings': typeof AppHoldingsRoute
   '/imoveis': typeof AppImoveisRoute
+  '/importar': typeof AppImportarRoute
   '/inteligencia': typeof AppInteligenciaRoute
   '/legal': typeof AppLegalRoute
   '/mapa': typeof AppMapaRoute
@@ -248,6 +256,7 @@ export interface FileRoutesById {
   '/_app/fornecedores': typeof AppFornecedoresRoute
   '/_app/holdings': typeof AppHoldingsRoute
   '/_app/imoveis': typeof AppImoveisRoute
+  '/_app/importar': typeof AppImportarRoute
   '/_app/inteligencia': typeof AppInteligenciaRoute
   '/_app/jarvis': typeof AppJarvisRouteWithChildren
   '/_app/legal': typeof AppLegalRoute
@@ -279,6 +288,7 @@ export interface FileRouteTypes {
     | '/fornecedores'
     | '/holdings'
     | '/imoveis'
+    | '/importar'
     | '/inteligencia'
     | '/jarvis'
     | '/legal'
@@ -308,6 +318,7 @@ export interface FileRouteTypes {
     | '/fornecedores'
     | '/holdings'
     | '/imoveis'
+    | '/importar'
     | '/inteligencia'
     | '/legal'
     | '/mapa'
@@ -337,6 +348,7 @@ export interface FileRouteTypes {
     | '/_app/fornecedores'
     | '/_app/holdings'
     | '/_app/imoveis'
+    | '/_app/importar'
     | '/_app/inteligencia'
     | '/_app/jarvis'
     | '/_app/legal'
@@ -439,6 +451,13 @@ declare module '@tanstack/react-router' {
       path: '/imoveis'
       fullPath: '/imoveis'
       preLoaderRoute: typeof AppImoveisRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/importar': {
+      id: '/_app/importar'
+      path: '/importar'
+      fullPath: '/importar'
+      preLoaderRoute: typeof AppImportarRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/inteligencia': {
@@ -596,6 +615,7 @@ interface AppRouteChildren {
   AppFornecedoresRoute: typeof AppFornecedoresRoute
   AppHoldingsRoute: typeof AppHoldingsRoute
   AppImoveisRoute: typeof AppImoveisRoute
+  AppImportarRoute: typeof AppImportarRoute
   AppInteligenciaRoute: typeof AppInteligenciaRoute
   AppJarvisRoute: typeof AppJarvisRouteWithChildren
   AppLegalRoute: typeof AppLegalRoute
@@ -617,6 +637,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppFornecedoresRoute: AppFornecedoresRoute,
   AppHoldingsRoute: AppHoldingsRoute,
   AppImoveisRoute: AppImoveisRoute,
+  AppImportarRoute: AppImportarRoute,
   AppInteligenciaRoute: AppInteligenciaRoute,
   AppJarvisRoute: AppJarvisRouteWithChildren,
   AppLegalRoute: AppLegalRoute,

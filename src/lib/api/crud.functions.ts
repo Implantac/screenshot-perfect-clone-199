@@ -32,6 +32,7 @@ import {
   cashFlowInputSchema,
   snapshotInputSchema,
   taxScenarioInputSchema,
+  importStatementSchema,
 } from "@/lib/validation/schemas";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -507,5 +508,139 @@ export const createTaxScenario = authed
 export const deleteTaxScenario = authed.inputValidator(idSchema).handler(async ({ data, context }) => {
   const { error } = await context.supabase.from("tax_scenarios").delete().eq("id", data.id);
   if (error) throw new Error(error.message);
+  return { ok: true as const, id: data.id };
+});
+
+// ===================================================== importação de extrato
+
+/**
+ * Importa um extrato já parseado no cliente.
+ *
+ * Estratégia de deduplicação em duas camadas:
+ *  1. consulta os `external_id` já existentes na entidade e remove repetidos;
+ *  2. insere o restante com `external_id` — o índice único parcial
+ *     `(entity_id, external_id)` é a garantia final contra corrida/reenvio.
+ *
+ * O lote é registrado em `import_batches` para permitir auditoria e rollback.
+ */
+export const importStatement = authed
+  .inputValidator(importStatementSchema)
+  .handler(async ({ data, context }) => {
+    const { entity_id, file_name, format, file_hash, rows } = data;
+
+    // 1. O que já existe nesta entidade (em blocos, para não estourar a URL).
+    const existing = new Set<string>();
+    const CHUNK = 200;
+    for (let i = 0; i < rows.length; i += CHUNK) {
+      const ids = rows.slice(i, i + CHUNK).map((row) => row.external_id);
+      const { data: found, error } = await context.supabase
+        .from("transactions")
+        .select("external_id")
+        .eq("entity_id", entity_id)
+        .in("external_id", ids);
+      if (error) throw new Error(error.message);
+      for (const row of found ?? []) if (row.external_id) existing.add(row.external_id);
+    }
+
+    const fresh = rows.filter((row) => !existing.has(row.external_id));
+    const dates = fresh.map((row) => row.date).sort();
+
+    // 2. Lote de importação (mesmo que nada entre, fica o registro da tentativa).
+    const { data: batch, error: batchError } = await context.supabase
+      .from("import_batches")
+      .insert({
+        entity_id,
+        file_name,
+        format,
+        file_hash: file_hash || null,
+        rows_total: rows.length,
+        rows_imported: 0,
+        rows_duplicated: rows.length - fresh.length,
+        rows_failed: 0,
+        period_start: dates[0] ?? null,
+        period_end: dates[dates.length - 1] ?? null,
+        status: "concluido",
+      })
+      .select("id")
+      .single();
+    if (batchError) throw new Error(batchError.message);
+
+    if (fresh.length === 0) {
+      return {
+        batchId: batch.id,
+        imported: 0,
+        duplicated: rows.length,
+        failed: 0,
+        periodStart: dates[0] ?? null,
+        periodEnd: dates[dates.length - 1] ?? null,
+      };
+    }
+
+    // 3. Inserção. `title` é a descrição do extrato; `category` vem inferida.
+    const payload = fresh.map((row) => ({
+      entity_id,
+      title: row.description,
+      amount: row.amount,
+      type: row.type,
+      category: row.category || null,
+      transaction_date: row.date,
+      external_id: row.external_id,
+      source: format,
+      import_batch_id: batch.id,
+    }));
+
+    let insertedIds: string[] = [];
+    const { data: inserted, error: insertError } = await context.supabase
+      .from("transactions")
+      .insert(payload)
+      .select("id");
+
+    if (!insertError) {
+      insertedIds = (inserted ?? []).map((row) => row.id);
+    } else if (insertError.code === "23505") {
+      // Corrida: alguém importou o mesmo extrato entre o preview e o commit.
+      // Cai para linha a linha e ignora o que já existe — o índice único decide.
+      for (const row of payload) {
+        const { data: single, error } = await context.supabase
+          .from("transactions")
+          .insert(row)
+          .select("id")
+          .maybeSingle();
+        if (!error) insertedIds.push(single?.id ?? "ok");
+      }
+    } else {
+      // Marca o lote como falho para não deixar registro otimista.
+      await context.supabase
+        .from("import_batches")
+        .update({ status: "falhou", rows_failed: fresh.length, errors: [{ message: insertError.message }] })
+        .eq("id", batch.id);
+      throw new Error(insertError.message);
+    }
+
+    const imported = insertedIds.length;
+    await context.supabase
+      .from("import_batches")
+      .update({ rows_imported: imported, rows_failed: fresh.length - imported })
+      .eq("id", batch.id);
+
+    return {
+      batchId: batch.id,
+      imported,
+      duplicated: rows.length - fresh.length,
+      failed: fresh.length - imported,
+      periodStart: dates[0] ?? null,
+      periodEnd: dates[dates.length - 1] ?? null,
+    };
+  });
+
+/** Desfaz uma importação inteira (remove só o que aquele lote criou). */
+export const deleteImportBatch = authed.inputValidator(idSchema).handler(async ({ data, context }) => {
+  const { error } = await context.supabase
+    .from("transactions")
+    .delete()
+    .eq("import_batch_id", data.id);
+  if (error) throw new Error(error.message);
+  const { error: batchError } = await context.supabase.from("import_batches").delete().eq("id", data.id);
+  if (batchError) throw new Error(batchError.message);
   return { ok: true as const, id: data.id };
 });

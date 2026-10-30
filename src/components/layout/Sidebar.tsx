@@ -3,27 +3,28 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 
-import { 
-  LayoutDashboard, 
-  ShieldAlert, 
-  Building2, 
-  Users2, 
-  ShieldCheck, 
-  Boxes, 
-  Handshake, 
-  Settings, 
-  User,
-  Landmark,
-  FileSearch,
-  Sparkles,
-  DollarSign,
-  Scale,
-  Map as MapIcon,
-  LogOut,
+import {
+  Boxes,
+  Building2,
   Cpu,
-  Wallet,
+  DollarSign,
+  FileSearch,
+  FileText,
+  Handshake,
+  Landmark,
   Landmark as SuccessionIcon,
-  FileText
+  LayoutDashboard,
+  LogOut,
+  Map as MapIcon,
+  Scale,
+  Settings,
+  ShieldAlert,
+  ShieldCheck,
+  Sparkles,
+  UploadCloud,
+  User,
+  Users2,
+  Wallet,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -52,6 +53,7 @@ const navGroups = [
     label: "Investimentos",
     items: [
       { label: "Custódia & Performance", icon: Wallet, to: "/custodia" },
+      { label: "Importar extrato", icon: UploadCloud, to: "/importar" },
       { label: "Sucessão & Tributação", icon: SuccessionIcon, to: "/sucessorio" },
       { label: "Relatórios", icon: FileText, to: "/relatorios" },
     ]

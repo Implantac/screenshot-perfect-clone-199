@@ -44,9 +44,12 @@ import {
   rebuildSnapshots,
   createTaxScenario,
   deleteTaxScenario,
+  importStatement,
+  deleteImportBatch,
 } from "@/lib/api/crud.functions";
 import { seedDemo } from "@/lib/api/demo.functions";
 import type { SeedResult } from "@/lib/demo/seedDemo";
+import type { ImportResult } from "@/lib/import/normalize";
 import type {
   AssetInput,
   AssetUpdateInput,
@@ -67,6 +70,7 @@ import type {
   accountInputSchema,
   positionInputSchema,
   positionUpdateSchema,
+  importStatementSchema,
   cashFlowInputSchema,
   snapshotInputSchema,
   taxScenarioInputSchema,
@@ -313,6 +317,8 @@ const CUSTODY_KEYS: QueryKey[] = [
   ["cash_flows"],
   ["portfolio_snapshots"],
   ["audit_logs"],
+  ["transactions"],
+  ["import_batches"],
 ];
 
 export const useCreateAccount = () =>
@@ -388,4 +394,19 @@ export const useDeleteTaxScenario = () =>
   useInvalidatingMutation<IdInput, unknown>(deleteTaxScenario, [["tax_scenarios"]], {
     success: "Cenário removido.",
     error: "Não foi possível remover o cenário.",
+  });
+
+// ------------------------------------------------------- importação (wave 5)
+
+/** Importa um extrato OFX/CSV. Invalida transações e o histórico de lotes. */
+export const useImportStatement = () =>
+  useInvalidatingMutation<z.input<typeof importStatementSchema>, ImportResult>(importStatement, CUSTODY_KEYS, {
+    success: "Extrato processado.",
+    error: "Não foi possível importar o extrato.",
+  });
+
+export const useDeleteImportBatch = () =>
+  useInvalidatingMutation<IdInput, unknown>(deleteImportBatch, CUSTODY_KEYS, {
+    success: "Importação desfeita — lançamentos removidos.",
+    error: "Não foi possível desfazer a importação.",
   });

@@ -276,3 +276,23 @@ export const taxScenarioInputSchema = z.object({
   total_cost: z.coerce.number().min(0).default(0),
 });
 export type TaxScenarioInput = z.input<typeof taxScenarioInputSchema>;
+
+// --------------------------------------------------------- importação (wave 5)
+export const importRowSchema = z.object({
+  external_id: z.string().trim().min(4).max(120),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida."),
+  amount: z.coerce.number().positive("O valor deve ser maior que zero."),
+  description: z.string().trim().min(1).max(180),
+  type: transactionTypeEnum,
+  category: z.string().trim().max(60).optional().or(z.literal("")),
+});
+
+export const importStatementSchema = z.object({
+  entity_id: uuid,
+  file_name: z.string().trim().min(1).max(160),
+  format: z.enum(["ofx", "csv"]),
+  file_hash: z.string().trim().max(64).optional().or(z.literal("")),
+  rows: z.array(importRowSchema).min(1, "Nada para importar.").max(2000, "Limite de 2.000 linhas por arquivo."),
+});
+export type ImportStatementInput = z.input<typeof importStatementSchema>;
+export type ImportRowInput = z.input<typeof importRowSchema>;

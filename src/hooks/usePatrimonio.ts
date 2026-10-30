@@ -269,3 +269,38 @@ export function useCustodians() {
     retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
   });
 }
+
+// ------------------------------------------------------- importação (wave 5)
+
+/** Histórico de lotes importados (auditoria + rollback). */
+export function useImportBatches() {
+  return useQuery({
+    queryKey: ["import_batches"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("import_batches")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (error) ensureTable(error, "import_batches", "20261030160000_imports.sql");
+      return data ?? [];
+    },
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+  });
+}
+
+/** Lançamentos vindos de importação (para contar o que entrou por arquivo). */
+export function useImportedTransactionIds() {
+  return useQuery({
+    queryKey: ["transactions", "imported"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("transactions")
+        .select("external_id, import_batch_id")
+        .not("import_batch_id", "is", null)
+        .limit(5000);
+      if (error) ensureTable(error, "transactions", "20261030160000_imports.sql");
+      return data ?? [];
+    },
+  });
+}
