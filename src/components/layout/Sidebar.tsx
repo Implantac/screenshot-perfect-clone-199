@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
@@ -18,7 +19,8 @@ import {
   DollarSign,
   Scale,
   Map as MapIcon,
-  LogOut
+  LogOut,
+  Cpu
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -31,6 +33,7 @@ const navGroups = [
       { label: "Jarvis (Diretor Digital)", icon: Sparkles, to: "/jarvis" },
       { label: "Central de Riscos", icon: ShieldAlert, to: "/riscos" },
       { label: "Saúde Documental", icon: FileSearch, to: "/saude-documental" },
+      { label: "Sala de Guerra IA", icon: Cpu, to: "/inteligencia" },
     ]
   },
   {
@@ -57,6 +60,17 @@ const navGroups = [
 export function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (active) setUserEmail(data.user?.email ?? null);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -180,8 +194,8 @@ export function Sidebar() {
             <User className="h-5 w-5 text-primary" />
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-xs font-bold truncate">Gestor de Patrimônio</p>
-            <p className="text-[10px] text-muted-foreground truncate">holding@usepatrium.com</p>
+            <p className="text-xs font-bold truncate">{userEmail ? "Gestor de Patrimônio" : "Sessão ativa"}</p>
+            <p className="text-[10px] text-muted-foreground truncate">{userEmail ?? "—"}</p>
           </div>
         </div>
       </div>

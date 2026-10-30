@@ -36,6 +36,11 @@ export const useJarvisInsights = () => {
   });
 };
 
+/**
+ * Histórico de health scores (mais antigo → mais recente) para o gráfico do
+ * dashboard. Antes retornava 1 linha fixa com números inventados (94.2% etc.);
+ * agora devolve a série real do tenant e uma lista vazia quando não há histórico.
+ */
 export const useJarvisHealth = () => {
   return useQuery({
     queryKey: ['jarvis-health'],
@@ -43,18 +48,11 @@ export const useJarvisHealth = () => {
       const { data, error } = await supabase
         .from('jarvis_health_scores')
         .select('*')
-        .order('recorded_at', { ascending: false })
-        .limit(1)
-        .single();
-      
-      if (error && error.code !== 'PGRST116') throw error;
-      return data || {
-        global_score: 94.2,
-        patrimonial_score: 96.5,
-        documental_score: 88.0,
-        compliance_score: 92.4,
-        risk_score: 98.1
-      };
+        .order('recorded_at', { ascending: true })
+        .limit(24);
+
+      if (error) throw error;
+      return data ?? [];
     },
   });
 };

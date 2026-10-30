@@ -31,10 +31,19 @@ function JarvisIntelligenceCenter() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
-          <ScoreGauge label="Patrimonial" value={health?.patrimonial_score || 96} color="primary" />
-          <ScoreGauge label="Documental" value={health?.documental_score || 88} color="blue" />
-          <ScoreGauge label="Compliance" value={health?.compliance_score || 92} color="emerald" />
-          <ScoreGauge label="Global Index" value={health?.global_score || 94} color="amber" />
+          {(() => {
+            // Última leitura do histórico (o hook devolve a série em ordem cronológica).
+            const series = health ?? [];
+            const latest = series.length > 0 ? series[series.length - 1] : null;
+            return (
+              <>
+                <ScoreGauge label="Patrimonial" value={Number(latest?.patrimonial_score ?? 0)} color="primary" />
+                <ScoreGauge label="Documental" value={Number(latest?.documental_score ?? 0)} color="blue" />
+                <ScoreGauge label="Compliance" value={Number(latest?.compliance_score ?? 0)} color="emerald" />
+                <ScoreGauge label="Global Index" value={Number(latest?.global_score ?? 0)} color="amber" />
+              </>
+            );
+          })()}
         </div>
 
         {/* Proactive Analysis Room */}

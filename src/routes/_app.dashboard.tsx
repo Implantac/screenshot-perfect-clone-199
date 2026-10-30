@@ -21,16 +21,26 @@ import {
 } from "recharts";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { useAssets, useRisks, useEntities } from "@/hooks/usePatrimonio";
+import { useAssets, useRisks, useEntities, useMembers } from "@/hooks/usePatrimonio";
+import { useJarvisHealth } from "@/hooks/useJarvis";
 
-const complianceData = [
-  { name: "Jan", score: 82 },
-  { name: "Fev", score: 85 },
-  { name: "Mar", score: 84 },
-  { name: "Abr", score: 88 },
-  { name: "Mai", score: 92 },
-  { name: "Jun", score: 96 },
-];
+/** Série do gráfico: histórico real de health score (fallback: linha de base). */
+function useComplianceSeries() {
+  const { data: history = [] } = useJarvisHealth();
+
+  if (history.length === 0) {
+    return [{ name: "Hoje", score: 0 }];
+  }
+
+  return [...history]
+    .filter((h) => h.recorded_at)
+    .sort((a, b) => String(a.recorded_at).localeCompare(String(b.recorded_at)))
+    .slice(-12)
+    .map((h) => ({
+      name: new Date(String(h.recorded_at)).toLocaleDateString("pt-BR", { month: "short" }).replace(".", ""),
+      score: Number(h.global_score ?? 0),
+    }));
+}
 
 export const Route = createFileRoute("/_app/dashboard")({
   component: DashboardExecutivo,
@@ -40,6 +50,14 @@ function DashboardExecutivo() {
   const { data: assets, isLoading: assetsLoading } = useAssets();
   const { data: risks, isLoading: risksLoading } = useRisks();
   const { data: entities, isLoading: entitiesLoading } = useEntities();
+  const complianceData = useComplianceSeries();
+  const { data: members } = useMembers();
+
+  const documentsValidated = assets?.filter((a) => a.status === "regular").length ?? 0;
+  const pendingTechnical = assets?.filter((a) => a.status !== "regular").length ?? 0;
+  const openRiskList = risks?.filter((r) => r.status !== "resolved") ?? [];
+  const criticalRiskCount = openRiskList.filter((r) => r.severity === "critical").length;
+  const complianceAlerts = openRiskList.filter((r) => r.severity === "critical" || r.severity === "high").length;
 
   if (assetsLoading || risksLoading || entitiesLoading) {
     return (
@@ -128,21 +146,27 @@ function DashboardExecutivo() {
         />
         <HealthCard 
           title="Saúde Documental" 
-          value="94.2%" 
+          value={`${avgCompliance.toFixed(1)}%`}
           status="Monitorado"
           color="blue"
           icon={FileSearch}
           description="Rastreabilidade total de matrículas, ônus reais e regularidade cartorária."
-          metrics={[{ label: "Doc. Validados", val: "1.248" }, { label: "Alertas IA", val: "03" }]}
+          metrics={[
+            { label: "Ativos regulares", val: `${documentsValidated}/${assets?.length ?? 0}` },
+            { label: "Pendências técnicas", val: String(pendingTechnical) },
+          ]}
         />
         <HealthCard 
           title="Fronteira Regulatória" 
-          value="98.1%" 
-          status="Impecável"
+          value={`${risks?.filter(r => r.status !== "resolved").length ?? 0} abertos`}
+          status="Fronteira"
           color="emerald"
           icon={ShieldCheck}
           description="Blindagem institucional, CNDs e conformidade regulatória total."
-          metrics={[{ label: "SLA Resposta", val: "100%" }, { label: "Certidões", val: "Ativas" }]}
+          metrics={[
+            { label: "Riscos críticos", val: String(criticalRiskCount) },
+            { label: "Alertas altos", val: String(complianceAlerts) },
+          ]}
         />
       </div>
 
@@ -159,7 +183,12 @@ function DashboardExecutivo() {
               </h3>
               <p className="text-[10px] lg:text-[11px] text-muted-foreground uppercase tracking-[0.3em] font-black opacity-50">Evolução do Score de Governança</p>
             </div>
-            <button className="px-6 lg:px-8 py-2.5 lg:py-3 bg-primary/10 border border-primary/20 rounded-full text-[10px] lg:text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary text-white transition-all shadow-xl shadow-primary/10 active:scale-95 w-full sm:w-auto">Gerar Relatório IA</button>
+            <Link
+              to="/jarvis/chat"
+              className="px-6 lg:px-8 py-2.5 lg:py-3 bg-primary/10 border border-primary/20 rounded-full text-[10px] lg:text-[11px] font-black uppercase tracking-[0.2em] hover:bg-primary text-white transition-all shadow-xl shadow-primary/10 active:scale-95 w-full sm:w-auto text-center"
+            >
+              Gerar Relatório IA
+            </Link>
           </div>
           
           <div className="h-[300px] md:h-[450px] xl:h-[550px] w-full relative z-10 pt-6">
@@ -230,9 +259,12 @@ function DashboardExecutivo() {
                 </div>
               )}
             </div>
-            <button className="w-full py-5 lg:py-6 bg-white/5 border border-white/10 rounded-[1.5rem] lg:rounded-[2rem] text-[10px] lg:text-[11px] font-black uppercase tracking-[0.4em] hover:bg-orange-500 hover:text-white transition-all duration-700 active:scale-95">
+            <Link
+              to="/riscos"
+              className="block text-center w-full py-5 lg:py-6 bg-white/5 border border-white/10 rounded-[1.5rem] lg:rounded-[2rem] text-[10px] lg:text-[11px] font-black uppercase tracking-[0.4em] hover:bg-orange-500 hover:text-white transition-all duration-700 active:scale-95"
+            >
               Acessar Central de Crise
-            </button>
+            </Link>
           </div>
 
           <div className="glass-card rounded-[2rem] lg:rounded-[3rem] p-6 lg:p-10 space-y-8 lg:space-y-10 border-blue-500/10 shadow-2xl">
@@ -242,14 +274,26 @@ function DashboardExecutivo() {
                   STRUCTURE
                 </h3>
                 <div className="flex -space-x-3 items-center">
-                  {[1,2,3,4].map(i => (
-                    <div key={i} className="h-8 w-8 lg:h-10 lg:w-10 rounded-full border-2 border-sidebar bg-accent overflow-hidden grayscale hover:grayscale-0 transition-all cursor-pointer hover:scale-110">
-                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i+10}`} alt="Sócio" />
+                  {(members ?? []).slice(0, 4).map((m) => (
+                    <div
+                      key={m.id}
+                      title={`${m.full_name}${m.role ? ` · ${m.role}` : ""}`}
+                      className="h-8 w-8 lg:h-10 lg:w-10 rounded-full border-2 border-sidebar bg-primary/15 text-primary flex items-center justify-center text-[10px] font-black hover:scale-110 transition-all cursor-pointer"
+                    >
+                      {m.full_name
+                        .split(" ")
+                        .filter(Boolean)
+                        .slice(0, 2)
+                        .map((part) => part[0])
+                        .join("")
+                        .toUpperCase()}
                     </div>
                   ))}
-                  <div className="h-8 w-8 lg:h-10 lg:w-10 rounded-full border-2 border-sidebar bg-white/10 flex items-center justify-center text-[10px] font-black backdrop-blur-md">
-                    +8
-                  </div>
+                  {(members?.length ?? 0) > 4 && (
+                    <div className="h-8 w-8 lg:h-10 lg:w-10 rounded-full border-2 border-sidebar bg-white/10 flex items-center justify-center text-[10px] font-black backdrop-blur-md">
+                      +{(members?.length ?? 0) - 4}
+                    </div>
+                  )}
                 </div>
              </div>
              <div className="grid grid-cols-2 gap-4 lg:gap-6">
@@ -259,7 +303,9 @@ function DashboardExecutivo() {
                 </div>
                 <div className="p-6 lg:p-8 bg-white/[0.03] rounded-2xl lg:rounded-[2.5rem] border border-white/5 group hover:border-blue-500/40 transition-all duration-500">
                    <p className="text-[9px] lg:text-[11px] uppercase font-black text-muted-foreground/50 tracking-[0.3em]">Conselho</p>
-                   <p className="text-2xl lg:text-4xl font-black mt-2 text-foreground tabular-nums tracking-tighter">12</p>
+                   <p className="text-2xl lg:text-4xl font-black mt-2 text-foreground tabular-nums tracking-tighter">
+                    {(members?.length ?? 0).toString().padStart(2, "0")}
+                  </p>
                 </div>
              </div>
           </div>
