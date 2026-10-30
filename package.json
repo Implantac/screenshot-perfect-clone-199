@@ -11,12 +11,14 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "bun test",
+    "typecheck": "./node_modules/.bin/tsc --noEmit",
     "test:watch": "bun test --watch",
     "seed:sql": "bun run scripts/generate-seed-sql.ts",
     "verify:db": "bun run scripts/verify-e2e.ts",
     "verify:llm": "bun run scripts/verify-llm.ts",
     "verify:ui": "bun run scripts/smoke-ui.ts",
-    "verify": "bun run test && bun run verify:llm && bun run verify:db"
+    "verify": "bun run test && bun run verify:llm && bun run verify:db",
+    "ci": "bun run typecheck && bun run test && bun run build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

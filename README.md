@@ -104,11 +104,17 @@ servidor (`src/lib/validation/schemas.ts`), com CSRF habilitado:
 ## Verificação
 
 ```bash
-bun run test          # 13 testes unitários (bun test): dataset, analista local, schemas
+bun run ci            # o mesmo que o GitHub Actions: typecheck + testes + build
+bun run typecheck     # tsc --noEmit
+bun run test          # 36 testes unitários (bun test): dataset, analista local, schemas
 bun run verify:llm    # caminho do LLM com stub HTTP local (sem gastar API)
 bun run verify:db     # E2E real: signup, seed sob RLS, briefing, isolamento entre tenants
 bun run verify:ui     # smoke em navegador (Playwright): login → seed → CRUD → JARVIS
 ```
+
+O pipeline de CI (`.github/workflows/ci.yml`) roda `typecheck`, `test` e `build` em cada
+push/PR para `main`, com versões de placeholder das variáveis do Supabase — nenhum segredo
+real é necessário para o build.
 
 `verify:db` cria usuários `@patrium.qa` no projeto Supabase — podem ser apagados em
 *Authentication* depois da verificação.
