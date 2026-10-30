@@ -14,7 +14,7 @@ import {
   Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useLegalCases } from "@/hooks/usePatrimonio";
+import { useLegalCases, isMissingTableError } from "@/hooks/usePatrimonio";
 import { useDeleteLegalCase } from "@/hooks/useCrud";
 import { LegalCaseForm, type LegalCaseRecord } from "@/components/forms/LegalCaseForm";
 
@@ -58,7 +58,7 @@ function daysUntil(iso: string | null): number | null {
 }
 
 function AssessoriaJuridica() {
-  const { data: cases, isLoading } = useLegalCases();
+  const { data: cases, isLoading, error } = useLegalCases();
   const remove = useDeleteLegalCase();
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<LegalCaseRecord | null>(null);
@@ -93,7 +93,8 @@ function AssessoriaJuridica() {
     });
   }, [cases, query, onlyActive]);
 
-  if (isLoading) {
+  // Durante o erro a tela precisa mostrar o aviso, não o spinner.
+  if (isLoading && !error) {
     return (
       <div className="h-[60vh] flex items-center justify-center">
         <Loader2 className="h-8 w-8 text-primary animate-spin" />
@@ -120,6 +121,19 @@ function AssessoriaJuridica() {
           <Plus className="h-4 w-4" /> Novo processo
         </button>
       </div>
+
+      {isMissingTableError(error) && (
+        <div className="glass-card rounded-2xl p-4 border border-orange-500/25 bg-orange-500/[0.05] flex items-start gap-3">
+          <AlertTriangle className="h-4 w-4 text-orange-400 mt-0.5 shrink-0" />
+          <div>
+            <p className="text-xs font-bold">Tabela de processos ainda não existe no banco</p>
+            <p className="text-[11px] text-muted-foreground mt-1">
+              Aplique a migration <span className="font-mono">20261030140000_operations_tables.sql</span> no SQL
+              Editor do Supabase. Enquanto isso, a lista fica vazia e o cadastro retorna erro.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
         <Metric label="Processos ativos" value={String(stats.active)} detail={`${stats.total} no total`} icon={Scale} tone="primary" />

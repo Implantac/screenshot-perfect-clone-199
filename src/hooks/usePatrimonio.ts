@@ -1,6 +1,37 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+/**
+ * Erro de tabela ausente (migration não aplicada). Diferente de "tenant vazio":
+ * a tela precisa dizer ao operador que falta rodar SQL, não que não há dados.
+ */
+export class MissingTableError extends Error {
+  readonly table: string;
+  constructor(table: string, migration?: string) {
+    super(
+      `A tabela "${table}" ainda não existe neste projeto Supabase.${
+        migration ? ` Aplique a migration ${migration}.` : ""
+      }`,
+    );
+    this.name = "MissingTableError";
+    this.table = table;
+  }
+}
+
+export function isMissingTableError(error: unknown): error is MissingTableError {
+  return error instanceof MissingTableError;
+}
+
+/** Converte PGRST205/42P01 em MissingTableError; repassa qualquer outro erro. */
+function ensureTable(error: unknown, table: string, migration?: string): void {
+  const code = (error as { code?: string } | null)?.code;
+  const message = (error as { message?: string } | null)?.message ?? "";
+  if (code === "PGRST205" || code === "42P01" || /could not find the table|does not exist/i.test(message)) {
+    throw new MissingTableError(table, migration);
+  }
+  throw error;
+}
+
 export function useEntities() {
   return useQuery({
     queryKey: ["entities"],
@@ -88,12 +119,14 @@ export function useShares() {
 export function useSuppliers() {
   return useQuery({
     queryKey: ["suppliers"],
+    // Não insistir quando a tabela nem existe: o retry só atrasaria o aviso na tela.
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("suppliers")
         .select("*, entities(name)")
         .order("name");
-      if (error) throw error;
+      if (error) ensureTable(error, "suppliers", "20261030140000_operations_tables.sql");
       return data;
     },
   });
@@ -102,12 +135,14 @@ export function useSuppliers() {
 export function useLegalCases() {
   return useQuery({
     queryKey: ["legal_cases"],
+    // Não insistir quando a tabela nem existe: o retry só atrasaria o aviso na tela.
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("legal_cases")
         .select("*, entities(name), assets(name), members(full_name)")
         .order("next_hearing", { ascending: true, nullsFirst: false });
-      if (error) throw error;
+      if (error) ensureTable(error, "legal_cases", "20261030140000_operations_tables.sql");
       return data;
     },
   });

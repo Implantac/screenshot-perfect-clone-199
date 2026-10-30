@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Handshake, Plus, Search, ShieldCheck, AlertTriangle, Clock, Pencil, Trash2, Loader2, Mail, Calendar, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useSuppliers } from "@/hooks/usePatrimonio";
+import { useSuppliers, isMissingTableError } from "@/hooks/usePatrimonio";
 import { useDeleteSupplier, useToggleSupplierStatus } from "@/hooks/useCrud";
 import { SupplierForm, type SupplierRecord } from "@/components/forms/SupplierForm";
 
@@ -30,7 +30,7 @@ function daysUntil(iso: string | null): number | null {
 }
 
 function GestaoFornecedores() {
-  const { data: suppliers, isLoading } = useSuppliers();
+  const { data: suppliers, isLoading, error } = useSuppliers();
   const remove = useDeleteSupplier();
   const toggle = useToggleSupplierStatus();
   const [formOpen, setFormOpen] = useState(false);
@@ -62,7 +62,8 @@ function GestaoFornecedores() {
     });
   }, [suppliers, query, statusFilter]);
 
-  if (isLoading) {
+  // Durante o erro a tela precisa mostrar o aviso, não o spinner.
+  if (isLoading && !error) {
     return (
       <div className="h-[60vh] flex items-center justify-center">
         <Loader2 className="h-8 w-8 text-primary animate-spin" />
@@ -89,6 +90,19 @@ function GestaoFornecedores() {
           <Plus className="h-4 w-4" /> Novo fornecedor
         </button>
       </div>
+
+      {isMissingTableError(error) && (
+        <div className="glass-card rounded-2xl p-4 border border-orange-500/25 bg-orange-500/[0.05] flex items-start gap-3">
+          <AlertTriangle className="h-4 w-4 text-orange-400 mt-0.5 shrink-0" />
+          <div>
+            <p className="text-xs font-bold">Tabela de fornecedores ainda não existe no banco</p>
+            <p className="text-[11px] text-muted-foreground mt-1">
+              Aplique a migration <span className="font-mono">20261030140000_operations_tables.sql</span> no SQL
+              Editor do Supabase. Enquanto isso, a lista fica vazia e o cadastro retorna erro.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
         <StatCard label="Homologados" value={String(stats.homologados)} icon={ShieldCheck} tone="emerald" detail="Compliance validado" />

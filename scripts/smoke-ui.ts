@@ -117,6 +117,9 @@ try {
     ["/settings", /Configurações/i],
     ["/mapa", /Cartografia Patrimonial/i],
   ];
+  // 404 do PostgREST é esperado enquanto as migrations novas não estiverem aplicadas:
+  // a tela deve mostrar o aviso de migration em vez de quebrar.
+  const isMissingTable404 = (text: string) => /status of 404/.test(text);
   for (const [route, pattern] of screens) {
     const errorsBefore = consoleErrors.length;
     await page.goto(`${BASE}${route}`, { waitUntil: "networkidle" });
@@ -124,11 +127,15 @@ try {
     const text = await page.locator("body").innerText();
     const rendered = pattern.test(text);
     const crashed = /Something went wrong|Application error|Erro inesperado/i.test(text);
-    const fresh = consoleErrors.length - errorsBefore;
+    const freshErrors = consoleErrors.slice(errorsBefore);
+    const tolerated = freshErrors.filter(isMissingTable404).length;
+    const real = freshErrors.length - tolerated;
+    const banner = /Aplique a migration/.test(text);
     log(
-      `${rendered && !crashed && fresh === 0 ? "✅" : "❌"} ${route.padEnd(18)} render=${rendered} erros=${fresh}`,
+      `${rendered && !crashed && real === 0 ? "✅" : "❌"} ${route.padEnd(18)} render=${rendered} erros=${real}` +
+        (tolerated ? ` (+${tolerated}×404 tabela ausente${banner ? ", aviso exibido" : ", SEM aviso"})` : ""),
     );
-    if (!rendered || crashed || fresh > 0) process.exitCode = 1;
+    if (!rendered || crashed || real > 0 || (tolerated > 0 && !banner)) process.exitCode = 1;
   }
   await page.screenshot({ path: `${shots}/06-fornecedores.png` });
 
