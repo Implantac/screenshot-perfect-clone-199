@@ -351,6 +351,7 @@ export async function seedDemoData(
         asset_class: position.asset_class,
         liquidity: position.liquidity,
         symbol: position.symbol,
+        instrument_id: position.instrument_id ?? null,
         name: position.name,
         quantity: position.quantity,
         unit_price: position.unit_price,

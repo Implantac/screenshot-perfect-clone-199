@@ -13,7 +13,7 @@
  *    exatamente deve mudar. É o que permite testar sem rede.
  */
 
-export type QuoteSource = "yahoo" | "brapi";
+export type QuoteSource = "yahoo" | "brapi" | "cvm";
 
 export type Quote = {
   /** Símbolo canônico do PATRIUM (PETR4, HGLG11, USD/BRL, US:AAPL). */
@@ -83,6 +83,28 @@ export function normalizeSymbol(raw: string): string | null {
   return null;
 }
 
+/**
+ * CNPJ → 14 dígitos. Aceita `12.345.678/0001-90`, `12345678000190` e espaços.
+ * É a identidade do fundo de investimento (não existe ticker para fundo aberto).
+ */
+export function normalizeCnpj(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const digits = raw.replace(/\D/g, "");
+  if (digits.length !== 14) return null;
+  // Rejeita sequências óbvias (00000000000000, 11111111111111…).
+  if (/^(\d)\1{13}$/.test(digits)) return null;
+  return digits;
+}
+
+/** Símbolo canônico de fundo: `FUND:12345678000190`. */
+export function fundSymbol(cnpj: string): string {
+  return `FUND:${normalizeCnpj(cnpj) ?? cnpj}`;
+}
+
+export function isFundSymbol(symbol: string): boolean {
+  return symbol.startsWith("FUND:");
+}
+
 /** Diz se o símbolo é cotável automaticamente (e, portanto, vale pedir). */
 export function isQuotable(symbol: string | null | undefined): symbol is string {
   return normalizeSymbol(symbol ?? "") !== null;
@@ -146,12 +168,25 @@ export function classifyFreshness(
 export type PositionLike = {
   id: string;
   symbol?: string | null;
+  /** CNPJ do fundo (posições de fundo não têm ticker). */
+  instrument_id?: string | null;
   name?: string | null;
   quantity?: number | string | null;
   unit_price?: number | string | null;
   as_of?: string | null;
   asset_class?: string | null;
 };
+
+/**
+ * Chave de casamento posição ↔ cotação.
+ * CNPJ do fundo tem precedência: um fundo pode ter `symbol` descritivo ("FIM-MULTI")
+ * e o CNPJ em `instrument_id`.
+ */
+export function positionQuoteKey(position: PositionLike): string | null {
+  const cnpj = normalizeCnpj(position.instrument_id ?? "");
+  if (cnpj) return fundSymbol(cnpj);
+  return normalizeSymbol(position.symbol ?? "");
+}
 
 export type QuoteUpdate = {
   positionId: string;
@@ -185,7 +220,9 @@ export type QuotePlan = {
 export function planQuoteUpdates(positions: PositionLike[], quotes: Quote[]): QuotePlan {
   const bySymbol = new Map<string, Quote>();
   for (const quote of quotes) {
-    const canonical = normalizeSymbol(quote.symbol) ?? quote.symbol;
+    const canonical = isFundSymbol(quote.symbol)
+      ? quote.symbol
+      : normalizeSymbol(quote.symbol) ?? quote.symbol;
     const current = bySymbol.get(canonical);
     if (!current || quote.asOf >= current.asOf) bySymbol.set(canonical, quote);
   }
@@ -201,7 +238,7 @@ export function planQuoteUpdates(positions: PositionLike[], quotes: Quote[]): Qu
   for (const position of positions) {
     const quantity = Number(position.quantity ?? 0);
     const currentPrice = Number(position.unit_price ?? 0);
-    const canonical = normalizeSymbol(position.symbol ?? "");
+    const canonical = positionQuoteKey(position);
     if (!canonical || !(quantity > 0)) {
       notQuotable.push({ positionId: position.id, name: position.name ?? "—" });
       continue;
@@ -244,10 +281,22 @@ export function planQuoteUpdates(positions: PositionLike[], quotes: Quote[]): Qu
 }
 
 /** Símbolos únicos e cotáveis de uma carteira — o que pedir ao provedor. */
+export function splitQuotableSymbols(positions: PositionLike[]): {
+  market: string[];
+  funds: string[];
+} {
+  const market: string[] = [];
+  const funds: string[] = [];
+  for (const symbol of quotableSymbols(positions)) {
+    (isFundSymbol(symbol) ? funds : market).push(symbol);
+  }
+  return { market, funds };
+}
+
 export function quotableSymbols(positions: PositionLike[]): string[] {
   const set = new Set<string>();
   for (const position of positions) {
-    const canonical = normalizeSymbol(position.symbol ?? "");
+    const canonical = positionQuoteKey(position);
     if (canonical && Number(position.quantity ?? 0) > 0) set.add(canonical);
   }
   return [...set].sort();

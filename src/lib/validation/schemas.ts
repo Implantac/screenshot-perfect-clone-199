@@ -235,6 +235,15 @@ export const positionInputSchema = z.object({
   asset_class: assetClassEnum.default("renda_fixa"),
   liquidity: assetLiquidityEnum.default("d1"),
   symbol: z.string().trim().max(24).optional().or(z.literal("")),
+  // CNPJ do fundo (14 dígitos): chave da cota diária da CVM. Aceita pontuação.
+  instrument_id: z
+    .string()
+    .trim()
+    .max(20)
+    .optional()
+    .or(z.literal(""))
+    .transform((value) => (value ? value.replace(/\D/g, "") : value))
+    .refine((value) => !value || value.length === 14, "CNPJ deve ter 14 dígitos."),
   name: text(120),
   quantity: z.coerce.number().min(0, "Quantidade não pode ser negativa."),
   unit_price: z.coerce.number().min(0, "Preço não pode ser negativo."),

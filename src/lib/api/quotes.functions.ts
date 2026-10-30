@@ -13,12 +13,14 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
+  isFundSymbol,
   planQuoteUpdates,
-  quotableSymbols,
+  splitQuotableSymbols,
   type PositionLike,
   type Quote,
   type QuotePlan,
 } from "@/lib/quotes";
+import { fetchCvmFundQuotes } from "@/lib/quotes/cvm";
 import { resolveProvider } from "@/lib/quotes/providers";
 import { applyQuotePlan, type ApplyResult } from "@/lib/quotes/apply";
 
@@ -51,6 +53,8 @@ const syncQuotesSchema = z.object({
 
 export type SyncQuotesResult = {
   provider: string;
+  /** Mês do informe da CVM usado para as cotas de fundo (null = sem fundos). */
+  fundMonth: string | null;
   requested: number;
   found: number;
   plan: QuotePlan;
@@ -58,23 +62,25 @@ export type SyncQuotesResult = {
   errors: { symbol: string; message: string }[];
 };
 
-export const syncQuotes = authed.inputValidator(syncQuotesSchema).handler(async ({ data, context }) => {
+export const syncQuotes = authed.validator(syncQuotesSchema).handler(async ({ data, context }) => {
   const provider = resolveProvider(data.provider);
 
   let query = context.supabase
     .from("positions")
-    .select("id, entity_id, symbol, name, quantity, unit_price, as_of, asset_class");
+    .select("id, entity_id, symbol, instrument_id, name, quantity, unit_price, as_of, asset_class");
   if (data.entity_id) query = query.eq("entity_id", data.entity_id);
 
   const { data: rows, error } = await query;
   if (error) throw schemaError(error);
 
   const positions = (rows ?? []) as (PositionLike & { entity_id: string })[];
-  const symbols = quotableSymbols(positions);
+  const { market, funds } = splitQuotableSymbols(positions);
+  const symbols = [...market, ...funds];
 
   if (symbols.length === 0) {
     return {
       provider: provider.id,
+      fundMonth: null,
       requested: 0,
       found: 0,
       plan: { updates: [], unchanged: 0, notQuotable: [], missing: [], totalDeltaBrl: 0 },
@@ -83,7 +89,17 @@ export const syncQuotes = authed.inputValidator(syncQuotesSchema).handler(async 
     } satisfies SyncQuotesResult;
   }
 
-  const { quotes, errors } = await provider.fetch(symbols);
+  // Mercado (ação, FII, moeda) pelo provedor escolhido; fundos abertos pela CVM.
+  const marketResult =
+    market.length > 0 ? await provider.fetch(market) : { quotes: [] as Quote[], errors: [] };
+  const fundCnpjs = funds.map((symbol) => symbol.replace("FUND:", ""));
+  const fundResult =
+    fundCnpjs.length > 0
+      ? await fetchCvmFundQuotes(fundCnpjs)
+      : { quotes: [] as Quote[], errors: [], month: null };
+
+  const quotes: Quote[] = [...marketResult.quotes, ...fundResult.quotes];
+  const errors = [...marketResult.errors, ...fundResult.errors];
 
   // Plano determinístico: o que muda, quanto muda, o que ficou de fora.
   const plan = planQuoteUpdates(positions, quotes);
@@ -135,13 +151,14 @@ export const syncQuotes = authed.inputValidator(syncQuotesSchema).handler(async 
   };
 
   const applied: ApplyResult = await applyQuotePlan(writer, quotes, plan, {
-    provider: provider.id,
+    provider: fundResult.quotes.length > 0 ? `${provider.id}+cvm` : provider.id,
     symbolsRequested: symbols.length,
     errors,
   });
 
   return {
-    provider: provider.id,
+    provider: fundResult.quotes.length > 0 ? `${provider.id}+cvm` : provider.id,
+    fundMonth: fundResult.month,
     requested: symbols.length,
     found: applied.quotesWritten,
     plan: { ...plan, updates: plan.updates.filter((update) => !applied.positionErrors.some((failure) => failure.positionId === update.positionId)) },

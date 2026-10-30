@@ -150,6 +150,8 @@ export type DemoPosition = {
   asset_class: "caixa" | "renda_fixa" | "renda_variavel" | "fundos" | "imoveis" | "internacional" | "alternativos" | "cripto";
   liquidity: "d0" | "d1" | "d30" | "longo_prazo" | "iliquido";
   symbol: string;
+  /** CNPJ do fundo (posições de fundo aberto): chave da cota diária da CVM. */
+  instrument_id?: string;
   name: string;
   quantity: number;
   unit_price: number;
@@ -1227,7 +1229,7 @@ export function buildDemoDataset(): DemoDataset {
     { entity: HOLDING, account: "BTG Core — Holding", asset_class: "renda_fixa", liquidity: "longo_prazo", symbol: "DEB-AGRO", name: "Debênture Agronegócio BTG", quantity: 800, unit_price: 1_050, cost_basis: 800_000, currency: "BRL" },
     { entity: HOLDING, account: "BTG Core — Holding", asset_class: "renda_variavel", liquidity: "d1", symbol: "ITUB4", name: "Itaú Unibanco PN", quantity: 40_000, unit_price: 38.4, cost_basis: 1_180_000, currency: "BRL" },
     { entity: HOLDING, account: "BTG Core — Holding", asset_class: "renda_variavel", liquidity: "d1", symbol: "PETR4", name: "Petrobras PN", quantity: 30_000, unit_price: 41.2, cost_basis: 1_020_000, currency: "BRL" },
-    { entity: HOLDING, account: "XP Private — Holding", asset_class: "fundos", liquidity: "d30", symbol: "FIM-MULTI", name: "Fundo Multimercado Alencar", quantity: 4_000, unit_price: 620, cost_basis: 2_100_000, currency: "BRL" },
+    { entity: HOLDING, account: "XP Private — Holding", asset_class: "fundos", liquidity: "d30", symbol: "FIM-MULTI", instrument_id: "00.017.024/0001-53", name: "Fundo Multimercado Alencar", quantity: 4_000, unit_price: 620, cost_basis: 2_100_000, currency: "BRL" },
     // Agro — capital de giro e fundo de investimento em cadeia produtiva
     { entity: AGRO, account: "Itaú Private — Agro", asset_class: "caixa", liquidity: "d0", symbol: "CC-AGRO", name: "Conta corrente Agro", quantity: 680_000, unit_price: 1, cost_basis: 680_000, currency: "BRL" },
     { entity: AGRO, account: "Itaú Private — Agro", asset_class: "alternativos", liquidity: "iliquido", symbol: "FIAGRO", name: "Fundo de investimento agro (FIAGRO)", quantity: 25_000, unit_price: 112, cost_basis: 2_400_000, currency: "BRL" },

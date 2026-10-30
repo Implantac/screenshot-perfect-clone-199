@@ -437,8 +437,11 @@ export const useSyncQuotes = () => {
         return;
       }
       const delta = result.plan.totalDeltaBrl;
+      const fundNote = result.fundMonth
+        ? ` (cotas de fundo: informe CVM ${result.fundMonth.slice(4)}/${result.fundMonth.slice(0, 4)})`
+        : "";
       toast.success(
-        `${updated} posição(ões) reprecificada(s) via ${result.provider} — ${
+        `${updated} posição(ões) reprecificada(s) via ${result.provider}${fundNote} — ${
           delta >= 0 ? "+" : ""
         }R$ ${delta.toLocaleString("pt-BR", { maximumFractionDigits: 0 })} em patrimônio.`,
       );

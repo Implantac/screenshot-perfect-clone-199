@@ -18,6 +18,7 @@ export function PositionForm({ open, onClose }: { open: boolean; onClose: () => 
     asset_class: "renda_fixa",
     liquidity: "d1",
     symbol: "",
+    instrument_id: "",
     name: "",
     quantity: 0,
     unit_price: 0,
@@ -142,11 +143,24 @@ export function PositionForm({ open, onClose }: { open: boolean; onClose: () => 
           </select>
         </Field>
 
-        <Field label="Ticker / código" error={form.errors.symbol}>
+        <Field label="Ticker / código" error={form.errors.symbol} hint="Ação, FII ou moeda: PETR4, HGLG11, US:AAPL, USD/BRL.">
           <input
             value={String(form.values.symbol ?? "")}
             onChange={(e) => form.setValue("symbol", e.target.value)}
             placeholder="PETR4"
+            className={inputClass}
+          />
+        </Field>
+
+        <Field
+          label="CNPJ do fundo"
+          error={form.errors.instrument_id}
+          hint="Fundo aberto não tem ticker: com o CNPJ, a cota é atualizada pela CVM."
+        >
+          <input
+            value={String(form.values.instrument_id ?? "")}
+            onChange={(e) => form.setValue("instrument_id", e.target.value)}
+            placeholder="12.345.678/0001-90"
             className={inputClass}
           />
         </Field>
