@@ -1,207 +1,279 @@
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { 
-  Scale, 
-  FileText, 
-  ShieldCheck, 
-  Gavel, 
-  History, 
-  Search, 
-  Plus, 
-  Filter, 
-  ChevronRight,
-  Clock,
-  ExternalLink,
-  Users2
+import {
+  Scale,
+  Plus,
+  Search,
+  Gavel,
+  Calendar,
+  Pencil,
+  Trash2,
+  Loader2,
+  AlertTriangle,
+  CheckCircle2,
+  Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLegalCases } from "@/hooks/usePatrimonio";
+import { useDeleteLegalCase } from "@/hooks/useCrud";
+import { LegalCaseForm, type LegalCaseRecord } from "@/components/forms/LegalCaseForm";
 
 export const Route = createFileRoute("/_app/legal")({
   component: AssessoriaJuridica,
 });
 
+const STATUS_META: Record<string, { label: string; className: string }> = {
+  em_andamento: { label: "Em andamento", className: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
+  suspenso: { label: "Suspenso", className: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20" },
+  acordo: { label: "Acordo", className: "bg-primary/10 text-primary border-primary/20" },
+  encerrado: { label: "Encerrado", className: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" },
+};
+
+const RISK_META: Record<string, { label: string; className: string }> = {
+  critical: { label: "Crítico", className: "text-red-500" },
+  high: { label: "Alto", className: "text-orange-500" },
+  medium: { label: "Médio", className: "text-blue-400" },
+  low: { label: "Baixo", className: "text-emerald-500" },
+};
+
+const TYPE_LABEL: Record<string, string> = {
+  civel: "Cível",
+  tributario: "Tributário",
+  ambiental: "Ambiental",
+  trabalhista: "Trabalhista",
+  societario: "Societário",
+  imobiliario: "Imobiliário",
+};
+
+const brl = (v: unknown) =>
+  Number(v ?? 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+
+function daysUntil(iso: string | null): number | null {
+  if (!iso) return null;
+  const d = new Date(iso).getTime();
+  if (Number.isNaN(d)) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return Math.round((d - today.getTime()) / 86_400_000);
+}
+
 function AssessoriaJuridica() {
+  const { data: cases, isLoading } = useLegalCases();
+  const remove = useDeleteLegalCase();
+  const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState<LegalCaseRecord | null>(null);
+  const [query, setQuery] = useState("");
+  const [onlyActive, setOnlyActive] = useState(true);
+
+  const stats = useMemo(() => {
+    const list = cases ?? [];
+    const active = list.filter((c) => c.status === "em_andamento" || c.status === "suspenso");
+    return {
+      total: list.length,
+      active: active.length,
+      exposure: active.reduce((sum, c) => sum + Number(c.value_at_stake ?? 0), 0),
+      critical: active.filter((c) => c.risk_level === "critical").length,
+      hearings: active.filter((c) => {
+        const d = daysUntil(c.next_hearing);
+        return d !== null && d >= 0 && d <= 30;
+      }).length,
+    };
+  }, [cases]);
+
+  const visible = useMemo(() => {
+    const term = query.toLowerCase();
+    return (cases ?? []).filter((c) => {
+      const matchesTerm =
+        !term ||
+        `${c.title} ${c.case_number} ${c.court ?? ""} ${(c.entities as { name?: string } | null)?.name ?? ""}`
+          .toLowerCase()
+          .includes(term);
+      const matchesStatus = !onlyActive || c.status === "em_andamento" || c.status === "suspenso";
+      return matchesTerm && matchesStatus;
+    });
+  }, [cases, query, onlyActive]);
+
+  if (isLoading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden max-w-[1800px] mx-auto w-full">
-      {/* Header */}
+    <div className="space-y-8 lg:space-y-10 animate-in fade-in duration-700 max-w-[1800px] mx-auto w-full">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
-          <h2 className="text-3xl font-black tracking-tight uppercase">Assessoria Jurídica & Litígios</h2>
-          <p className="text-muted-foreground mt-2">Gestão de processos judiciais, contratos societários e blindagem patrimonial.</p>
+          <h2 className="text-3xl font-black tracking-tight uppercase">Assessoria Jurídica</h2>
+          <p className="text-muted-foreground mt-2 text-sm lg:text-base">
+            Contencioso estratégico, exposição financeira e próximas audiências.
+          </p>
         </div>
-        <div className="flex gap-3">
-          <button className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Vincular Processo
+        <button
+          onClick={() => {
+            setEditing(null);
+            setFormOpen(true);
+          }}
+          className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
+        >
+          <Plus className="h-4 w-4" /> Novo processo
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
+        <Metric label="Processos ativos" value={String(stats.active)} detail={`${stats.total} no total`} icon={Scale} tone="primary" />
+        <Metric label="Exposição total" value={brl(stats.exposure)} detail="Valor em disputa (ativos)" icon={Gavel} tone="blue" />
+        <Metric label="Risco crítico" value={String(stats.critical)} detail="Prioridade máxima" icon={AlertTriangle} tone="red" />
+        <Metric label="Audiências em 30d" value={String(stats.hearings)} detail="Agenda do contencioso" icon={Calendar} tone="emerald" />
+      </div>
+
+      <div className="glass-card rounded-[2rem] overflow-hidden border-white/5">
+        <div className="p-5 lg:p-6 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar por processo, parte ou vara…"
+              className="w-full bg-background border border-white/10 rounded-xl py-2.5 pl-11 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
+            />
+          </div>
+          <button
+            onClick={() => setOnlyActive((v) => !v)}
+            className={cn(
+              "h-10 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all",
+              onlyActive
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-white/5 text-muted-foreground border-white/10 hover:bg-white/10",
+            )}
+          >
+            {onlyActive ? "Somente ativos" : "Todos os processos"}
           </button>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-         <LegalStat label="Processos Ativos" val="06" icon={Gavel} color="text-orange-500" />
-         <LegalStat label="Blindagem" val="Forte" icon={ShieldCheck} color="text-emerald-500" />
-         <LegalStat label="Contratos Venc." val="02" icon={Clock} color="text-red-500" />
-         <LegalStat label="Diligências" val="12" icon={FileText} />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-         {/* Lawsuits Table */}
-         <div className="lg:col-span-8 glass-card rounded-[2.5rem] overflow-hidden">
-            <div className="p-6 md:p-8 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-6">
-               <h3 className="text-xl font-bold flex items-center gap-2">
-                  <Scale className="h-6 w-6 text-primary" />
-                  Contencioso & Litígios
-               </h3>
-               <div className="flex gap-2">
-                  <div className="relative">
-                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                     <input type="text" placeholder="Filtrar processos..." className="bg-background border-white/10 rounded-xl py-2 pl-9 pr-4 text-[10px] w-full md:w-48" />
+        <div className="divide-y divide-white/5">
+          {visible.map((c) => {
+            const status = STATUS_META[c.status] ?? STATUS_META.em_andamento;
+            const risk = RISK_META[c.risk_level] ?? RISK_META.medium;
+            const days = daysUntil(c.next_hearing);
+            return (
+              <div key={c.id} className="p-5 lg:p-6 hover:bg-white/[0.02] transition-colors">
+                <div className="flex flex-col lg:flex-row lg:items-start gap-4 lg:gap-6">
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <span className={cn("px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border", status.className)}>
+                        {status.label}
+                      </span>
+                      <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">
+                        {TYPE_LABEL[c.type] ?? c.type}
+                      </span>
+                      <span className={cn("text-[9px] font-black uppercase tracking-widest", risk.className)}>
+                        Risco {risk.label}
+                      </span>
+                    </div>
+                    <h3 className="text-base lg:text-lg font-bold leading-tight">{c.title}</h3>
+                    <div className="flex flex-wrap items-center gap-4 text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
+                      <span className="font-mono normal-case tracking-normal">{c.case_number}</span>
+                      {c.court && <span className="normal-case tracking-normal">{c.court}</span>}
+                      <span className="flex items-center gap-1.5">
+                        <Building2 className="h-3 w-3" />
+                        {(c.entities as { name?: string } | null)?.name ?? "Sem entidade"}
+                      </span>
+                    </div>
+                    {c.notes && <p className="text-[11px] text-muted-foreground/70 leading-relaxed">{c.notes}</p>}
                   </div>
-               </div>
-            </div>
-            
-            <div className="divide-y divide-white/5">
-               <LawsuitRow 
-                  title="Ação Indenizatória - Limite Territorial" 
-                  number="1029384-22.2024.8.26.0100"
-                  court="TJSP - Comarca de São Paulo"
-                  status="Em Fase de Instrução"
-                  asset="Fazenda Santa Fé"
-                  priority="high"
-               />
-               <LawsuitRow 
-                  title="Renovação de Contrato Social - Holding Alencar" 
-                  number="1122334-55.2026.8.26.0000"
-                  court="JUCESP - São Paulo"
-                  status="Aguardando Deferimento"
-                  asset="Holding Alencar"
-                  priority="medium"
-               />
-               <LawsuitRow 
-                  title="Usucapião Extrajudicial - Lote 04" 
-                  number="Cartório 12º Notas"
-                  court="Extrajudicial"
-                  status="Finalizado"
-                  asset="Imóvel Urbano SP"
-                  priority="low"
-               />
-            </div>
-            
-            <div className="p-6 bg-white/[0.01] text-center">
-               <button className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-all">Ver todos os processos</button>
-            </div>
-         </div>
 
-         {/* Contacts/Advocacy Sidebar */}
-         <div className="lg:col-span-4 space-y-6">
-            <div className="glass-card rounded-[2.5rem] p-8 space-y-6">
-               <h3 className="text-lg font-bold">Escritórios Parceiros</h3>
-               <div className="space-y-4">
-                  <LawyerCard name="Moraes & Advogados" specialty="Civil e Imobiliário" phone="(11) 98765-4321" />
-                  <LawyerCard name="Silva & Partners" specialty="Societário e Tributário" phone="(11) 91234-5678" />
-               </div>
-               <button className="w-full py-4 bg-primary/10 text-primary border border-primary/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-primary/20 transition-all">
-                  Homologar Novo Escritório
-               </button>
-            </div>
+                  <div className="flex items-center gap-6 lg:gap-8 lg:text-right">
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">Exposição</p>
+                      <p className="text-base font-black tabular-nums">{brl(c.value_at_stake)}</p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">Audiência</p>
+                      <p
+                        className={cn(
+                          "text-base font-black tabular-nums",
+                          days !== null && days >= 0 && days <= 7 ? "text-orange-500" : "",
+                        )}
+                      >
+                        {c.next_hearing ? new Date(c.next_hearing).toLocaleDateString("pt-BR") : "—"}
+                      </p>
+                      {days !== null && (
+                        <p className="text-[9px] font-bold text-muted-foreground/60">
+                          {days < 0 ? `há ${Math.abs(days)}d` : `em ${days}d`}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setEditing(c as unknown as LegalCaseRecord);
+                          setFormOpen(true);
+                        }}
+                        title="Editar processo"
+                        className="h-9 w-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (confirm(`Remover o processo "${c.title}"?`)) remove.mutate({ id: c.id });
+                        }}
+                        title="Remover processo"
+                        className="h-9 w-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-muted-foreground hover:text-red-400 transition-colors"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
 
-            <div className="glass-card rounded-[2.5rem] p-8 space-y-6 bg-primary/5 border-primary/20">
-               <h3 className="text-lg font-bold flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-primary" />
-                  Blindagem Patrimonial
-               </h3>
-               <p className="text-xs text-muted-foreground leading-relaxed">
-                  Sua estrutura atual possui <span className="text-primary font-black">94% de eficiência</span> contra riscos sucessórios e penhoras.
-               </p>
-               <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary rounded-full" style={{ width: "94%" }} />
-               </div>
-               <button className="w-full py-4 bg-primary text-primary-foreground rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/20">
-                  Emitir Relatório de Risco
-               </button>
+          {visible.length === 0 && (
+            <div className="p-12 text-center space-y-2">
+              <CheckCircle2 className="h-10 w-10 text-emerald-500 mx-auto opacity-60" />
+              <p className="text-sm font-bold">Nenhum processo encontrado</p>
+              <p className="text-xs text-muted-foreground">
+                {onlyActive ? "Talvez existam processos encerrados — alterne o filtro." : "Cadastre o primeiro processo do contencioso."}
+              </p>
             </div>
-         </div>
+          )}
+        </div>
       </div>
+
+      <LegalCaseForm
+        open={formOpen}
+        onClose={() => {
+          setFormOpen(false);
+          setEditing(null);
+        }}
+        editing={editing}
+      />
     </div>
   );
 }
 
-function LegalStat({ label, val, icon: Icon, color = "text-foreground" }: { label: string; val: string; icon: any; color?: string }) {
-  return (
-    <div className="glass-card p-6 rounded-[2rem] flex items-center gap-4">
-       <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
-          <Icon className={cn("h-6 w-6", color)} />
-       </div>
-       <div>
-          <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{label}</p>
-          <p className="text-xl font-black mt-0.5 tracking-tight">{val}</p>
-       </div>
-    </div>
-  );
-}
-
-function LawsuitRow({ title, number, court, status, asset, priority }: any) {
-  const priorities: any = {
-    high: "bg-red-500/10 text-red-500 border-red-500/20",
-    medium: "bg-orange-500/10 text-orange-500 border-orange-500/20",
-    low: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+function Metric({ label, value, detail, icon: Icon, tone }: any) {
+  const tones: Record<string, string> = {
+    primary: "text-primary bg-primary/10 border-primary/20",
+    blue: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+    red: "text-red-500 bg-red-500/10 border-red-500/20",
+    emerald: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
   };
-
   return (
-    <div className="p-8 hover:bg-white/[0.02] transition-colors group cursor-pointer">
-       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-          <div className="space-y-3 flex-1">
-             <div className="flex items-center gap-3">
-                <span className={cn("px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest border", priorities[priority])}>
-                   {priority}
-                </span>
-                <h4 className="text-lg font-bold group-hover:text-primary transition-colors">{title}</h4>
-             </div>
-             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                <div>
-                   <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-1">Processo</p>
-                   <p className="text-xs font-medium text-foreground">{number}</p>
-                </div>
-                <div>
-                   <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-1">Órgão</p>
-                   <p className="text-xs font-medium text-foreground">{court}</p>
-                </div>
-                <div>
-                   <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-1">Ativo Vinculado</p>
-                   <p className="text-xs font-medium text-primary flex items-center gap-1">
-                      {asset}
-                      <ExternalLink className="h-3 w-3" />
-                   </p>
-                </div>
-             </div>
-          </div>
-          <div className="flex flex-col items-end gap-3 shrink-0">
-             <div className="px-3 py-1 bg-white/5 rounded-xl border border-white/10 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                {status}
-             </div>
-             <button className="p-2 hover:bg-primary/10 rounded-xl text-muted-foreground group-hover:text-primary transition-all">
-                <ChevronRight className="h-5 w-5" />
-             </button>
-          </div>
-       </div>
-    </div>
-  );
-}
-
-function LawyerCard({ name, specialty, phone }: any) {
-  return (
-    <div className="p-5 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-between group hover:border-white/10 transition-all cursor-pointer">
-       <div className="flex items-center gap-4">
-          <div className="h-10 w-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
-             <Users2 className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-          </div>
-          <div>
-             <p className="text-sm font-bold">{name}</p>
-             <p className="text-[10px] text-muted-foreground font-medium">{specialty}</p>
-          </div>
-       </div>
-       <div className="text-right">
-          <p className="text-[10px] font-bold text-primary">{phone}</p>
-       </div>
+    <div className="glass-card p-5 lg:p-6 rounded-2xl lg:rounded-[2rem] space-y-4">
+      <div className={cn("h-11 w-11 rounded-xl border flex items-center justify-center", tones[tone] ?? tones.primary)}>
+        <Icon className="h-5 w-5" />
+      </div>
+      <div>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/70">{label}</p>
+        <p className="text-2xl lg:text-3xl font-black tabular-nums mt-1">{value}</p>
+        <p className="text-[10px] text-muted-foreground/60 mt-1">{detail}</p>
+      </div>
     </div>
   );
 }

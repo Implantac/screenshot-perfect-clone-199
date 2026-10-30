@@ -1,100 +1,272 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Landmark, MapPin, Layers, History, ArrowRight, Search, Plus, Filter, FileText } from "lucide-react";
+import { useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+  Landmark,
+  Search,
+  FileText,
+  Loader2,
+  CheckCircle2,
+  AlertTriangle,
+  Clock,
+  CalendarDays,
+  Sparkles,
+  ArrowRight,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useDocuments } from "@/hooks/usePatrimonio";
+import { useUpdateDocument } from "@/hooks/useCrud";
+import { DocumentForm } from "@/components/forms/DocumentForm";
 
 export const Route = createFileRoute("/_app/regularizacao")({
   component: Regularizacao,
 });
 
+const STATUS_META: Record<string, { label: string; className: string }> = {
+  regular: { label: "Regular", className: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" },
+  pendente: { label: "Pendente", className: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
+  alerta: { label: "Alerta", className: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20" },
+  critico: { label: "Crítico", className: "bg-red-500/10 text-red-500 border-red-500/20" },
+};
+
+const STATUS_OPTIONS = ["regular", "pendente", "alerta", "critico"] as const;
+
+function daysUntil(iso: string | null): number | null {
+  if (!iso) return null;
+  const d = new Date(iso.includes("T") ? iso : `${iso}T00:00:00`).getTime();
+  if (Number.isNaN(d)) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return Math.round((d - today.getTime()) / 86_400_000);
+}
+
 function Regularizacao() {
+  const { data: documents, isLoading } = useDocuments();
+  const update = useUpdateDocument();
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("todos");
+  const [formOpen, setFormOpen] = useState(false);
+
+  const stats = useMemo(() => {
+    const list = documents ?? [];
+    const overdue = list.filter((d) => {
+      const days = daysUntil(d.expiry_date);
+      return days !== null && days < 0;
+    });
+    const soon = list.filter((d) => {
+      const days = daysUntil(d.expiry_date);
+      return days !== null && days >= 0 && days <= 30;
+    });
+    return {
+      total: list.length,
+      regular: list.filter((d) => d.status === "regular").length,
+      overdue: overdue.length,
+      soon: soon.length,
+      compliance: list.length
+        ? Math.round((list.filter((d) => d.status === "regular").length / list.length) * 100)
+        : 0,
+    };
+  }, [documents]);
+
+  const visible = useMemo(() => {
+    const term = query.toLowerCase();
+    return (documents ?? []).filter((d) => {
+      const matchesStatus = statusFilter === "todos" || d.status === statusFilter;
+      const matchesTerm =
+        !term ||
+        `${d.title} ${d.type ?? ""} ${(d.entities as { name?: string } | null)?.name ?? ""} ${(d.assets as { name?: string } | null)?.name ?? ""}`
+          .toLowerCase()
+          .includes(term);
+      return matchesStatus && matchesTerm;
+    });
+  }, [documents, query, statusFilter]);
+
+  if (isLoading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden">
+    <div className="space-y-8 lg:space-y-10 animate-in fade-in duration-700 max-w-[1800px] mx-auto w-full">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <h2 className="text-3xl font-black tracking-tight uppercase">Regularização Imobiliária</h2>
-          <p className="text-muted-foreground text-lg">Workflow visual de averbações, retificações e habite-se.</p>
+        <div>
+          <h2 className="text-3xl font-black tracking-tight uppercase">Regularização</h2>
+          <p className="text-muted-foreground mt-2 text-sm lg:text-base">
+            Cofre documental: matrículas, averbações, licenças e prazos — atualizados no banco.
+          </p>
         </div>
-        <button className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Novo Processo
+        <button
+          onClick={() => setFormOpen(true)}
+          className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
+        >
+          <FileText className="h-4 w-4" /> Arquivar documento
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-         <MetricBox label="Em Trâmite" val="08" color="text-primary" />
-         <MetricBox label="Aguardando Órgão" val="12" color="text-blue-500" />
-         <MetricBox label="Atrasados" val="03" color="text-red-500" />
-         <MetricBox label="Concluídos (Mês)" val="15" color="text-emerald-500" />
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
+        <Metric label="Documentos" value={String(stats.total)} detail="No acervo" icon={FileText} tone="primary" />
+        <Metric label="Regulares" value={String(stats.regular)} detail={`${stats.compliance}% de conformidade`} icon={CheckCircle2} tone="emerald" />
+        <Metric label="Vencidos" value={String(stats.overdue)} detail="Ação imediata" icon={AlertTriangle} tone="red" />
+        <Metric label="Vencem em 30d" value={String(stats.soon)} detail="Renovação preventiva" icon={Clock} tone="blue" />
       </div>
 
-      <div className="glass-card rounded-[2.5rem] p-10 space-y-10">
-         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <h3 className="text-xl font-black flex items-center gap-3">
-               <Layers className="h-6 w-6 text-primary" />
-               Workflow de Processos
-            </h3>
-            <div className="flex gap-2">
-               <button className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-xs font-bold uppercase tracking-widest">Lista</button>
-               <button className="px-4 py-2 bg-white/5 border border-white/5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all">Kanban</button>
+      <div className="glass-card rounded-[2rem] overflow-hidden border-white/5">
+        <div className="p-5 lg:p-6 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar documento, tipo, entidade…"
+              className="w-full bg-background border border-white/10 rounded-xl py-2.5 pl-11 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
+            />
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {["todos", ...STATUS_OPTIONS].map((value) => (
+              <button
+                key={value}
+                onClick={() => setStatusFilter(value)}
+                className={cn(
+                  "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all",
+                  statusFilter === value
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-white/5 text-muted-foreground border-white/10 hover:bg-white/10",
+                )}
+              >
+                {value === "todos" ? "Todos" : STATUS_META[value].label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="divide-y divide-white/5">
+          {visible.map((doc) => {
+            const meta = STATUS_META[doc.status ?? "pendente"] ?? STATUS_META.pendente;
+            const days = daysUntil(doc.expiry_date);
+            return (
+              <div key={doc.id} className="p-5 lg:p-6 hover:bg-white/[0.02] transition-colors">
+                <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6">
+                  <div className="flex-1 min-w-0 space-y-1.5">
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <span className={cn("px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border", meta.className)}>
+                        {meta.label}
+                      </span>
+                      <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">
+                        {doc.type ?? "Documento"}
+                      </span>
+                    </div>
+                    <h3 className="text-base font-bold leading-tight truncate">{doc.title}</h3>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold truncate">
+                      {(doc.entities as { name?: string } | null)?.name ?? "Sem entidade"}
+                      {(doc.assets as { name?: string } | null)?.name
+                        ? ` · ${(doc.assets as { name?: string } | null)?.name}`
+                        : ""}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3 lg:gap-4 flex-wrap">
+                    <div className="text-right">
+                      <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">Vencimento</p>
+                      <p className="text-sm font-black tabular-nums flex items-center gap-1.5 justify-end">
+                        <CalendarDays className="h-3 w-3 text-muted-foreground" />
+                        {doc.expiry_date ? new Date(`${doc.expiry_date}T00:00:00`).toLocaleDateString("pt-BR") : "—"}
+                      </p>
+                      {days !== null && (
+                        <p
+                          className={cn(
+                            "text-[9px] font-bold",
+                            days < 0 ? "text-red-500" : days <= 30 ? "text-orange-500" : "text-muted-foreground/60",
+                          )}
+                        >
+                          {days < 0 ? `vencido há ${Math.abs(days)}d` : `em ${days}d`}
+                        </p>
+                      )}
+                    </div>
+                    <select
+                      value={doc.status ?? "pendente"}
+                      onChange={(e) =>
+                        update.mutate({ id: doc.id, status: e.target.value as (typeof STATUS_OPTIONS)[number] })
+                      }
+                      className="bg-background border border-white/10 rounded-xl px-3 py-2 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:ring-1 focus:ring-primary/50"
+                    >
+                      {STATUS_OPTIONS.map((option) => (
+                        <option key={option} value={option}>
+                          {STATUS_META[option].label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          {visible.length === 0 && (
+            <div className="p-12 text-center space-y-3">
+              <Landmark className="h-10 w-10 mx-auto text-muted-foreground/40" />
+              <p className="text-sm font-bold">Nenhum documento neste filtro</p>
+              <p className="text-xs text-muted-foreground max-w-md mx-auto">
+                Arquive matrículas, licenças e averbações para acompanhar prazos e conformidade.
+              </p>
+              <button
+                onClick={() => setFormOpen(true)}
+                className="mt-2 h-10 px-5 rounded-xl bg-primary text-primary-foreground text-xs font-bold uppercase tracking-widest"
+              >
+                Arquivar primeiro documento
+              </button>
             </div>
-         </div>
-
-         <div className="space-y-4">
-            <ProcessRow 
-              title="Averbação de Construção - Edifício Corporate" 
-              step="Cartório de Registro" 
-              progress={65} 
-              status="Em Análise"
-            />
-            <ProcessRow 
-              title="Retificação de Área - Fazenda Santa Fé" 
-              step="INCRA / Georreferenciamento" 
-              progress={30} 
-              status="Coleta de Campo"
-            />
-            <ProcessRow 
-              title="Emissão de Habite-se - Residencial Garden" 
-              step="Prefeitura Municipal" 
-              progress={90} 
-              status="Vistoria Final"
-            />
-         </div>
+          )}
+        </div>
       </div>
+
+      <div className="flex flex-col sm:flex-row gap-4">
+        <Link
+          to="/jarvis/alertas"
+          className="flex-1 glass-card rounded-2xl p-5 flex items-center justify-between gap-4 hover:border-primary/30 transition-all group"
+        >
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="h-5 w-5 text-orange-500" />
+            <span className="text-xs font-black uppercase tracking-widest">Alertas de vencimento</span>
+          </div>
+          <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+        </Link>
+        <Link
+          to="/jarvis/chat"
+          className="flex-1 glass-card rounded-2xl p-5 flex items-center justify-between gap-4 hover:border-primary/30 transition-all group"
+        >
+          <div className="flex items-center gap-3">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <span className="text-xs font-black uppercase tracking-widest">Análise documental com JARVIS</span>
+          </div>
+          <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+        </Link>
+      </div>
+
+      <DocumentForm open={formOpen} onClose={() => setFormOpen(false)} />
     </div>
   );
 }
 
-function MetricBox({ label, val, color }: { label: string; val: string; color?: string }) {
-   return (
-      <div className="glass-card p-6 rounded-[2rem] text-center border-transparent hover:border-white/5 transition-all">
-         <p className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em]">{label}</p>
-         <p className={cn("text-4xl font-black mt-2 tracking-tighter", color)}>{val}</p>
+function Metric({ label, value, detail, icon: Icon, tone }: any) {
+  const tones: Record<string, string> = {
+    primary: "text-primary bg-primary/10 border-primary/20",
+    blue: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+    red: "text-red-500 bg-red-500/10 border-red-500/20",
+    emerald: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
+  };
+  return (
+    <div className="glass-card p-5 lg:p-6 rounded-2xl lg:rounded-[2rem] space-y-3">
+      <div className={cn("h-10 w-10 rounded-xl border flex items-center justify-center", tones[tone] ?? tones.primary)}>
+        <Icon className="h-4 w-4" />
       </div>
-   );
-}
-
-function ProcessRow({ title, step, progress, status }: any) {
-   return (
-      <div className="group flex flex-col md:flex-row md:items-center gap-6 p-6 rounded-[2rem] bg-white/5 border border-white/5 hover:border-primary/20 transition-all cursor-pointer">
-         <div className="flex-1 min-w-0">
-            <h4 className="text-lg font-bold truncate group-hover:text-primary transition-colors">{title}</h4>
-            <div className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground font-black uppercase tracking-widest">
-               <span className="flex items-center gap-1.5"><MapPin className="h-3 w-3" /> {step}</span>
-               <span className="flex items-center gap-1.5"><History className="h-3 w-3" /> {status}</span>
-            </div>
-         </div>
-         <div className="w-full md:w-64 space-y-2">
-            <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-               <span className="text-muted-foreground">Progresso</span>
-               <span className="text-foreground">{progress}%</span>
-            </div>
-            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-               <div className="h-full bg-primary rounded-full transition-all duration-1000" style={{ width: `${progress}%` }} />
-            </div>
-         </div>
-         <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all group-hover:translate-x-1 shrink-0">
-            <ArrowRight className="h-5 w-5" />
-         </div>
+      <div>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/70">{label}</p>
+        <p className="text-2xl lg:text-3xl font-black tabular-nums mt-1">{value}</p>
+        <p className="text-[10px] text-muted-foreground/60 mt-1">{detail}</p>
       </div>
-   );
+    </div>
+  );
 }

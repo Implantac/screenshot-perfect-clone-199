@@ -1,176 +1,310 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { 
-  Sparkles, 
-  BrainCircuit, 
-  TrendingUp, 
-  ShieldCheck, 
-  Zap, 
-  MessageSquare, 
+import { useMemo } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+  Sparkles,
+  BrainCircuit,
+  ShieldCheck,
+  Zap,
   ArrowRight,
   ChevronRight,
   LineChart,
-  BarChart3,
   PieChart as PieIcon,
-  Activity
+  Loader2,
+  CheckCircle2,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { useJarvisHealth, useJarvisInsights } from "@/hooks/useJarvis";
+import { useAssets, useRisks } from "@/hooks/usePatrimonio";
+import { useResolveInsight } from "@/hooks/useCrud";
 
 export const Route = createFileRoute("/_app/inteligencia")({
   component: InteligenciaIA,
 });
 
+const SEVERITY_META: Record<string, { label: string; className: string }> = {
+  critical: { label: "Crítico", className: "border-red-500/20 bg-red-500/10 text-red-400" },
+  high: { label: "Alto", className: "border-orange-500/20 bg-orange-500/10 text-orange-400" },
+  medium: { label: "Médio", className: "border-primary/20 bg-primary/10 text-primary" },
+  low: { label: "Baixo", className: "border-white/10 bg-white/5 text-muted-foreground" },
+};
+
+const brl = (v: number) =>
+  v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+
 function InteligenciaIA() {
+  const { data: insights, isLoading: insightsLoading } = useJarvisInsights();
+  const { data: health } = useJarvisHealth();
+  const { data: risks } = useRisks();
+  const { data: assets } = useAssets();
+  const resolveInsight = useResolveInsight();
+
+  const open = useMemo(() => (insights ?? []).filter((i) => !i.is_resolved), [insights]);
+
+  const series = useMemo(() => {
+    const rows = health ?? [];
+    return rows.slice(-7).map((row, index) => ({
+      label: new Date(row.recorded_at ?? Date.now()).toLocaleDateString("pt-BR", { month: "short" }),
+      value: Number(row.global_score ?? 0),
+      index,
+    }));
+  }, [health]);
+
+  const riskAllocation = useMemo(() => {
+    const list = risks ?? [];
+    if (list.length === 0) return { low: 0, medium: 0, high: 0, critical: 0, total: 0, score: 0 };
+    const count = { low: 0, medium: 0, high: 0, critical: 0 };
+    for (const risk of list) {
+      const key = (risk.severity ?? "medium") as keyof typeof count;
+      if (key in count) count[key] += 1;
+    }
+    const total = list.length;
+    const score =
+      100 -
+      (count.medium * 0.15 * 100 + count.high * 0.35 * 100 + count.critical * 0.6 * 100) / total;
+    return {
+      ...Object.fromEntries(Object.entries(count).map(([k, v]) => [k, Math.round((v / total) * 100)])),
+      total,
+      score: Math.max(0, Math.round(score * 10) / 10),
+    } as { low: number; medium: number; high: number; critical: number; total: number; score: number };
+  }, [risks]);
+
+  const insightsWithImpact = useMemo(() => {
+    const assetValue = (assets ?? []).reduce((sum, a) => sum + Number(a.value ?? 0), 0);
+    return open.map((insight) => {
+      const metadata = (insight.metadata ?? {}) as Record<string, unknown>;
+      const impact = metadata.impact ?? metadata.impact_estimate;
+      return {
+        ...insight,
+        impactLabel:
+          typeof impact === "number"
+            ? `${brl(impact)} / ano`
+            : typeof impact === "string" && impact.length > 0
+              ? impact
+              : assetValue > 0
+                ? `base ${brl(assetValue)}`
+                : "sem impacto estimado",
+      };
+    });
+  }, [open, assets]);
+
+  const trend = useMemo(() => {
+    if (series.length < 2) return null;
+    const first = series[0].value;
+    const last = series[series.length - 1].value;
+    if (!first) return null;
+    return Math.round(((last - first) / first) * 1000) / 10;
+  }, [series]);
+
+  if (insightsLoading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-10 animate-in fade-in duration-700 overflow-x-hidden">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div className="space-y-1">
+    <div className="space-y-8 lg:space-y-10 animate-in fade-in duration-700 max-w-[1800px] mx-auto w-full">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+        <div className="space-y-2">
           <div className="flex items-center gap-2 text-primary">
-            <Sparkles className="h-5 w-5 fill-primary/20" />
-            <span className="text-xs font-black uppercase tracking-[0.2em]">SALA DE GUERRA IA</span>
+            <Sparkles className="h-4 w-4 fill-primary/20" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em]">Sala de guerra IA</span>
           </div>
-          <h2 className="text-4xl font-black tracking-tight uppercase">Inteligência Estratégica</h2>
-          <p className="text-muted-foreground text-lg">Processamento de dados massivos para recomendações patrimoniais em tempo real.</p>
+          <h2 className="text-3xl lg:text-4xl font-black tracking-tight uppercase">Inteligência Estratégica</h2>
+          <p className="text-muted-foreground text-sm lg:text-base max-w-2xl">
+            Insights abertos, série histórica de saúde patrimonial e alocação de risco do seu tenant.
+          </p>
         </div>
-        <div className="flex gap-3">
-          <button className="h-12 px-6 bg-primary/10 text-primary border border-primary/20 rounded-2xl font-bold text-sm hover:bg-primary/20 transition-all flex items-center gap-2">
-            <BrainCircuit className="h-4 w-4" />
-            Recalibrar Modelos
-          </button>
-        </div>
+        <Link
+          to="/jarvis/chat"
+          className="h-12 px-6 bg-primary/10 text-primary border border-primary/20 rounded-2xl font-bold text-sm hover:bg-primary/20 transition-all flex items-center justify-center gap-2"
+        >
+          <MessageSquare className="h-4 w-4" /> Perguntar ao JARVIS
+        </Link>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
-        {/* Main Insights Panel */}
-        <div className="xl:col-span-3 space-y-8">
-          <div className="glass-card rounded-[2.5rem] p-10 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 transition-opacity">
-              <Sparkles className="h-48 w-48 text-primary" />
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 lg:gap-8">
+        <div className="xl:col-span-3 space-y-6 lg:space-y-8">
+          <div className="glass-card rounded-[2rem] p-6 lg:p-10 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
+              <Sparkles className="h-40 w-40 text-primary" />
             </div>
-            
-            <h3 className="text-xl font-bold mb-8 flex items-center gap-3">
+            <h3 className="text-lg font-bold mb-6 flex items-center gap-3">
               <Zap className="h-5 w-5 text-yellow-500" />
-              Insights de Alta Prioridade
+              Insights de alta prioridade
+              <span className="ml-auto text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                {open.length} aberto(s)
+              </span>
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <InsightCard 
-                title="Otimização Tributária"
-                description="Detectamos uma oportunidade de redução de 12% no ITR da Fazenda Santa Fé via retificação de área de preservação."
-                impact="R$ 142.000,00 / ano"
-                category="Fiscal"
-                action="Aplicar Sugestão"
-              />
-              <InsightCard 
-                title="Alerta de Liquidez"
-                description="O fluxo de caixa projetado para a Holding Alencar indica necessidade de aporte em Outubro/2026."
-                impact="R$ 2.4M (Déficit)"
-                category="Financeiro"
-                action="Ver Projeção"
-                variant="warning"
-              />
-              <InsightCard 
-                title="Consolidação Societária"
-                description="A fusão das holdings Agroinvest e SP Urbanismo pode reduzir custos administrativos em 18%."
-                impact="R$ 850.000,00 / ano"
-                category="Societário"
-                action="Simular Fusão"
-              />
-              <InsightCard 
-                title="Risco Documental"
-                description="A matrícula do Edifício Corporate possui uma averbação de 1992 que pode gerar contestação judicial."
-                impact="Risco Moderado"
-                category="Legal"
-                action="Análise Jurídica"
-                variant="danger"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {insightsWithImpact.map((insight) => {
+                const meta = SEVERITY_META[insight.severity] ?? SEVERITY_META.medium;
+                return (
+                  <div
+                    key={insight.id}
+                    className="p-5 rounded-3xl bg-white/5 border border-white/5 hover:border-white/20 transition-all space-y-3"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span
+                        className={cn(
+                          "px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border",
+                          meta.className,
+                        )}
+                      >
+                        {insight.type} · {meta.label}
+                      </span>
+                      <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest truncate">
+                        {insight.impactLabel}
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-base leading-snug">{insight.title}</h4>
+                      <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed line-clamp-3">
+                        {insight.description}
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between pt-2">
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                        {new Date(insight.created_at).toLocaleDateString("pt-BR")}
+                      </p>
+                      <button
+                        onClick={() => resolveInsight.mutate({ id: insight.id })}
+                        disabled={resolveInsight.isPending}
+                        className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1 hover:underline disabled:opacity-50"
+                      >
+                        Marcar tratado
+                        <ChevronRight className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {open.length === 0 && (
+                <div className="md:col-span-2 p-10 text-center space-y-2">
+                  <CheckCircle2 className="h-9 w-9 text-emerald-500 mx-auto opacity-70" />
+                  <p className="text-sm font-bold">Nenhum insight aberto</p>
+                  <p className="text-xs text-muted-foreground">
+                    Todos os apontamentos do JARVIS foram tratados. Novos insights aparecem aqui conforme os dados mudam.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="glass-card rounded-[2.5rem] p-8 space-y-6">
-              <h3 className="text-lg font-bold flex items-center gap-2">
-                <LineChart className="h-5 w-5 text-primary" />
-                Saúde Patrimonial (IA Predict)
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            <div className="glass-card rounded-[2rem] p-6 lg:p-8 space-y-5">
+              <h3 className="text-sm font-bold flex items-center gap-2">
+                <LineChart className="h-4 w-4 text-primary" /> Saúde patrimonial
               </h3>
-              <div className="h-48 flex items-end gap-3 px-2">
-                {[45, 62, 58, 75, 82, 96, 92].map((h, i) => (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
-                    <div 
-                      className="w-full bg-primary/20 rounded-t-lg group-hover:bg-primary/40 transition-all" 
-                      style={{ height: `${h}%` }}
-                    >
-                      <div className="h-1 bg-primary rounded-full w-full opacity-0 group-hover:opacity-100" />
-                    </div>
-                    <span className="text-[10px] font-bold text-muted-foreground">M{i+1}</span>
+              {series.length > 0 ? (
+                <>
+                  <div className="h-40 flex items-end gap-2 px-1">
+                    {series.map((point) => (
+                      <div key={point.index} className="flex-1 flex flex-col items-center gap-2 group">
+                        <span className="text-[9px] font-black tabular-nums text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                          {point.value.toFixed(1)}
+                        </span>
+                        <div
+                          className="w-full bg-primary/25 rounded-t-lg group-hover:bg-primary/50 transition-all"
+                          style={{ height: `${Math.max(4, Math.min(100, point.value))}%` }}
+                        />
+                        <span className="text-[9px] font-bold text-muted-foreground uppercase">{point.label}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                  <p className="text-[11px] text-muted-foreground leading-relaxed text-center">
+                    {trend === null
+                      ? "Série insuficiente para calcular tendência."
+                      : trend >= 0
+                        ? `Variação de +${trend}% no período registrado.`
+                        : `Variação de ${trend}% no período registrado.`}
+                  </p>
+                </>
+              ) : (
+                <p className="text-xs text-muted-foreground py-8 text-center">
+                  Sem histórico de health score — o dataset de demonstração inclui a série.
+                </p>
+              )}
+            </div>
+
+            <div className="glass-card rounded-[2rem] p-6 lg:p-8 space-y-5">
+              <h3 className="text-sm font-bold flex items-center gap-2">
+                <PieIcon className="h-4 w-4 text-primary" /> Alocação por risco
+              </h3>
+              {riskAllocation.total > 0 ? (
+                <>
+                  <div className="flex items-center justify-between gap-5">
+                    <div className="h-28 w-28 rounded-full border-[10px] border-primary/10 border-t-primary border-r-orange-500/50 border-b-red-500/50 flex items-center justify-center shrink-0">
+                      <span className="text-base font-black tracking-tighter tabular-nums">{riskAllocation.score}</span>
+                    </div>
+                    <div className="flex-1 space-y-2.5">
+                      <RiskLegend label="Baixo" color="bg-primary" perc={`${riskAllocation.low}%`} />
+                      <RiskLegend label="Médio" color="bg-emerald-500" perc={`${riskAllocation.medium}%`} />
+                      <RiskLegend label="Alto" color="bg-orange-500" perc={`${riskAllocation.high}%`} />
+                      <RiskLegend label="Crítico" color="bg-red-500" perc={`${riskAllocation.critical}%`} />
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground text-center">
+                    {riskAllocation.total} risco(s) registrados · score ponderado por severidade
+                  </p>
+                </>
+              ) : (
+                <p className="text-xs text-muted-foreground py-8 text-center">
+                  Nenhum risco registrado para calcular a alocação.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="xl:col-span-1 space-y-6">
+          <div className="glass-card rounded-[2rem] p-6 lg:p-8 flex flex-col border-primary/10 h-full min-h-[420px]">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20">
+                <BrainCircuit className="h-5 w-5" />
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed text-center px-4">
-                Tendência de crescimento de <span className="text-primary font-bold">+4.2%</span> para os próximos 6 meses baseada no mercado atual.
+              <div>
+                <h4 className="font-bold text-sm">JARVIS</h4>
+                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
+                  Analista do seu tenant
+                </p>
+              </div>
+            </div>
+
+            <div className="flex-1 space-y-4 text-xs text-muted-foreground leading-relaxed">
+              <p className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                {open.length > 0
+                  ? `Há ${open.length} insight(s) aberto(s), sendo ${
+                      open.filter((i) => i.severity === "critical" || i.severity === "high").length
+                    } de severidade alta ou crítica.`
+                  : "Nenhum insight aberto no momento."}{" "}
+                {riskAllocation.total > 0
+                  ? `A carteira carrega ${riskAllocation.total} risco(s) ativos (${riskAllocation.critical}% críticos).`
+                  : "Nenhum risco cadastrado."}
+              </p>
+              <p className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                O JARVIS responde em linguagem natural com os números reais do seu portfólio e cita a fonte de cada
+                afirmação.
               </p>
             </div>
 
-            <div className="glass-card rounded-[2.5rem] p-8 space-y-6">
-              <h3 className="text-lg font-bold flex items-center gap-2">
-                <PieIcon className="h-5 w-5 text-primary" />
-                Alocação por Risco
-              </h3>
-              <div className="flex items-center justify-between gap-6">
-                <div className="h-32 w-32 rounded-full border-[12px] border-primary/10 border-t-primary border-r-emerald-500/50 border-b-orange-500/50 flex items-center justify-center">
-                   <span className="text-lg font-black tracking-tighter">96.8</span>
-                </div>
-                <div className="flex-1 space-y-3">
-                   <RiskLegend label="Baixo Risco" color="bg-primary" perc="82%" />
-                   <RiskLegend label="Médio Risco" color="bg-emerald-500" perc="14%" />
-                   <RiskLegend label="Alto Risco" color="bg-orange-500" perc="4%" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* AI Chat Sidebar */}
-        <div className="xl:col-span-1 space-y-6">
-          <div className="glass-card rounded-[2.5rem] p-8 h-full flex flex-col min-h-[600px] border-primary/10">
-            <div className="flex items-center gap-3 mb-8">
-               <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20">
-                  <Sparkles className="h-5 w-5" />
-               </div>
-               <div>
-                  <h4 className="font-bold text-sm">IA Patrium</h4>
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Sempre Online</p>
-               </div>
-            </div>
-
-            <div className="flex-1 space-y-6 overflow-y-auto pr-2 scrollbar-none">
-               <ChatMessage 
-                text="Olá, Dr. Alencar. Analisei o portfólio hoje e notei que a Holding Alencar possui um excesso de liquidez não alocada de R$ 4.2M. Gostaria de ver opções de ativos rurais?"
-                isAi
-               />
-               <ChatMessage 
-                text="Sim, me mostre ativos rurais no Mato Grosso com VGV entre R$ 10M e R$ 20M."
-               />
-               <ChatMessage 
-                text="Encontrei 3 propriedades que encaixam no perfil. Uma delas é lindeira à sua Fazenda Santa Fé, o que facilitaria a gestão operacional."
-                isAi
-               />
-            </div>
-
-            <div className="pt-6 border-t border-white/5 mt-6">
-               <div className="relative">
-                  <input 
-                    type="text" 
-                    placeholder="Perguntar à IA..." 
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-5 text-sm focus:ring-primary/50"
-                  />
-                  <button className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20 hover:scale-105 transition-all">
-                    <ArrowRight className="h-5 w-5" />
-                  </button>
-               </div>
-               <p className="text-[10px] text-muted-foreground text-center mt-3 uppercase tracking-widest font-bold opacity-50">Powered by Patrium Intelligence</p>
-            </div>
+            <Link
+              to="/jarvis/chat"
+              className="mt-6 h-12 rounded-2xl bg-primary text-primary-foreground font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-all"
+            >
+              Abrir o chat
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              to="/jarvis/alertas"
+              className="mt-2 text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors flex items-center justify-center gap-1.5"
+            >
+              <ShieldCheck className="h-3 w-3" /> Ver alertas consolidados
+            </Link>
           </div>
         </div>
       </div>
@@ -178,57 +312,14 @@ function InteligenciaIA() {
   );
 }
 
-function InsightCard({ title, description, impact, category, action, variant = "default" }: any) {
-  const variants: Record<string, string> = {
-    default: "border-primary/10 bg-primary/5 text-primary",
-    warning: "border-orange-500/10 bg-orange-500/5 text-orange-500",
-    danger: "border-red-500/10 bg-red-500/5 text-red-500",
-  };
-
+function RiskLegend({ label, color, perc }: { label: string; color: string; perc: string }) {
   return (
-    <div className="p-6 rounded-3xl bg-white/5 border border-white/5 hover:border-white/20 transition-all space-y-4">
-      <div className="flex items-center justify-between">
-        <span className={cn("px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border", variants[variant])}>
-          {category}
-        </span>
-        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Impacto Estimado</span>
-      </div>
-      <div>
-        <h4 className="font-bold text-lg">{title}</h4>
-        <p className="text-xs text-muted-foreground mt-2 leading-relaxed">{description}</p>
-      </div>
-      <div className="flex items-center justify-between pt-4">
-        <p className={cn("text-sm font-black", variant === 'danger' ? 'text-red-400' : variant === 'warning' ? 'text-orange-400' : 'text-primary')}>{impact}</p>
-        <button className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1 hover:underline group">
-          {action}
-          <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function RiskLegend({ label, color, perc }: any) {
-  return (
-    <div className="flex items-center justify-between group cursor-pointer">
-      <div className="flex items-center gap-3">
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2.5">
         <div className={cn("h-2.5 w-2.5 rounded-full", color)} />
-        <span className="text-xs font-bold text-muted-foreground group-hover:text-foreground transition-colors">{label}</span>
+        <span className="text-[11px] font-bold text-muted-foreground">{label}</span>
       </div>
-      <span className="text-xs font-black">{perc}</span>
-    </div>
-  );
-}
-
-function ChatMessage({ text, isAi }: any) {
-  return (
-    <div className={cn("flex", isAi ? "justify-start" : "justify-end")}>
-      <div className={cn(
-        "max-w-[85%] p-4 rounded-2xl text-xs leading-relaxed",
-        isAi ? "bg-white/5 border border-white/10 text-muted-foreground" : "bg-primary text-primary-foreground font-medium shadow-lg shadow-primary/10"
-      )}>
-        {text}
-      </div>
+      <span className="text-[11px] font-black tabular-nums">{perc}</span>
     </div>
   );
 }
