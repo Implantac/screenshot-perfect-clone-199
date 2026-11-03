@@ -685,13 +685,16 @@ export type Database = {
           head_hash: string | null
           head_sequence: number | null
           id: string
+          key_fingerprint: string | null
           manifest: Json
           manifest_hash: string
           owner_user_id: string
           period_from: string | null
           period_to: string | null
+          public_key: string | null
           signature: string | null
           signature_algorithm: string | null
+          signature_format: string | null
         }
         Insert: {
           chain_hash: string
@@ -701,13 +704,16 @@ export type Database = {
           head_hash?: string | null
           head_sequence?: number | null
           id?: string
+          key_fingerprint?: string | null
           manifest: Json
           manifest_hash: string
           owner_user_id: string
           period_from?: string | null
           period_to?: string | null
+          public_key?: string | null
           signature?: string | null
           signature_algorithm?: string | null
+          signature_format?: string | null
         }
         Update: {
           chain_hash?: string
@@ -717,13 +723,16 @@ export type Database = {
           head_hash?: string | null
           head_sequence?: number | null
           id?: string
+          key_fingerprint?: string | null
           manifest?: Json
           manifest_hash?: string
           owner_user_id?: string
           period_from?: string | null
           period_to?: string | null
+          public_key?: string | null
           signature?: string | null
           signature_algorithm?: string | null
+          signature_format?: string | null
         }
         Relationships: []
       }
@@ -2016,6 +2025,16 @@ export type Database = {
           broken: number
           first_broken_sequence: number
           started_mid_chain: boolean
+        }[]
+      }
+      audit_signing_keys_used: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          key_fingerprint: string
+          signature_algorithm: string
+          anchors: number
+          first_used: string
+          last_used: string
         }[]
       }
       claim_office_invites: {

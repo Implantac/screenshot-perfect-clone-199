@@ -16,10 +16,16 @@
  *     `audit_payload_text()` — uma única fonte de verdade para os dois lados.
  *     O JS recomputa o hash sobre esse texto: se alguém editar o dado, o hash
  *     não fecha.
+ *   - A assinatura é **ECDSA P-256** desde a wave 25 (chave privada só no
+ *     servidor, pública no pacote): o auditor verifica sem poder assinar. O HMAC
+ *     da wave 20 continua aceito na verificação de âncoras antigas.
  *   - HMAC usa segredo do servidor (`AUDIT_SIGNING_SECRET`). Sem segredo, a
  *     âncora é emitida sem assinatura e a tela diz isso — degradação honesta,
  *     nunca assinatura falsa.
  */
+
+import { auditorInstructions } from "@/lib/audit/asymmetric";
+
 
 export const GENESIS_HASH = "0".repeat(64);
 
@@ -391,7 +397,16 @@ export type SignedAnchor = {
   /** SHA-256 do manifest canônico (é o que se assina). */
   manifestHash: string;
   signature: string | null;
-  signatureAlgorithm: "HMAC-SHA256" | null;
+  signatureAlgorithm: "HMAC-SHA256" | "ECDSA-P256-SHA256" | null;
+  /**
+   * Formato da assinatura. `hex` = HMAC da wave 20; `der-base64` = ECDSA da
+   * wave 25, que é o que o `openssl dgst -verify` aceita direto.
+   */
+  signatureFormat?: "hex" | "der-base64" | null;
+  /** PEM da chave pública — a âncora carrega o que é preciso para verificá-la. */
+  publicKey?: string | null;
+  /** SHA-256 do SPKI: identifica a chave sem revelá-la. */
+  keyFingerprint?: string | null;
   signaturePending?: boolean;
 };
 
@@ -458,6 +473,7 @@ export function buildAnchor(input: {
       manifestHash,
       signature: null,
       signatureAlgorithm: null,
+      signatureFormat: null,
       signaturePending: true,
     };
   }
@@ -467,6 +483,7 @@ export function buildAnchor(input: {
     manifestHash,
     signature: hmacSha256Hex(secret, manifestHash),
     signatureAlgorithm: "HMAC-SHA256",
+    signatureFormat: "hex",
   };
 }
 
@@ -489,19 +506,33 @@ export function buildExportPackage(anchor: SignedAnchor, entries: ChainEntry[]) 
   const ordered = [...entries].sort((a, b) => a.sequence - b.sequence);
   return {
     format: "patrium-audit-package",
-    version: 1,
+    version: 2,
     generatedAt: anchor.manifest.generatedAt,
     manifest: anchor.manifest,
     manifestHash: anchor.manifestHash,
     signature: anchor.signature,
     signatureAlgorithm: anchor.signatureAlgorithm,
-    /** Como o auditor verifica: recompute o manifest canônico, o SHA-256 e o HMAC. */
-    instructions: [
-      "1. Recompute o texto canônico do manifest na ordem dos campos de manifestToCanonical().",
-      "2. SHA-256 do texto deve ser igual a manifestHash.",
-      "3. HMAC-SHA256(manifestHash, segredo compartilhado) deve ser igual a signature.",
-      "4. Para cada entrada, SHA-256(prevHash + '|' + payloadText) deve ser igual a entryHash.",
-    ],
+    signatureFormat: anchor.signatureFormat ?? null,
+    /**
+     * Com assinatura assimétrica (wave 25) o auditor verifica sozinho: a chave
+     * pública vai no pacote e não permite assinar. Com HMAC (wave 20) ele ainda
+     * depende de um segredo compartilhado — declarado, não escondido.
+     */
+    publicKey: anchor.publicKey ?? null,
+    keyFingerprint: anchor.keyFingerprint ?? null,
+    verification: {
+      method:
+        anchor.signatureAlgorithm === "ECDSA-P256-SHA256"
+          ? "openssl dgst -sha256 -verify (chave pública no pacote)"
+          : anchor.signatureAlgorithm === "HMAC-SHA256"
+            ? "HMAC-SHA256 com segredo compartilhado"
+            : "sem assinatura",
+      independent:
+        anchor.signatureAlgorithm === "ECDSA-P256-SHA256"
+          ? "sim: o auditor verifica e não consegue assinar"
+          : "não: exige segredo do operador",
+    },
+    instructions: auditorInstructions(anchor.signatureAlgorithm),
     entries: ordered,
   };
 }

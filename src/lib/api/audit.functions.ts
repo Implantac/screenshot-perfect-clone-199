@@ -12,8 +12,14 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
+  normalizePemEnv,
+  signManifestHashWithKeys,
+  verifyAnchorSignatureAsync,
+} from "@/lib/audit/asymmetric";
+import {
   buildAnchor,
   buildExportPackage,
+  hmacSha256Hex,
   verifyAnchorSignature,
   verifyChain,
   type AuditManifest,
@@ -112,14 +118,36 @@ export const issueAuditAnchor = authed
     const entries = (rows ?? []).map(mapEntry).sort((a, b) => a.sequence - b.sequence);
     const userId = (context.claims as { sub?: string })?.sub ?? null;
 
-    const anchor = buildAnchor({
+    // Assinatura: ECDSA quando há par de chaves (o auditor verifica sozinho);
+    // HMAC como fallback declarado; sem nada, âncora pendente — nunca falsa.
+    const privateKeyPem = normalizePemEnv(process.env.AUDIT_SIGNING_PRIVATE_KEY);
+    const publicKeyPem = normalizePemEnv(process.env.AUDIT_SIGNING_PUBLIC_KEY);
+    const hierarchical = Boolean(privateKeyPem && publicKeyPem);
+
+    let anchor = buildAnchor({
       entries,
       generatedAt: new Date().toISOString(),
       periodFrom: data.periodFrom || null,
       periodTo: data.periodTo || null,
       ownerUserId: userId,
-      secret: process.env.AUDIT_SIGNING_SECRET ?? null,
+      secret: hierarchical ? null : (process.env.AUDIT_SIGNING_SECRET ?? null),
     });
+
+    if (hierarchical) {
+      const signature = await signManifestHashWithKeys(
+        { privateKeyPem: privateKeyPem as string, publicKeyPem: publicKeyPem as string },
+        anchor.manifestHash,
+      );
+      anchor = {
+        ...anchor,
+        signature: signature.signature,
+        signatureAlgorithm: signature.algorithm,
+        signatureFormat: "der-base64",
+        publicKey: signature.publicKeyPem,
+        keyFingerprint: signature.keyFingerprint,
+        signaturePending: false,
+      };
+    }
 
     if (!userId) throw new Error("Sessão sem usuário: não é possível emitir âncora.");
 
@@ -134,6 +162,9 @@ export const issueAuditAnchor = authed
       manifest_hash: anchor.manifestHash,
       signature: anchor.signature,
       signature_algorithm: anchor.signatureAlgorithm,
+      signature_format: anchor.signatureFormat ?? null,
+      public_key: anchor.publicKey ?? null,
+      key_fingerprint: anchor.keyFingerprint ?? null,
       manifest: anchor.manifest as unknown as never,
     });
 
@@ -143,7 +174,7 @@ export const issueAuditAnchor = authed
       note: insertError
         ? `Âncora calculada, mas não foi possível gravar: ${insertError.message}`
         : anchor.signaturePending
-          ? "Âncora gravada sem assinatura: configure AUDIT_SIGNING_SECRET no servidor para assinar com HMAC-SHA256."
+          ? "Âncora gravada sem assinatura: configure o par AUDIT_SIGNING_PRIVATE_KEY/AUDIT_SIGNING_PUBLIC_KEY (recomendado) ou AUDIT_SIGNING_SECRET."
           : undefined,
     };
   });
@@ -158,9 +189,15 @@ export type StoredAnchor = {
   manifestHash: string;
   signature: string | null;
   signatureAlgorithm: string | null;
+  signatureFormat: string | null;
+  keyFingerprint: string | null;
+  /** `true` quando a âncora é verificável pelo auditor sem o segredo do operador. */
+  independentlyVerifiable: boolean;
   manifest: AuditManifest;
-  /** Recalculado no servidor com o segredo atual. */
+  /** Recalculado no servidor com a chave pública (ou o segredo) atual. */
   signatureValid: boolean | null;
+  /** Motivo da falha de verificação, quando houver. */
+  signatureIssue: string | null;
 };
 
 export const getAuditAnchors = authed
@@ -179,10 +216,43 @@ export const getAuditAnchors = authed
       throw new Error(error.message);
     }
 
-    const secret = process.env.AUDIT_SIGNING_SECRET ?? null;
+    const hmacSecret = process.env.AUDIT_SIGNING_SECRET ?? null;
+    const envPublicKey = normalizePemEnv(process.env.AUDIT_SIGNING_PUBLIC_KEY);
 
-    return {
-      anchors: (rows ?? []).map((row) => ({
+    // Verificação assíncrona: ECDSA usa a pública que está NA âncora (para
+    // sobreviver à rotação de chave); HMAC usa o segredo do servidor.
+    const anchors: StoredAnchor[] = [];
+    for (const row of rows ?? []) {
+      const isAsymmetric = row.signature_algorithm === "ECDSA-P256-SHA256";
+      let signatureValid: boolean | null = null;
+      let signatureIssue: string | null = null;
+      let keyFingerprint: string | null = row.key_fingerprint ?? null;
+
+      if (!row.signature) {
+        signatureValid = null;
+        signatureIssue = "Âncora emitida sem assinatura.";
+      } else if (isAsymmetric) {
+        const result = await verifyAnchorSignatureAsync({
+          manifestHash: row.manifest_hash,
+          signature: row.signature,
+          algorithm: row.signature_algorithm,
+          publicKeyPem: row.public_key ?? envPublicKey,
+        });
+        signatureValid = result.ok;
+        signatureIssue = result.reason;
+        keyFingerprint = keyFingerprint ?? result.keyFingerprint;
+      } else {
+        const result = await verifyAnchorSignatureAsync({
+          manifestHash: row.manifest_hash,
+          signature: row.signature,
+          algorithm: row.signature_algorithm,
+          hmacExpected: hmacSecret ? hmacSha256Hex(hmacSecret, row.manifest_hash) : null,
+        });
+        signatureValid = result.ok;
+        signatureIssue = result.reason;
+      }
+
+      anchors.push({
         id: row.id,
         createdAt: row.created_at,
         entries: Number(row.entries ?? 0),
@@ -192,17 +262,18 @@ export const getAuditAnchors = authed
         manifestHash: row.manifest_hash,
         signature: row.signature,
         signatureAlgorithm: row.signature_algorithm,
+        signatureFormat: row.signature_format ?? null,
+        keyFingerprint,
+        independentlyVerifiable: isAsymmetric && Boolean(row.public_key ?? envPublicKey),
         manifest: row.manifest as unknown as AuditManifest,
-        signatureValid: row.signature ? verifyAnchorSignature({ manifestHash: row.manifest_hash, signature: row.signature }, secret) : null,
-      })),
-      migrationPending: null,
-    };
+        signatureValid,
+        signatureIssue,
+      });
+    }
+
+    return { anchors, migrationPending: null };
   });
 
-/**
- * Pacote completo para o auditor: manifest assinado + janela de entradas.
- * Devolvido como JSON serializável (o download acontece na tela).
- */
 export const exportAuditPackage = authed
   .inputValidator(z.object({ limit: z.coerce.number().int().min(1).max(2000).default(300) }))
   .handler(async ({ data, context }) => {
@@ -217,12 +288,33 @@ export const exportAuditPackage = authed
     const entries = (rows ?? []).map(mapEntry).sort((a, b) => a.sequence - b.sequence);
     const userId = (context.claims as { sub?: string })?.sub ?? null;
 
-    const anchor = buildAnchor({
+    // O pacote que o auditor baixa é assinado igual à âncora (mesma chave).
+    const privateKeyPem = normalizePemEnv(process.env.AUDIT_SIGNING_PRIVATE_KEY);
+    const publicKeyPem = normalizePemEnv(process.env.AUDIT_SIGNING_PUBLIC_KEY);
+    const hierarchical = Boolean(privateKeyPem && publicKeyPem);
+
+    let anchor = buildAnchor({
       entries,
       generatedAt: new Date().toISOString(),
       ownerUserId: userId,
-      secret: process.env.AUDIT_SIGNING_SECRET ?? null,
+      secret: hierarchical ? null : (process.env.AUDIT_SIGNING_SECRET ?? null),
     });
+
+    if (hierarchical) {
+      const signature = await signManifestHashWithKeys(
+        { privateKeyPem: privateKeyPem as string, publicKeyPem: publicKeyPem as string },
+        anchor.manifestHash,
+      );
+      anchor = {
+        ...anchor,
+        signature: signature.signature,
+        signatureAlgorithm: signature.algorithm,
+        signatureFormat: "der-base64",
+        publicKey: signature.publicKeyPem,
+        keyFingerprint: signature.keyFingerprint,
+        signaturePending: false,
+      };
+    }
 
     const verification = verifyChain(entries);
     return {

@@ -144,7 +144,7 @@ function renderCertificate(input: {
 
   doc.line(margin, doc.height - 60, margin + width, doc.height - 60, { color: [226, 230, 236] });
   doc.text(
-    "Documento gerado pelo PATRIUM OS. A assinatura da âncora é HMAC-SHA256 do manifest.",
+    "Documento gerado pelo PATRIUM OS. A assinatura da âncora é ECDSA P-256 (ou HMAC-SHA256 nas âncoras anteriores à wave 25).",
     margin,
     doc.height - 46,
     { size: 7, color: MUTED },
@@ -303,10 +303,14 @@ function Auditoria() {
           {
             label: "Âncoras emitidas",
             value: String(anchorsQuery.data?.anchors.length ?? 0),
-            hint:
-              anchorsQuery.data?.anchors.some((anchor) => anchor.signatureValid)
-                ? "assinatura HMAC-SHA256 verificada"
-                : "assinatura HMAC pendente de segredo",
+            hint: (() => {
+              const anchors = anchorsQuery.data?.anchors ?? [];
+              if (anchors.length === 0) return "nenhuma emitida";
+              if (anchors.some((anchor) => anchor.independentlyVerifiable && anchor.signatureValid))
+                return "ECDSA P-256 verificável pelo auditor";
+              if (anchors.some((anchor) => anchor.signatureValid)) return "HMAC-SHA256 verificada (simétrica)";
+              return "assinatura pendente de chave";
+            })(),
             icon: FileCheck2,
             tone: (anchorsQuery.data?.anchors.length ?? 0) > 0 ? "text-emerald-400" : "text-muted-foreground",
           },
@@ -459,6 +463,34 @@ function Auditoria() {
                     {anchor.entries} entradas · head {shortHash(anchor.headHash, 10)} · manifest{" "}
                     {shortHash(anchor.manifestHash, 10)}
                   </p>
+                  <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                    <span
+                      className={cn(
+                        "rounded border px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider",
+                        anchor.signatureAlgorithm === "ECDSA-P256-SHA256"
+                          ? "border-primary/30 bg-primary/10 text-primary"
+                          : "border-white/10 bg-white/5 text-muted-foreground",
+                      )}
+                    >
+                      {anchor.signatureAlgorithm ?? "sem assinatura"}
+                    </span>
+                    {anchor.keyFingerprint && (
+                      <span
+                        className="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[8px] text-muted-foreground"
+                        title={`fingerprint SHA-256 completo: ${anchor.keyFingerprint}`}
+                      >
+                        chave {shortHash(anchor.keyFingerprint, 12)}
+                      </span>
+                    )}
+                    {anchor.independentlyVerifiable && (
+                      <span className="text-[8px] font-black uppercase tracking-wider text-emerald-400">
+                        auditor verifica sozinho
+                      </span>
+                    )}
+                  </div>
+                  {anchor.signatureIssue && (
+                    <p className="mt-1 text-[9px] text-amber-400">{anchor.signatureIssue}</p>
+                  )}
                 </div>
               ))}
               {(anchorsQuery.data?.anchors.length ?? 0) === 0 ? (
@@ -485,13 +517,25 @@ function Auditoria() {
                 <strong className="text-foreground">3.</strong> SHA-256 do manifest canônico = manifestHash.
               </li>
               <li>
-                <strong className="text-foreground">4.</strong> HMAC-SHA256(manifestHash, segredo) =
-                assinatura da âncora.
+                <strong className="text-foreground">4.</strong> Assinatura da âncora sobre o manifestHash —
+                ECDSA P-256 (chave pública no pacote) ou HMAC-SHA256 nas âncoras antigas.
               </li>
             </ol>
+            <div className="mt-2 rounded-xl border border-primary/20 bg-primary/5 px-2.5 py-2">
+              <p className="text-[9px] font-black uppercase tracking-widest text-primary">
+                Comando do auditor
+              </p>
+              <code className="mt-1 block break-all font-mono text-[9px] text-foreground/80">
+                openssl dgst -sha256 -verify public.pem -signature signature.der manifest-hash.txt
+              </code>
+              <p className="mt-1 text-[9px] text-muted-foreground">
+                A chave pública e a assinatura vão no pacote JSON. Verificar não exige nenhum segredo do
+                PATRIUM — e não permite assinar outra âncora.
+              </p>
+            </div>
             <p className="mt-2 text-[10px] text-muted-foreground">
-              O pacote JSON traz as quatro instruções e as entradas com o texto canônico — dá para refazer
-              a conta fora do PATRIUM.
+              O pacote JSON traz as instruções e as entradas com o texto canônico — dá para refazer a
+              conta fora do PATRIUM.
             </p>
           </section>
         </div>
