@@ -28,6 +28,7 @@ import { Route as AppJarvisRouteImport } from './routes/_app.jarvis'
 import { Route as AppLegalRouteImport } from './routes/_app.legal'
 import { Route as AppMapaRouteImport } from './routes/_app.mapa'
 import { Route as AppPortalRouteImport } from './routes/_app.portal'
+import { Route as AppPortalClienteRouteImport } from './routes/_app.portal-cliente'
 import { Route as AppPrivadosRouteImport } from './routes/_app.privados'
 import { Route as AppProjecaoRouteImport } from './routes/_app.projecao'
 import { Route as AppRegularizacaoRouteImport } from './routes/_app.regularizacao'
@@ -138,6 +139,11 @@ const AppPortalRoute = AppPortalRouteImport.update({
   path: '/portal',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPortalClienteRoute = AppPortalClienteRouteImport.update({
+  id: '/portal-cliente',
+  path: '/portal-cliente',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPrivadosRoute = AppPrivadosRouteImport.update({
   id: '/privados',
   path: '/privados',
@@ -233,6 +239,7 @@ export interface FileRoutesByFullPath {
   '/legal': typeof AppLegalRoute
   '/mapa': typeof AppMapaRoute
   '/portal': typeof AppPortalRoute
+  '/portal-cliente': typeof AppPortalClienteRoute
   '/privados': typeof AppPrivadosRoute
   '/projecao': typeof AppProjecaoRoute
   '/regularizacao': typeof AppRegularizacaoRoute
@@ -267,6 +274,7 @@ export interface FileRoutesByTo {
   '/legal': typeof AppLegalRoute
   '/mapa': typeof AppMapaRoute
   '/portal': typeof AppPortalRoute
+  '/portal-cliente': typeof AppPortalClienteRoute
   '/privados': typeof AppPrivadosRoute
   '/projecao': typeof AppProjecaoRoute
   '/regularizacao': typeof AppRegularizacaoRoute
@@ -304,6 +312,7 @@ export interface FileRoutesById {
   '/_app/legal': typeof AppLegalRoute
   '/_app/mapa': typeof AppMapaRoute
   '/_app/portal': typeof AppPortalRoute
+  '/_app/portal-cliente': typeof AppPortalClienteRoute
   '/_app/privados': typeof AppPrivadosRoute
   '/_app/projecao': typeof AppProjecaoRoute
   '/_app/regularizacao': typeof AppRegularizacaoRoute
@@ -341,6 +350,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/mapa'
     | '/portal'
+    | '/portal-cliente'
     | '/privados'
     | '/projecao'
     | '/regularizacao'
@@ -375,6 +385,7 @@ export interface FileRouteTypes {
     | '/legal'
     | '/mapa'
     | '/portal'
+    | '/portal-cliente'
     | '/privados'
     | '/projecao'
     | '/regularizacao'
@@ -411,6 +422,7 @@ export interface FileRouteTypes {
     | '/_app/legal'
     | '/_app/mapa'
     | '/_app/portal'
+    | '/_app/portal-cliente'
     | '/_app/privados'
     | '/_app/projecao'
     | '/_app/regularizacao'
@@ -569,6 +581,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPortalRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/portal-cliente': {
+      id: '/_app/portal-cliente'
+      path: '/portal-cliente'
+      fullPath: '/portal-cliente'
+      preLoaderRoute: typeof AppPortalClienteRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/privados': {
       id: '/_app/privados'
       path: '/privados'
@@ -718,6 +737,7 @@ interface AppRouteChildren {
   AppLegalRoute: typeof AppLegalRoute
   AppMapaRoute: typeof AppMapaRoute
   AppPortalRoute: typeof AppPortalRoute
+  AppPortalClienteRoute: typeof AppPortalClienteRoute
   AppPrivadosRoute: typeof AppPrivadosRoute
   AppProjecaoRoute: typeof AppProjecaoRoute
   AppRegularizacaoRoute: typeof AppRegularizacaoRoute
@@ -745,6 +765,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppLegalRoute: AppLegalRoute,
   AppMapaRoute: AppMapaRoute,
   AppPortalRoute: AppPortalRoute,
+  AppPortalClienteRoute: AppPortalClienteRoute,
   AppPrivadosRoute: AppPrivadosRoute,
   AppProjecaoRoute: AppProjecaoRoute,
   AppRegularizacaoRoute: AppRegularizacaoRoute,

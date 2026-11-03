@@ -25,6 +25,7 @@ import {
   Sparkles,
   UploadCloud,
   User,
+  UserCheck,
   Users,
   Users2,
   Wallet,
@@ -62,6 +63,7 @@ const navGroups = [
       { label: "Balanço & metas", icon: Scale, to: "/balanco" },
       { label: "Atribuição de retorno", icon: PieChart, to: "/atribuicao" },
       { label: "Portal do cliente", icon: Users, to: "/portal" },
+      { label: "Área do cliente", icon: UserCheck, to: "/portal-cliente" },
       { label: "Sucessão & Tributação", icon: SuccessionIcon, to: "/sucessorio" },
       { label: "Relatórios", icon: FileText, to: "/relatorios" },
     ]
