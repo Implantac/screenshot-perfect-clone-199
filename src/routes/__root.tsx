@@ -14,6 +14,7 @@ import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { reportClientEvent } from "@/lib/api/observability.functions";
 
 function NotFoundComponent() {
   return (
@@ -42,6 +43,16 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   const router = useRouter();
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    // Wave 26: a mesma falha também alimenta o painel `/sistema`, onde o admin
+    // vê o que mais repete. O envio é "fire and forget": erro ao reportar erro
+    // não pode virar uma segunda tela de erro.
+    void reportClientEvent({
+      data: {
+        source: "ui.boundary",
+        message: error instanceof Error ? error.message : String(error),
+        context: { boundary: "root" },
+      },
+    }).catch(() => undefined);
   }, [error]);
 
   return (
@@ -139,11 +150,57 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Captura o que a fronteira de erro do React não vê: exceção fora do render
+ * (listener, timer, promessa rejeitada sem catch) — wave 26.
+ *
+ * Limites declarados: no máximo 5 eventos por carregamento de página e nenhum
+ * repetido na mesma sessão. Sem isso, um `setInterval` quebrado geraria um
+ * evento a cada segundo e o painel viraria ruído — o oposto de observabilidade.
+ */
+function SystemEventReporter() {
+  useEffect(() => {
+    const sent = new Set<string>();
+    const send = (source: string, message: string) => {
+      if (sent.size >= 5) return;
+      const key = `${source}:${message.slice(0, 120)}`;
+      if (sent.has(key)) return;
+      sent.add(key);
+      void reportClientEvent({
+        data: {
+          source,
+          message,
+          context: { route: typeof window === "undefined" ? null : window.location.pathname },
+        },
+      }).catch(() => undefined);
+    };
+
+    const onError = (event: ErrorEvent) => send("ui.window.error", event.message || "erro sem mensagem");
+    const onRejection = (event: PromiseRejectionEvent) => {
+      const reason = event.reason;
+      send(
+        "ui.promise.rejection",
+        reason instanceof Error ? reason.message : typeof reason === "string" ? reason : "promessa rejeitada",
+      );
+    };
+
+    window.addEventListener("error", onError);
+    window.addEventListener("unhandledrejection", onRejection);
+    return () => {
+      window.removeEventListener("error", onError);
+      window.removeEventListener("unhandledrejection", onRejection);
+    };
+  }, []);
+
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
+      <SystemEventReporter />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <Toaster position="top-right" expand={false} richColors theme="dark" />

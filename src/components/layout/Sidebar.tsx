@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 
 import {
+  Activity,
   Boxes,
   Building2,
   CalendarClock,

@@ -1988,6 +1988,42 @@ export type Database = {
         }
         Relationships: []
       }
+      system_events: {
+        Row: {
+          context: Json
+          created_at: string
+          fingerprint: string
+          id: string
+          kind: string
+          message: string
+          occurred_at: string
+          severity: string
+          source: string
+        }
+        Insert: {
+          context?: Json
+          created_at?: string
+          fingerprint: string
+          id?: string
+          kind: string
+          message: string
+          occurred_at?: string
+          severity: string
+          source: string
+        }
+        Update: {
+          context?: Json
+          created_at?: string
+          fingerprint?: string
+          id?: string
+          kind?: string
+          message?: string
+          occurred_at?: string
+          severity?: string
+          source?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       audit_logs_chain: {
@@ -2036,6 +2072,35 @@ export type Database = {
           first_used: string
           last_used: string
         }[]
+      }
+      system_event_counts: {
+        Args: { _hours?: number }
+        Returns: {
+          fingerprint: string
+          kind: string
+          severity: string
+          source: string
+          message: string
+          occurrences: number
+          first_seen: string
+          last_seen: string
+        }[]
+      }
+      system_events_recent: {
+        Args: { _limit?: number }
+        Returns: {
+          id: string
+          kind: string
+          severity: string
+          source: string
+          message: string
+          context: Json
+          occurred_at: string
+        }[]
+      }
+      purge_system_events: {
+        Args: { _days?: number }
+        Returns: number
       }
       claim_office_invites: {
         Args: Record<PropertyKey, never>

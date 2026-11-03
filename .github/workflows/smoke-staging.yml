@@ -1,0 +1,145 @@
+# Verificação de staging — roda de propósito (manual ou diário), nunca em PR:
+# PR de fork não tem os secrets e falharia por motivo errado.
+name: Smoke de staging
+
+on:
+  # Manual: é o botão que o operador aperta depois de aplicar as migrations.
+  workflow_dispatch:
+    inputs:
+      strict:
+        description: "Falhar também quando houver erro de rede em vez de schema"
+        required: false
+        default: "false"
+  # Diário: pega deriva de ambiente (migration aplicada na mão e revertida,
+  # projeto pausado, chave trocada) sem ninguém precisar lembrar.
+  schedule:
+    - cron: "17 8 * * *" # 08:17 UTC = 05:17 em São Paulo
+
+concurrency:
+  group: smoke-staging
+  cancel-in-progress: false
+
+jobs:
+  schema:
+    name: schema de staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Instalar dependências
+        run: bun install --frozen-lockfile
+
+      - name: Conferir que os secrets de staging existem
+        env:
+          STAGING_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+          STAGING_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.STAGING_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          missing=0
+          [ -z "$STAGING_SUPABASE_URL" ] && { echo "::error::Falta o secret STAGING_SUPABASE_URL"; missing=1; }
+          [ -z "$STAGING_SUPABASE_PUBLISHABLE_KEY" ] && { echo "::error::Falta o secret STAGING_SUPABASE_PUBLISHABLE_KEY"; missing=1; }
+          if [ "$missing" -eq 1 ]; then
+            echo "Crie os dois secrets em Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          echo "Secrets presentes."
+
+      # O manifesto x disco é verificado sem rede: se alguém criou migration e
+      # esqueceu de registrar, o staging nem chega a ser sondado.
+      - name: Manifesto de migrations bate com o disco
+        run: bun test src/lib/__tests__/observability.test.ts
+
+      - name: Diagnóstico de schema (JSON)
+        id: schema
+        env:
+          SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.STAGING_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          set +e
+          bun run scripts/check-schema.ts --json > schema-report.json
+          code=$?
+          set -e
+          cat schema-report.json
+          echo "exit=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Resumo no job
+        env:
+          SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+        run: |
+          {
+            echo "## Schema de staging"
+            if [ "${{ steps.schema.outputs.exit }}" = "0" ]; then
+              echo "✅ Todas as migrations do manifesto estão aplicadas."
+            else
+              echo "❌ Faltam migrations. Aplique \`supabase/APLICAR-TUDO.sql\`."
+              echo ""
+              echo '```json'
+              cat schema-report.json
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Guardar relatório
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: schema-report
+          path: schema-report.json
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Falhar se o schema estiver incompleto
+        run: |
+          exit_code="${{ steps.schema.outputs.exit }}"
+          if [ "$exit_code" != "0" ]; then
+            echo "::error::Schema de staging incompleto (ver schema-report.json no artefato)."
+            exit 1
+          fi
+          if [ "${{ github.event.inputs.strict }}" = "true" ] && grep -q '"code": "NETWORK"' schema-report.json; then
+            echo "::error::Modo estrito: houve erro de rede ao sondar o staging."
+            exit 1
+          fi
+          echo "Schema de staging completo."
+
+  smoke:
+    name: site de staging responde
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: schema
+
+    steps:
+      - name: Checar se a URL pública está configurada
+        id: gate
+        env:
+          STAGING_APP_URL: ${{ secrets.STAGING_APP_URL }}
+        run: |
+          if [ -z "$STAGING_APP_URL" ]; then
+            echo "::notice::STAGING_APP_URL não configurado — pulando o smoke de HTTP."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: GET nas rotas públicas
+        if: steps.gate.outputs.skip == 'false'
+        env:
+          STAGING_APP_URL: ${{ secrets.STAGING_APP_URL }}
+        run: |
+          fail=0
+          for route in / /login; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "${STAGING_APP_URL}${route}")
+            echo "${route} → ${code}"
+            [ "$code" = "200" ] || fail=1
+          done
+          if [ "$fail" -ne 0 ]; then
+            echo "::error::Staging não respondeu 200 nas rotas públicas."
+            exit 1
+          fi
+          echo "Rotas públicas ok."

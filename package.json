@@ -20,7 +20,8 @@
     "verify:ui": "bun run scripts/smoke-ui.ts",
     "verify": "bun run test && bun run verify:llm && bun run verify:db",
     "ci": "bun run typecheck && bun run test && bun run build",
-    "check:schema": "bun run scripts/check-schema.ts"
+    "check:schema": "bun run scripts/check-schema.ts",
+    "check:schema:json": "bun run scripts/check-schema.ts --json"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

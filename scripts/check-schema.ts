@@ -1,92 +1,153 @@
 /**
  * Diagnóstico de schema: diz, em uma linha por tabela, o que existe no Supabase.
  *
- * Uso: `bun run check:schema`
+ * Uso:
+ *   `bun run check:schema`          → relatório legível, código 1 se faltar algo
+ *   `bun run check:schema --json`   → mesmo dado em JSON (para o CI de staging)
  *
- * Por que existe: as waves 4–8 dependem de sete migrations. Quando uma não é
- * aplicada, a tela mostra "vazio" — que é indistinguível de "sem dados" para quem
- * está usando. Este script troca o palpite por um diagnóstico.
+ * Por que existe: as waves 4–26 dependem de 28 migrations. Quando uma não é
+ * aplicada, a tela mostra "vazio" — indistinguível de "sem dados" para quem está
+ * usando. Este script troca o palpite por um diagnóstico.
+ *
+ * Wave 26: a lista de tabelas saiu daqui e passou a vir do manifesto em
+ * `src/lib/observability/schema-manifest.ts`. Antes eram duas listas (esta e a
+ * do código) e a daqui apodrecia em silêncio — `system_events`, por exemplo,
+ * nunca apareceria. Agora um teste compara o manifesto com os arquivos em disco
+ * e este script só consome o resultado.
  */
+import {
+  LATEST_MIGRATION,
+  MIGRATION_COUNT,
+  expectedColumns,
+  expectedTables,
+} from "../src/lib/observability/schema-manifest";
+
+const argv = process.argv.slice(2);
+const asJson = argv.includes("--json");
+const strict = argv.includes("--strict");
+
 const url = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
-const key = process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const key =
+  process.env.SUPABASE_PUBLISHABLE_KEY ??
+  process.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+  process.env.SUPABASE_ANON_KEY;
 
 if (!url || !key) {
   console.error("Defina SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY (ou VITE_*) no .env.");
-  process.exit(1);
+  process.exit(2);
 }
 
-/** Tabela → migration que a cria. */
-const EXPECTED: { table: string; migration: string }[] = [
-  { table: "audit_logs", migration: "20261030120000_audit_trail.sql" },
-  { table: "suppliers", migration: "20261030140000_operations_tables.sql" },
-  { table: "legal_cases", migration: "20261030140000_operations_tables.sql" },
-  { table: "custodians", migration: "20261030150000_wealth_core.sql" },
-  { table: "accounts", migration: "20261030150000_wealth_core.sql" },
-  { table: "positions", migration: "20261030150000_wealth_core.sql" },
-  { table: "cash_flows", migration: "20261030150000_wealth_core.sql" },
-  { table: "portfolio_snapshots", migration: "20261030150000_wealth_core.sql" },
-  { table: "tax_scenarios", migration: "20261030150000_wealth_core.sql" },
-  { table: "import_batches", migration: "20261030160000_imports.sql" },
-  { table: "quotes", migration: "20261030170000_quotes.sql" },
-  { table: "quote_runs", migration: "20261030170000_quotes.sql" },
-  { table: "commitments", migration: "20261030190000_private_markets.sql" },
-  { table: "capital_events", migration: "20261030190000_private_markets.sql" },
-  { table: "liabilities", migration: "20261030200000_balance_sheet.sql" },
-  { table: "goals", migration: "20261030200000_balance_sheet.sql" },
-  { table: "portal_grants", migration: "20261030210000_portal_access.sql" },
-];
+type ProbeResult = { ok: boolean; message: string; code: string | null };
 
-/** Colunas que provam que a migration foi aplicada inteira. */
-const COLUMNS: { table: string; column: string }[] = [
-  { table: "transactions", column: "external_id" },
-  { table: "transactions", column: "import_batch_id" },
-  { table: "positions", column: "price_source" },
-  { table: "positions", column: "instrument_id" },
-];
+async function probe(path: string): Promise<ProbeResult> {
+  try {
+    const response = await fetch(`${url}/rest/v1/${path}`, {
+      headers: { apikey: key!, authorization: `Bearer ${key!}` },
+    });
+    if (response.ok) return { ok: true, message: "", code: null };
 
-async function probe(path: string): Promise<{ ok: boolean; message: string }> {
-  const response = await fetch(`${url}/rest/v1/${path}`, {
-    headers: { apikey: key!, authorization: `Bearer ${key}` },
-  });
-  if (response.ok) return { ok: true, message: "" };
-  const body = (await response.json().catch(() => ({}))) as { message?: string; code?: string };
-  if (body.code === "PGRST205" || body.code === "42P01") {
-    return { ok: false, message: "tabela ausente" };
+    const body = (await response.json().catch(() => ({}))) as { message?: string; code?: string };
+    const code = body.code ?? null;
+
+    if (code === "PGRST205" || code === "42P01") {
+      return { ok: false, message: "tabela ausente", code };
+    }
+    if (code === "42703" || code === "PGRST204") {
+      return { ok: false, message: "coluna ausente", code };
+    }
+    // 401/403 = RLS bloqueando: a tabela existe (é o esperado sem sessão).
+    return { ok: true, message: `RLS (HTTP ${response.status})`, code };
+  } catch (error) {
+    return {
+      ok: false,
+      message: `sem conexão: ${error instanceof Error ? error.message : "erro"}`,
+      code: "NETWORK",
+    };
   }
-  if (body.code === "42703" || body.code === "PGRST204") {
-    return { ok: false, message: "coluna ausente" };
-  }
-  // 401/403 = RLS bloqueando: a tabela existe (é o esperado sem sessão).
-  return { ok: true, message: `RLS (HTTP ${response.status})` };
 }
+
+const tables = expectedTables();
+const columns = expectedColumns();
 
 const missingMigrations = new Set<string>();
-let failures = 0;
+const failures: { target: string; message: string; migration: string; code: string | null }[] = [];
+const lines: string[] = [];
 
-console.log(`\nProjeto: ${url}\n`);
-console.log("TABELAS");
-for (const item of EXPECTED) {
+if (!asJson) {
+  lines.push("");
+  lines.push(`Projeto: ${url}`);
+  lines.push(`Manifesto: ${MIGRATION_COUNT} migrations · última ${LATEST_MIGRATION}`);
+  lines.push("");
+  lines.push("TABELAS");
+}
+
+for (const item of tables) {
   const result = await probe(`${item.table}?select=*&limit=1`);
-  if (!result.ok) missingMigrations.add(item.migration);
-  else if (result.message) failures += 1;
-  const status = result.ok ? "✅" : "❌";
-  console.log(`  ${status} ${item.table.padEnd(22)} ${result.ok ? result.message : result.message}`);
+  if (!result.ok) {
+    missingMigrations.add(item.migration);
+    failures.push({ target: item.table, message: result.message, migration: item.migration, code: result.code });
+  }
+  if (!asJson) {
+    lines.push(
+      `  ${result.ok ? "✅" : "❌"} ${item.table.padEnd(24)} ${result.message || `ok · wave ${item.migration.slice(0, 8)}`}`,
+    );
+  }
 }
 
-console.log("\nCOLUNAS ADICIONADAS POR MIGRATION");
-for (const item of COLUMNS) {
+if (!asJson && columns.length > 0) {
+  lines.push("");
+  lines.push("COLUNAS ADICIONADAS POR MIGRATION");
+}
+
+for (const item of columns) {
   const result = await probe(`${item.table}?select=${item.column}&limit=1`);
-  if (!result.ok) missingMigrations.add("(colunas — ver migration correspondente)");
-  console.log(`  ${result.ok ? "✅" : "❌"} ${item.table}.${item.column}`);
+  if (!result.ok) {
+    missingMigrations.add(item.migration);
+    failures.push({
+      target: `${item.table}.${item.column}`,
+      message: result.message,
+      migration: item.migration,
+      code: result.code,
+    });
+  }
+  if (!asJson) lines.push(`  ${result.ok ? "✅" : "❌"} ${item.table}.${item.column}`);
 }
 
-if (missingMigrations.size === 0) {
-  console.log("\n✅ Schema completo. Todas as waves podem gravar.\n");
-} else {
-  console.log("\n❌ Faltam migrations neste projeto:");
-  for (const migration of missingMigrations) console.log(`   · ${migration}`);
+const ok = missingMigrations.size === 0;
+
+if (asJson) {
   console.log(
-    "\n   Atalho: cole o conteúdo de supabase/APLICAR-TUDO.sql no SQL Editor e rode uma vez.\n",
+    JSON.stringify(
+      {
+        ok,
+        url,
+        manifest: { migrations: MIGRATION_COUNT, latest: LATEST_MIGRATION },
+        checked: { tables: tables.length, columns: columns.length },
+        missingMigrations: [...missingMigrations],
+        failures,
+      },
+      null,
+      2,
+    ),
   );
-  process.exitCode = 1;
+} else {
+  if (ok) {
+    lines.push("");
+    lines.push("✅ Schema completo. Todas as waves podem gravar.");
+    lines.push("");
+  } else {
+    lines.push("");
+    lines.push("❌ Faltam migrations neste projeto:");
+    for (const migration of [...missingMigrations].sort()) lines.push(`   · ${migration}`);
+    lines.push("");
+    lines.push("   Atalho: cole o conteúdo de supabase/APLICAR-TUDO.sql no SQL Editor e rode uma vez.");
+    lines.push("");
+  }
+  console.log(lines.join("\n"));
 }
+
+// Falha só quando `--strict` (ou quando falta schema de verdade e não é só RLS).
+// Sem `--strict`, falta de migration em ambiente local ainda retorna 1 — é o
+// comportamento histórico, e é o que evita "verde" com schema incompleto.
+if (!ok) process.exitCode = 1;
+else if (strict && failures.length > 0) process.exitCode = 1;

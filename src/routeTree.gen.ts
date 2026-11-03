@@ -42,7 +42,9 @@ import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
 import { Route as AppSaudeDocumentalRouteImport } from './routes/_app.saude-documental'
 import { Route as AppSegurancaRouteImport } from './routes/_app.seguranca'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
+import { Route as AppSistemaRouteImport } from './routes/_app.sistema'
 import { Route as AppSucessorioRouteImport } from './routes/_app.sucessorio'
+import { Route as ApiHealthRouteImport } from './routes/api.health'
 import { Route as AppJarvisIndexRouteImport } from './routes/_app.jarvis.index'
 import { Route as AppJarvisAcoesRouteImport } from './routes/_app.jarvis.acoes'
 import { Route as AppJarvisAlertasRouteImport } from './routes/_app.jarvis.alertas'
@@ -215,10 +217,20 @@ const AppSettingsRoute = AppSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSistemaRoute = AppSistemaRouteImport.update({
+  id: '/sistema',
+  path: '/sistema',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSucessorioRoute = AppSucessorioRouteImport.update({
   id: '/sucessorio',
   path: '/sucessorio',
   getParentRoute: () => AppRoute,
+} as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AppJarvisIndexRoute = AppJarvisIndexRouteImport.update({
   id: '/',
@@ -289,7 +301,9 @@ export interface FileRoutesByFullPath {
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/seguranca': typeof AppSegurancaRoute
   '/settings': typeof AppSettingsRoute
+  '/sistema': typeof AppSistemaRoute
   '/sucessorio': typeof AppSucessorioRoute
+  '/api/health': typeof ApiHealthRoute
   '/jarvis/acoes': typeof AppJarvisAcoesRoute
   '/jarvis/alertas': typeof AppJarvisAlertasRoute
   '/jarvis/chat': typeof AppJarvisChatRoute
@@ -330,7 +344,9 @@ export interface FileRoutesByTo {
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/seguranca': typeof AppSegurancaRoute
   '/settings': typeof AppSettingsRoute
+  '/sistema': typeof AppSistemaRoute
   '/sucessorio': typeof AppSucessorioRoute
+  '/api/health': typeof ApiHealthRoute
   '/jarvis/acoes': typeof AppJarvisAcoesRoute
   '/jarvis/alertas': typeof AppJarvisAlertasRoute
   '/jarvis/chat': typeof AppJarvisChatRoute
@@ -374,7 +390,9 @@ export interface FileRoutesById {
   '/_app/saude-documental': typeof AppSaudeDocumentalRoute
   '/_app/seguranca': typeof AppSegurancaRoute
   '/_app/settings': typeof AppSettingsRoute
+  '/_app/sistema': typeof AppSistemaRoute
   '/_app/sucessorio': typeof AppSucessorioRoute
+  '/api/health': typeof ApiHealthRoute
   '/_app/jarvis/acoes': typeof AppJarvisAcoesRoute
   '/_app/jarvis/alertas': typeof AppJarvisAlertasRoute
   '/_app/jarvis/chat': typeof AppJarvisChatRoute
@@ -418,7 +436,9 @@ export interface FileRouteTypes {
     | '/saude-documental'
     | '/seguranca'
     | '/settings'
+    | '/sistema'
     | '/sucessorio'
+    | '/api/health'
     | '/jarvis/acoes'
     | '/jarvis/alertas'
     | '/jarvis/chat'
@@ -459,7 +479,9 @@ export interface FileRouteTypes {
     | '/saude-documental'
     | '/seguranca'
     | '/settings'
+    | '/sistema'
     | '/sucessorio'
+    | '/api/health'
     | '/jarvis/acoes'
     | '/jarvis/alertas'
     | '/jarvis/chat'
@@ -502,7 +524,9 @@ export interface FileRouteTypes {
     | '/_app/saude-documental'
     | '/_app/seguranca'
     | '/_app/settings'
+    | '/_app/sistema'
     | '/_app/sucessorio'
+    | '/api/health'
     | '/_app/jarvis/acoes'
     | '/_app/jarvis/alertas'
     | '/_app/jarvis/chat'
@@ -516,6 +540,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
+  ApiHealthRoute: typeof ApiHealthRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -751,12 +776,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/sistema': {
+      id: '/_app/sistema'
+      path: '/sistema'
+      fullPath: '/sistema'
+      preLoaderRoute: typeof AppSistemaRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/sucessorio': {
       id: '/_app/sucessorio'
       path: '/sucessorio'
       fullPath: '/sucessorio'
       preLoaderRoute: typeof AppSucessorioRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_app/jarvis/': {
       id: '/_app/jarvis/'
@@ -865,6 +904,7 @@ interface AppRouteChildren {
   AppSaudeDocumentalRoute: typeof AppSaudeDocumentalRoute
   AppSegurancaRoute: typeof AppSegurancaRoute
   AppSettingsRoute: typeof AppSettingsRoute
+  AppSistemaRoute: typeof AppSistemaRoute
   AppSucessorioRoute: typeof AppSucessorioRoute
 }
 
@@ -899,6 +939,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppSaudeDocumentalRoute: AppSaudeDocumentalRoute,
   AppSegurancaRoute: AppSegurancaRoute,
   AppSettingsRoute: AppSettingsRoute,
+  AppSistemaRoute: AppSistemaRoute,
   AppSucessorioRoute: AppSucessorioRoute,
 }
 
@@ -908,6 +949,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
+  ApiHealthRoute: ApiHealthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
