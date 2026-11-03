@@ -148,6 +148,25 @@ export function useLegalCases() {
   });
 }
 
+/**
+ * Lançamentos de provisão (wave 18). O saldo escriturado nasce daqui, não de um
+ * campo digitado — é o que permite explicar a variação para o auditor.
+ */
+export function useLegalProvisionEntries() {
+  return useQuery({
+    queryKey: ["legal_provision_entries"],
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("legal_provision_entries")
+        .select("*")
+        .order("occurred_on", { ascending: true });
+      if (error) ensureTable(error, "legal_provision_entries", "20261030230000_legal_provisions.sql");
+      return data;
+    },
+  });
+}
+
 /** Trilha de auditoria do tenant (RLS: dono do dado ou admin). */
 export function useAuditLogs(limit = 60) {
   return useQuery({

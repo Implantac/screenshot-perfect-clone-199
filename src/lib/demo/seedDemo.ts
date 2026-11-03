@@ -49,6 +49,14 @@ function addDays(days: number): string {
   return d.toISOString();
 }
 
+/** Data ISO a N meses de hoje (usada para o desembolso previsto da provisão). */
+function addMonths(months: number): string | null {
+  if (!months) return null;
+  const d = new Date();
+  d.setMonth(d.getMonth() + months);
+  return isoDate(d);
+}
+
 /** Último dia do mês N meses atrás (0 = mês corrente). */
 function monthEnd(monthsAgo: number): Date {
   const today = new Date();
@@ -426,28 +434,78 @@ export async function seedDemoData(
     counts.suppliers = demo.suppliers.length;
   }
 
-  // 12. Processos jurídicos
-  const { error: legalError } = await supabase.from("legal_cases").insert(
-    demo.legalCases.map((c) => ({
-      case_number: c.case_number,
-      title: c.title,
-      entity_id: entityRef(c.entity),
-      asset_id: assetRef(c.asset),
-      type: c.type,
-      status: c.status,
-      court: c.court,
-      risk_level: c.risk_level,
-      value_at_stake: c.value_at_stake,
-      next_hearing: addDays(c.hearingInDays),
-      responsible_id: memberId.get(c.responsible) ?? null,
-      notes: c.notes,
-    })),
-  );
-  if (legalError) {
-    if (isMissingTable(legalError)) skipped.push("legal_cases");
-    else throw legalError;
+  // 12. Processos jurídicos + lançamentos de provisão (wave 18)
+  const legalBase = demo.legalCases.map((c) => ({
+    case_number: c.case_number,
+    title: c.title,
+    entity_id: entityRef(c.entity),
+    asset_id: assetRef(c.asset),
+    type: c.type,
+    status: c.status,
+    court: c.court,
+    risk_level: c.risk_level,
+    value_at_stake: c.value_at_stake,
+    next_hearing: addDays(c.hearingInDays),
+    responsible_id: memberId.get(c.responsible) ?? null,
+    notes: c.notes,
+  }));
+
+  const legalFull = demo.legalCases.map((c, index) => ({
+    ...legalBase[index],
+    polarity: c.polarity,
+    // 0 vira null: "sem probabilidade informada" é diferente de "chance zero".
+    probability: c.probability > 0 ? c.probability : null,
+    phase: c.phase,
+    expected_settlement: addMonths(c.settlementInMonths),
+    lawyer_assessment: c.lawyer_assessment,
+  }));
+
+  let legalInsert = await supabase
+    .from("legal_cases")
+    .insert(legalFull)
+    .select("id, case_number");
+
+  // Projeto sem a migration da wave 18: as colunas novas não existem (PGRST204).
+  // A demonstração continua válida, só sem o bloco de provisão.
+  let provisionSupported = true;
+  if (legalInsert.error?.code === "PGRST204") {
+    provisionSupported = false;
+    skipped.push("legal_provision_entries");
+    legalInsert = await supabase.from("legal_cases").insert(legalBase).select("id, case_number");
+  }
+
+  if (legalInsert.error) {
+    if (isMissingTable(legalInsert.error)) skipped.push("legal_cases");
+    else throw legalInsert.error;
   } else {
     counts.legal_cases = demo.legalCases.length;
+
+    if (provisionSupported) {
+      const caseId = new Map(
+        (legalInsert.data ?? []).map((row) => [row.case_number as string, row.id as string]),
+      );
+      const entryRows = demo.provisionEntries
+        .map((entry) => ({
+          case_id: caseId.get(entry.case_number) ?? null,
+          kind: entry.kind,
+          amount: entry.amount,
+          occurred_on: isoDate(new Date(Date.now() - entry.daysAgo * 86_400_000)),
+          note: entry.note,
+        }))
+        .filter((entry): entry is typeof entry & { case_id: string } => Boolean(entry.case_id));
+
+      if (entryRows.length > 0) {
+        const { error: entryError } = await supabase
+          .from("legal_provision_entries")
+          .insert(entryRows);
+        if (entryError) {
+          if (isMissingTable(entryError)) skipped.push("legal_provision_entries");
+          else throw entryError;
+        } else {
+          counts.legal_provision_entries = entryRows.length;
+        }
+      }
+    }
   }
 
   const total = Object.values(counts).reduce((a, b) => a + b, 0);

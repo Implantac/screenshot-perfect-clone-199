@@ -131,6 +131,24 @@ export type DemoLegalCase = {
   hearingInDays: number;
   responsible: string;
   notes: string;
+  // --- wave 18: o que transforma valor de causa em provisão -----------------
+  polarity: "passivo" | "ativo" | "neutro";
+  /** Percentual de perda (passivo) ou de êxito (ativo). */
+  probability: number;
+  phase: "conhecimento" | "instrucao" | "sentenca" | "recurso" | "execucao" | "encerrado";
+  /** Meses a partir de hoje para o desembolso previsto. */
+  settlementInMonths: number;
+  lawyer_assessment: string;
+};
+
+/** Lançamento de provisão da demonstração (subledger da wave 18). */
+export type DemoProvisionEntry = {
+  case_number: string;
+  kind: "constituicao" | "atualizacao" | "reversao" | "baixa";
+  amount: number;
+  /** Dias atrás (positivo) em que o lançamento foi feito. */
+  daysAgo: number;
+  note: string;
 };
 
 /** Conta de custódia da demonstração. */
@@ -182,6 +200,7 @@ export type DemoDataset = {
   healthScores: DemoHealthScore[];
   suppliers: DemoSupplier[];
   legalCases: DemoLegalCase[];
+  provisionEntries: DemoProvisionEntry[];
   accounts: DemoAccount[];
   positions: DemoPosition[];
   cashFlows: DemoCashFlow[];
@@ -1113,6 +1132,12 @@ export function buildDemoDataset(): DemoDataset {
       hearingInDays: 12,
       responsible: "Lucia Prado",
       notes: "Divergência de 42 ha entre matrícula e georreferenciamento do INCRA.",
+      polarity: "passivo",
+      probability: 0.45,
+      phase: "instrucao",
+      settlementInMonths: 20,
+      lawyer_assessment:
+        "Risco de perda moderado: perícia do INCRA aponta 42 ha, mas a matrícula é anterior ao georreferenciamento. Acordo provável por retificação administrativa.",
     },
     {
       case_number: "5009876-12.2025.8.16.0001",
@@ -1127,6 +1152,12 @@ export function buildDemoDataset(): DemoDataset {
       hearingInDays: 5,
       responsible: "Lucia Prado",
       notes: "Embargo parcial de 118 ha por sobreposição de reserva legal.",
+      polarity: "passivo",
+      probability: 0.7,
+      phase: "instrucao",
+      settlementInMonths: 14,
+      lawyer_assessment:
+        "Auto de infração com vício de motivação em parte do embargo; núcleo de 60 ha deve ser mantido. Provisão reconhecida.",
     },
     {
       case_number: "1002345-67.2023.8.26.0100",
@@ -1141,6 +1172,12 @@ export function buildDemoDataset(): DemoDataset {
       hearingInDays: 40,
       responsible: "Roberto Alencar",
       notes: "Parcelamento em 24x homologado; acompanhar pagamento das parcelas.",
+      polarity: "passivo",
+      probability: 0.9,
+      phase: "execucao",
+      settlementInMonths: 12,
+      lawyer_assessment:
+        "Dívida líquida e parcelada: praticamente certa. Único caminho é pagar as parcelas em dia.",
     },
     {
       case_number: "1008765-43.2025.8.26.0100",
@@ -1155,6 +1192,12 @@ export function buildDemoDataset(): DemoDataset {
       hearingInDays: 21,
       responsible: "Lucia Prado",
       notes: "Responsabilidade subsidiária da tomadora; envolve a Construtora Horizonte Sul.",
+      polarity: "passivo",
+      probability: 0.62,
+      phase: "sentenca",
+      settlementInMonths: 10,
+      lawyer_assessment:
+        "Sentença de 1º grau reconheceu a subsidiariedade; recurso em preparo. Execução só alcança a família se a construtora não pagar.",
     },
     {
       case_number: "5003456-78.2022.8.16.0001",
@@ -1169,6 +1212,12 @@ export function buildDemoDataset(): DemoDataset {
       hearingInDays: 30,
       responsible: "Roberto Alencar",
       notes: "Definir doação com usufruto antes da sentença para reduzir custo de ITCMD.",
+      polarity: "neutro",
+      probability: 0,
+      phase: "instrucao",
+      settlementInMonths: 30,
+      lawyer_assessment:
+        "Não é contingência: o valor é o acervo sendo partilhado, não uma dívida. Entra como prazo de sucessão, não como provisão.",
     },
     {
       case_number: "5007654-32.2021.8.16.0001",
@@ -1183,6 +1232,57 @@ export function buildDemoDataset(): DemoDataset {
       hearingInDays: -120,
       responsible: "Roberto Alencar",
       notes: "Acordo cumprido; imóvel reocupado por novo locatário.",
+      polarity: "passivo",
+      probability: 0,
+      phase: "encerrado",
+      settlementInMonths: 0,
+      lawyer_assessment: "Encerrado com acordo cumprido; nada a provisionar.",
+    },
+  ];
+
+  // Lançamentos de provisão: é isso que dá histórico ao saldo escriturado.
+  const provisionEntries: DemoProvisionEntry[] = [
+    {
+      case_number: "5009876-12.2025.8.16.0001",
+      kind: "constituicao",
+      amount: 980_000,
+      daysAgo: 260,
+      note: "Provisão inicial após o auto de infração ambiental.",
+    },
+    {
+      case_number: "5009876-12.2025.8.16.0001",
+      kind: "atualizacao",
+      amount: 42_000,
+      daysAgo: 95,
+      note: "Correção monetária do trimestre.",
+    },
+    {
+      case_number: "1008765-43.2025.8.26.0100",
+      kind: "constituicao",
+      amount: 460_000,
+      daysAgo: 150,
+      note: "Constituição após sentença de 1º grau.",
+    },
+    {
+      case_number: "1008765-43.2025.8.26.0100",
+      kind: "reversao",
+      amount: 60_000,
+      daysAgo: 40,
+      note: "Reversão parcial: acordo com a construtora reduz a exposição.",
+    },
+    {
+      case_number: "1002345-67.2023.8.26.0100",
+      kind: "constituicao",
+      amount: 320_000,
+      daysAgo: 300,
+      note: "Parcelamento homologado do IPTU.",
+    },
+    {
+      case_number: "1002345-67.2023.8.26.0100",
+      kind: "baixa",
+      amount: 40_000,
+      daysAgo: 30,
+      note: "Parcelas pagas no mês.",
     },
   ];
 
@@ -1284,6 +1384,7 @@ export function buildDemoDataset(): DemoDataset {
     healthScores,
     suppliers,
     legalCases,
+    provisionEntries,
     accounts,
     positions,
     cashFlows,

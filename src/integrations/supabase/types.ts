@@ -1241,6 +1241,44 @@ export type Database = {
         }
         Relationships: []
       }
+      legal_provision_entries: {
+        Row: {
+          amount: number
+          case_id: string
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["provision_entry_kind"]
+          note: string | null
+          occurred_on: string
+        }
+        Insert: {
+          amount?: number
+          case_id: string
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["provision_entry_kind"]
+          note?: string | null
+          occurred_on?: string
+        }
+        Update: {
+          amount?: number
+          case_id?: string
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["provision_entry_kind"]
+          note?: string | null
+          occurred_on?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_provision_entries_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "legal_cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       legal_cases: {
         Row: {
           asset_id: string | null
@@ -1258,6 +1296,12 @@ export type Database = {
           type: Database["public"]["Enums"]["legal_case_type"]
           updated_at: string
           value_at_stake: number | null
+          expected_settlement: string | null
+          lawyer_assessment: string | null
+          phase: Database["public"]["Enums"]["legal_phase"] | null
+          polarity: Database["public"]["Enums"]["legal_polarity"]
+          probability: number | null
+          provision_recognized: boolean | null
         }
         Insert: {
           asset_id?: string | null
@@ -1275,6 +1319,11 @@ export type Database = {
           type?: Database["public"]["Enums"]["legal_case_type"]
           updated_at?: string
           value_at_stake?: number | null
+          expected_settlement?: string | null
+          lawyer_assessment?: string | null
+          phase?: Database["public"]["Enums"]["legal_phase"] | null
+          polarity?: Database["public"]["Enums"]["legal_polarity"]
+          probability?: number | null
         }
         Update: {
           asset_id?: string | null
@@ -1292,6 +1341,11 @@ export type Database = {
           type?: Database["public"]["Enums"]["legal_case_type"]
           updated_at?: string
           value_at_stake?: number | null
+          expected_settlement?: string | null
+          lawyer_assessment?: string | null
+          phase?: Database["public"]["Enums"]["legal_phase"] | null
+          polarity?: Database["public"]["Enums"]["legal_polarity"]
+          probability?: number | null
         }
         Relationships: []
       }
@@ -1389,6 +1443,16 @@ export type Database = {
         Returns: boolean
       }
       owns_entity: { Args: { _entity_id: string }; Returns: boolean }
+      provisions_pending_closure: {
+        Args: Record<string, never>
+        Returns: {
+          case_id: string
+          title: string
+          entity_id: string
+          book_balance: number
+          status: Database["public"]["Enums"]["legal_case_status"]
+        }[]
+      }
       my_mfa_factors: {
         Args: Record<string, never>
         Returns: { id: string; friendly_name: string | null; status: string; created_at: string }[]
@@ -1411,6 +1475,9 @@ export type Database = {
       portal_visibility: "completo" | "resumido" | "faixas";
       portal_status: "convite_pendente" | "ativo" | "suspenso" | "revogado";
       mfa_scope: "admin" | "portal" | "todos";
+      legal_polarity: "passivo" | "ativo" | "neutro";
+      legal_phase: "conhecimento" | "instrucao" | "sentenca" | "recurso" | "execucao" | "encerrado";
+      provision_entry_kind: "constituicao" | "atualizacao" | "reversao" | "baixa";
       supplier_status: "homologado" | "em_analise" | "risco_critico" | "inativo"
       capital_event_kind: "call" | "distribution"
       capital_event_status: "previsto" | "pago" | "atrasado" | "cancelado"
@@ -1560,6 +1627,9 @@ export const Constants = {
       capital_event_status: ["previsto", "pago", "atrasado", "cancelado"],
       private_strategy: ["private_equity", "venture_capital", "infraestrutura", "real_estate", "agro", "credito_privado", "outro"],
       mfa_scope: ["admin", "portal", "todos"],
+      legal_polarity: ["passivo", "ativo", "neutro"],
+      legal_phase: ["conhecimento", "instrucao", "sentenca", "recurso", "execucao", "encerrado"],
+      provision_entry_kind: ["constituicao", "atualizacao", "reversao", "baixa"],
       liability_kind: ["financiamento_imobiliario", "credito_rural", "emprestimo", "consignado", "cartao", "debenture", "divida_societaria", "outro"],
       amortization_kind: ["price", "sac", "bullet"],
       goal_kind: ["liquidez", "sucessao", "imovel", "educacao", "filantropia", "reserva_oportunidade", "meta_patrimonial", "outro"],

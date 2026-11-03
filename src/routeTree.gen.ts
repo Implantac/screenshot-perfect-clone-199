@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppAtribuicaoRouteImport } from './routes/_app.atribuicao'
 import { Route as AppBalancoRouteImport } from './routes/_app.balanco'
 import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
+import { Route as AppContenciosoRouteImport } from './routes/_app.contencioso'
 import { Route as AppCustodiaRouteImport } from './routes/_app.custodia'
 import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
 import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
@@ -74,6 +75,11 @@ const AppBalancoRoute = AppBalancoRouteImport.update({
 const AppComplianceRoute = AppComplianceRouteImport.update({
   id: '/compliance',
   path: '/compliance',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppContenciosoRoute = AppContenciosoRouteImport.update({
+  id: '/contencioso',
+  path: '/contencioso',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCustodiaRoute = AppCustodiaRouteImport.update({
@@ -238,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/atribuicao': typeof AppAtribuicaoRoute
   '/balanco': typeof AppBalancoRoute
   '/compliance': typeof AppComplianceRoute
+  '/contencioso': typeof AppContenciosoRoute
   '/custodia': typeof AppCustodiaRoute
   '/dashboard': typeof AppDashboardRoute
   '/family-office': typeof AppFamilyOfficeRoute
@@ -276,6 +283,7 @@ export interface FileRoutesByTo {
   '/atribuicao': typeof AppAtribuicaoRoute
   '/balanco': typeof AppBalancoRoute
   '/compliance': typeof AppComplianceRoute
+  '/contencioso': typeof AppContenciosoRoute
   '/custodia': typeof AppCustodiaRoute
   '/dashboard': typeof AppDashboardRoute
   '/family-office': typeof AppFamilyOfficeRoute
@@ -315,6 +323,7 @@ export interface FileRoutesById {
   '/_app/atribuicao': typeof AppAtribuicaoRoute
   '/_app/balanco': typeof AppBalancoRoute
   '/_app/compliance': typeof AppComplianceRoute
+  '/_app/contencioso': typeof AppContenciosoRoute
   '/_app/custodia': typeof AppCustodiaRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/family-office': typeof AppFamilyOfficeRoute
@@ -355,6 +364,7 @@ export interface FileRouteTypes {
     | '/atribuicao'
     | '/balanco'
     | '/compliance'
+    | '/contencioso'
     | '/custodia'
     | '/dashboard'
     | '/family-office'
@@ -393,6 +403,7 @@ export interface FileRouteTypes {
     | '/atribuicao'
     | '/balanco'
     | '/compliance'
+    | '/contencioso'
     | '/custodia'
     | '/dashboard'
     | '/family-office'
@@ -431,6 +442,7 @@ export interface FileRouteTypes {
     | '/_app/atribuicao'
     | '/_app/balanco'
     | '/_app/compliance'
+    | '/_app/contencioso'
     | '/_app/custodia'
     | '/_app/dashboard'
     | '/_app/family-office'
@@ -512,6 +524,13 @@ declare module '@tanstack/react-router' {
       path: '/compliance'
       fullPath: '/compliance'
       preLoaderRoute: typeof AppComplianceRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/contencioso': {
+      id: '/_app/contencioso'
+      path: '/contencioso'
+      fullPath: '/contencioso'
+      preLoaderRoute: typeof AppContenciosoRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/custodia': {
@@ -762,6 +781,7 @@ interface AppRouteChildren {
   AppAtribuicaoRoute: typeof AppAtribuicaoRoute
   AppBalancoRoute: typeof AppBalancoRoute
   AppComplianceRoute: typeof AppComplianceRoute
+  AppContenciosoRoute: typeof AppContenciosoRoute
   AppCustodiaRoute: typeof AppCustodiaRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppFamilyOfficeRoute: typeof AppFamilyOfficeRoute
@@ -792,6 +812,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAtribuicaoRoute: AppAtribuicaoRoute,
   AppBalancoRoute: AppBalancoRoute,
   AppComplianceRoute: AppComplianceRoute,
+  AppContenciosoRoute: AppContenciosoRoute,
   AppCustodiaRoute: AppCustodiaRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppFamilyOfficeRoute: AppFamilyOfficeRoute,

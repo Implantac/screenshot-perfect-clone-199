@@ -20,6 +20,11 @@ export type LegalCaseRecord = {
   next_hearing: string | null;
   responsible_id: string | null;
   notes: string | null;
+  polarity?: string | null;
+  phase?: string | null;
+  probability?: number | string | null;
+  expected_settlement?: string | null;
+  lawyer_assessment?: string | null;
 };
 
 const TYPES = [
@@ -35,6 +40,22 @@ const STATUS = [
   { value: "em_andamento", label: "Em andamento" },
   { value: "suspenso", label: "Suspenso" },
   { value: "acordo", label: "Acordo" },
+  { value: "encerrado", label: "Encerrado" },
+];
+
+const POLARITY = [
+  { value: "passivo", label: "Passivo — a família é ré" },
+  { value: "ativo", label: "Ativo — a família é autora" },
+  { value: "neutro", label: "Sem contingência — inventário/regularização" },
+];
+
+const PHASES = [
+  { value: "", label: "Não informada" },
+  { value: "conhecimento", label: "Conhecimento (citação/contestação)" },
+  { value: "instrucao", label: "Instrução (provas)" },
+  { value: "sentenca", label: "Sentença de 1º grau" },
+  { value: "recurso", label: "Recurso" },
+  { value: "execucao", label: "Execução" },
   { value: "encerrado", label: "Encerrado" },
 ];
 
@@ -74,6 +95,15 @@ export function LegalCaseForm({
     next_hearing: editing?.next_hearing ? editing.next_hearing.slice(0, 10) : "",
     responsible_id: editing?.responsible_id ?? "",
     notes: editing?.notes ?? "",
+    polarity: (editing?.polarity as "passivo") ?? "passivo",
+    phase: (editing?.phase as "instrucao") ?? "",
+    // O banco guarda fração (0–1); a tela mostra o percentual que o jurídico fala.
+    probability_pct:
+      editing?.probability != null
+        ? Math.round(Number(editing.probability) * 10000) / 100
+        : undefined,
+    expected_settlement: editing?.expected_settlement ? editing.expected_settlement.slice(0, 10) : "",
+    lawyer_assessment: editing?.lawyer_assessment ?? "",
   });
 
   const filteredAssets = assets?.filter(
@@ -230,6 +260,74 @@ export function LegalCaseForm({
             value={String(form.values.value_at_stake ?? "")}
             onChange={(e) => form.setValue("value_at_stake", e.target.value)}
             placeholder="4800000"
+          />
+        </Field>
+
+        <Field label="Polo do processo" error={form.errors.polarity}>
+          <select
+            className={inputClass}
+            value={String(form.values.polarity ?? "passivo")}
+            onChange={(e) => form.setValue("polarity", e.target.value)}
+          >
+            {POLARITY.map((p) => (
+              <option key={p.value} value={p.value}>
+                {p.label}
+              </option>
+            ))}
+          </select>
+        </Field>
+
+        <Field label="Fase processual" error={form.errors.phase}>
+          <select
+            className={inputClass}
+            value={String(form.values.phase ?? "")}
+            onChange={(e) => form.setValue("phase", e.target.value)}
+          >
+            {PHASES.map((p) => (
+              <option key={p.value} value={p.value}>
+                {p.label}
+              </option>
+            ))}
+          </select>
+        </Field>
+
+        <Field
+          label="Probabilidade de perda (%)"
+          error={form.errors.probability_pct}
+          hint="Informe o percentual do jurídico. Em branco, o sistema estima por risco e fase."
+        >
+          <input
+            className={inputClass}
+            inputMode="numeric"
+            value={String(form.values.probability_pct ?? "")}
+            onChange={(e) => form.setValue("probability_pct", e.target.value)}
+            placeholder="65"
+          />
+        </Field>
+
+        <Field
+          label="Desembolso previsto"
+          error={form.errors.expected_settlement}
+          hint="Usado para trazer a provisão a valor presente (acima de 12 meses)."
+        >
+          <input
+            type="date"
+            className={inputClass}
+            value={String(form.values.expected_settlement ?? "")}
+            onChange={(e) => form.setValue("expected_settlement", e.target.value)}
+          />
+        </Field>
+
+        <Field
+          label="Avaliação do advogado"
+          error={form.errors.lawyer_assessment}
+          className="sm:col-span-2"
+        >
+          <textarea
+            className={`${inputClass} min-h-[70px] resize-y`}
+            value={String(form.values.lawyer_assessment ?? "")}
+            onChange={(e) => form.setValue("lawyer_assessment", e.target.value)}
+            placeholder="Tese de defesa, jurisprudência dominante, chance real de acordo…"
           />
         </Field>
 

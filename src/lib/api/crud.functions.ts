@@ -22,6 +22,7 @@ import {
   supplierUpdateSchema,
   legalCaseInputSchema,
   legalCaseUpdateSchema,
+  provisionEntryInputSchema,
   memberInputSchema,
   memberUpdateSchema,
   shareInputSchema,
@@ -273,12 +274,26 @@ export const deleteSupplier = authed.inputValidator(idSchema).handler(async ({ d
 });
 
 // ================================================================== legal cases
+/**
+ * O formulário fala em % (0–100) porque é a língua do jurídico; o banco guarda
+ * fração (0–1) para a régua do CPC 25 ser comparável. A conversão fica aqui,
+ * não no formulário, para valer em qualquer caminho de escrita.
+ */
+function legalCasePayload<T extends { probability_pct?: unknown }>(data: T) {
+  const { probability_pct, ...rest } = data;
+  const percent = probability_pct === "" || probability_pct == null ? null : Number(probability_pct);
+  return {
+    ...rest,
+    probability: percent === null ? null : Math.min(1, Math.max(0, percent / 100)),
+  };
+}
+
 export const createLegalCase = authed
   .inputValidator(legalCaseInputSchema)
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
       .from("legal_cases")
-      .insert(nullify(data) as Tables["legal_cases"]["Insert"])
+      .insert(nullify(legalCasePayload(data)) as Tables["legal_cases"]["Insert"])
       .select("*")
       .single();
     if (error) throw new Error(error.message);
@@ -291,7 +306,7 @@ export const updateLegalCase = authed
     const { id, ...rest } = data;
     const { data: row, error } = await context.supabase
       .from("legal_cases")
-      .update(nullify(rest) as Tables["legal_cases"]["Update"])
+      .update(nullify(legalCasePayload(rest)) as Tables["legal_cases"]["Update"])
       .eq("id", id)
       .select("*")
       .single();
@@ -304,6 +319,19 @@ export const deleteLegalCase = authed.inputValidator(idSchema).handler(async ({ 
   if (error) throw new Error(error.message);
   return { ok: true as const, id: data.id };
 });
+
+// ======================================================= lançamentos de provisão
+export const createProvisionEntry = authed
+  .inputValidator(provisionEntryInputSchema)
+  .handler(async ({ data, context }) => {
+    const { data: row, error } = await context.supabase
+      .from("legal_provision_entries")
+      .insert(nullify(data) as Tables["legal_provision_entries"]["Insert"])
+      .select("*")
+      .single();
+    if (error) throw new Error(error.message);
+    return row;
+  });
 
 // ====================================================================== members
 export const createMember = authed.inputValidator(memberInputSchema).handler(async ({ data, context }) => {

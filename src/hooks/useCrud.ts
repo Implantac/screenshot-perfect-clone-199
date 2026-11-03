@@ -66,6 +66,7 @@ import {
   deletePortalGrant,
   updateGoal,
   deleteGoal,
+  createProvisionEntry,
 } from "@/lib/api/crud.functions";
 import type { SeedResult } from "@/lib/demo/seedDemo";
 import type { ImportResult } from "@/lib/import/normalize";
@@ -80,6 +81,7 @@ import type {
   ActionPlanUpdateInput,
   SupplierInput,
   LegalCaseInput,
+  ProvisionEntryInput,
   MemberInput,
   ShareInput,
   DocumentUpdateInput,
@@ -280,7 +282,11 @@ export const useDeleteSupplier = () =>
     error: "Não foi possível remover o fornecedor.",
   });
 
-const LEGAL_KEYS: QueryKey[] = [["legal_cases"], ["audit_logs"]];
+const LEGAL_KEYS: QueryKey[] = [
+  ["legal_cases"],
+  ["legal_provision_entries"],
+  ["audit_logs"],
+];
 
 export const useCreateLegalCase = () =>
   useInvalidatingMutation<LegalCaseInput, unknown>(createLegalCase, LEGAL_KEYS, {
@@ -292,6 +298,12 @@ export const useUpdateLegalCase = () =>
   useInvalidatingMutation<z.input<typeof legalCaseUpdateSchema>, unknown>(updateLegalCase, LEGAL_KEYS, {
     success: "Processo atualizado.",
     error: "Não foi possível atualizar o processo.",
+  });
+
+export const useCreateProvisionEntry = () =>
+  useInvalidatingMutation<ProvisionEntryInput, unknown>(createProvisionEntry, LEGAL_KEYS, {
+    success: "Lançamento registrado na provisão.",
+    error: "Não foi possível registrar o lançamento (a migration da wave 18 já foi aplicada?).",
   });
 
 export const useDeleteLegalCase = () =>

@@ -125,6 +125,16 @@ export type SupplierInput = z.input<typeof supplierInputSchema>;
 export const supplierUpdateSchema = supplierInputSchema.partial().extend({ id: uuid });
 
 // ------------------------------------------------------------------- legal cases
+const legalPolarityEnum = z.enum(["passivo", "ativo", "neutro"]);
+const legalPhaseEnum = z.enum([
+  "conhecimento",
+  "instrucao",
+  "sentenca",
+  "recurso",
+  "execucao",
+  "encerrado",
+]);
+
 export const legalCaseInputSchema = z.object({
   case_number: text(60),
   title: text(160),
@@ -138,9 +148,31 @@ export const legalCaseInputSchema = z.object({
   next_hearing: optionalDate,
   responsible_id: optionalUuid,
   notes: z.string().trim().max(600).optional().or(z.literal("")),
+  // --- wave 18: o processo passa a carregar a régua de provisão -------------
+  polarity: legalPolarityEnum.default("passivo"),
+  phase: z.union([legalPhaseEnum, z.literal("")]).optional(),
+  /**
+   * Percentual informado pelo jurídico, em % (0 a 100) — a UI fala a língua do
+   * advogado. O banco guarda fração (0 a 1): a conversão acontece no formulário.
+   */
+  probability_pct: z
+    .union([z.coerce.number().min(0, "Mínimo 0%.").max(100, "Máximo 100%."), z.literal("")])
+    .optional(),
+  expected_settlement: optionalDate,
+  lawyer_assessment: z.string().trim().max(600).optional().or(z.literal("")),
 });
 export type LegalCaseInput = z.input<typeof legalCaseInputSchema>;
 export const legalCaseUpdateSchema = legalCaseInputSchema.partial().extend({ id: uuid });
+
+// ------------------------------------------------- lançamentos de provisão (wave 18)
+export const provisionEntryInputSchema = z.object({
+  case_id: uuid,
+  kind: z.enum(["constituicao", "atualizacao", "reversao", "baixa"]),
+  amount: money.refine((value) => value > 0, "O valor precisa ser maior que zero."),
+  occurred_on: optionalDate,
+  note: z.string().trim().max(240).optional().or(z.literal("")),
+});
+export type ProvisionEntryInput = z.input<typeof provisionEntryInputSchema>;
 
 // ------------------------------------------------------------------------ members
 export const memberInputSchema = z.object({
