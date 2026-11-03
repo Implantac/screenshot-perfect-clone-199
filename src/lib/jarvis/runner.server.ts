@@ -87,12 +87,14 @@ async function loadDatasets(
   if (wanted.has("registrais")) {
     queries.push(
       (async () => {
-        const { data: rows, error } = await supabase.from("assets").select("current_value");
+        // A coluna de valor em `assets` chama-se `value` — mapear para o nome que
+        // o motor de balanço espera evita a consulta falhar silenciosamente.
+        const { data: rows, error } = await supabase.from("assets").select("value");
         if (error) {
           warnings.push(`Ativos registrais indisponíveis (${error.message}).`);
           data.registrais = [];
         } else {
-          data.registrais = (rows ?? []) as { current_value?: number | null }[];
+          data.registrais = (rows ?? []).map((row) => ({ current_value: row.value }));
         }
       })(),
     );

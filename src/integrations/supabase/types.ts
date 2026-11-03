@@ -1469,6 +1469,118 @@ export type Database = {
           },
         ]
       }
+      office_members: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          invited_by: string | null
+          office_id: string
+          role: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          invited_by?: string | null
+          office_id: string
+          role?: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          invited_by?: string | null
+          office_id?: string
+          role?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "office_members_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      office_clients: {
+        Row: {
+          granted_at: string
+          granted_by: string | null
+          id: string
+          label: string
+          office_id: string
+          owner_user_id: string
+          revoked_at: string | null
+          status: string
+        }
+        Insert: {
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          label: string
+          office_id: string
+          owner_user_id: string
+          revoked_at?: string | null
+          status?: string
+        }
+        Update: {
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          label?: string
+          office_id?: string
+          owner_user_id?: string
+          revoked_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "office_clients_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offices: {
+        Row: {
+          created_at: string
+          created_by: string
+          document: string | null
+          id: string
+          name: string
+          slug: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          document?: string | null
+          id?: string
+          name: string
+          slug?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          document?: string | null
+          id?: string
+          name?: string
+          slug?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       portal_grants: {
         Row: {
           id: string;
@@ -1864,6 +1976,50 @@ export type Database = {
           first_broken_sequence: number
           started_mid_chain: boolean
         }[]
+      }
+      claim_office_invites: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      office_can_read_tenant: {
+        Args: { _owner: string }
+        Returns: boolean
+      }
+      office_consolidation: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          office_id: string
+          office_name: string
+          owner_user_id: string
+          label: string
+          client_status: string
+          granted_at: string
+          entities: number
+          entities_value: number
+          assets_value: number
+          positions_value: number
+          liabilities_value: number
+          net_worth: number
+          risks_open: number
+          risks_critical: number
+          documents_expiring: number
+          documents_overdue: number
+          legal_exposure: number
+          agro_area_ha: number
+          last_update: string
+        }[]
+      }
+      office_lookup: {
+        Args: { _slug: string }
+        Returns: {
+          id: string
+          name: string
+          slug: string
+        }[]
+      }
+      office_role_of: {
+        Args: { _user: string }
+        Returns: string
       }
       provisions_pending_closure: {
         Args: Record<string, never>

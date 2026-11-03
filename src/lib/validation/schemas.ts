@@ -243,6 +243,48 @@ export const jarvisProposalApplySchema = z.object({
 });
 export type JarvisProposalApplyInput = z.input<typeof jarvisProposalApplySchema>;
 
+// --------------------------------------------- multi-family office (wave 22)
+export const officeRoleEnum = z.enum(["socio", "gestor", "analista", "leitor"]);
+
+export const officeCreateSchema = z.object({
+  name: z.string().trim().min(2, "Informe o nome do escritório.").max(120),
+  slug: z
+    .string()
+    .trim()
+    .min(3, "O slug precisa de ao menos 3 caracteres.")
+    .max(40)
+    .regex(/^[a-z0-9-]+$/i, "Use apenas letras, números e hífen.")
+    .optional(),
+  document: z.string().trim().max(32).optional(),
+});
+export type OfficeCreateInput = z.input<typeof officeCreateSchema>;
+
+export const officeInviteSchema = z.object({
+  officeId: z.string().uuid("Escritório inválido."),
+  email: z.string().trim().email("E-mail inválido."),
+  role: officeRoleEnum.default("analista"),
+});
+export type OfficeInviteInput = z.input<typeof officeInviteSchema>;
+
+export const officeMemberUpdateSchema = z.object({
+  memberId: z.string().uuid("Membro inválido."),
+  role: officeRoleEnum.optional(),
+  status: z.enum(["ativo", "suspenso"]).optional(),
+});
+export type OfficeMemberUpdateInput = z.input<typeof officeMemberUpdateSchema>;
+
+/** A família concede (ou revoga) o acesso do escritório ao próprio tenant. */
+export const officeGrantSchema = z.object({
+  officeSlug: z.string().trim().min(1, "Informe o identificador do escritório.").max(40),
+  label: z.string().trim().min(2, "Dê um nome ao seu consolidado no escritório.").max(80),
+});
+export type OfficeGrantInput = z.input<typeof officeGrantSchema>;
+
+export const officeRevokeSchema = z.object({
+  grantId: z.string().uuid("Vínculo inválido."),
+});
+export type OfficeRevokeInput = z.input<typeof officeRevokeSchema>;
+
 /** Primeiro erro legível de um ZodError (para toast). */
 export function firstZodError(error: z.ZodError): string {
   const issue = error.issues[0];

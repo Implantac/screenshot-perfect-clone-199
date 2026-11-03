@@ -20,6 +20,7 @@ import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
 import { Route as AppContenciosoRouteImport } from './routes/_app.contencioso'
 import { Route as AppCustodiaRouteImport } from './routes/_app.custodia'
 import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
+import { Route as AppEscritorioRouteImport } from './routes/_app.escritorio'
 import { Route as AppFamilyOfficeRouteImport } from './routes/_app.family-office'
 import { Route as AppFinanceiroRouteImport } from './routes/_app.financeiro'
 import { Route as AppFornecedoresRouteImport } from './routes/_app.fornecedores'
@@ -102,6 +103,11 @@ const AppCustodiaRoute = AppCustodiaRouteImport.update({
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEscritorioRoute = AppEscritorioRouteImport.update({
+  id: '/escritorio',
+  path: '/escritorio',
   getParentRoute: () => AppRoute,
 } as any)
 const AppFamilyOfficeRoute = AppFamilyOfficeRouteImport.update({
@@ -261,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/contencioso': typeof AppContenciosoRoute
   '/custodia': typeof AppCustodiaRoute
   '/dashboard': typeof AppDashboardRoute
+  '/escritorio': typeof AppEscritorioRoute
   '/family-office': typeof AppFamilyOfficeRoute
   '/financeiro': typeof AppFinanceiroRoute
   '/fornecedores': typeof AppFornecedoresRoute
@@ -302,6 +309,7 @@ export interface FileRoutesByTo {
   '/contencioso': typeof AppContenciosoRoute
   '/custodia': typeof AppCustodiaRoute
   '/dashboard': typeof AppDashboardRoute
+  '/escritorio': typeof AppEscritorioRoute
   '/family-office': typeof AppFamilyOfficeRoute
   '/financeiro': typeof AppFinanceiroRoute
   '/fornecedores': typeof AppFornecedoresRoute
@@ -344,6 +352,7 @@ export interface FileRoutesById {
   '/_app/contencioso': typeof AppContenciosoRoute
   '/_app/custodia': typeof AppCustodiaRoute
   '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/escritorio': typeof AppEscritorioRoute
   '/_app/family-office': typeof AppFamilyOfficeRoute
   '/_app/financeiro': typeof AppFinanceiroRoute
   '/_app/fornecedores': typeof AppFornecedoresRoute
@@ -387,6 +396,7 @@ export interface FileRouteTypes {
     | '/contencioso'
     | '/custodia'
     | '/dashboard'
+    | '/escritorio'
     | '/family-office'
     | '/financeiro'
     | '/fornecedores'
@@ -428,6 +438,7 @@ export interface FileRouteTypes {
     | '/contencioso'
     | '/custodia'
     | '/dashboard'
+    | '/escritorio'
     | '/family-office'
     | '/financeiro'
     | '/fornecedores'
@@ -469,6 +480,7 @@ export interface FileRouteTypes {
     | '/_app/contencioso'
     | '/_app/custodia'
     | '/_app/dashboard'
+    | '/_app/escritorio'
     | '/_app/family-office'
     | '/_app/financeiro'
     | '/_app/fornecedores'
@@ -583,6 +595,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/escritorio': {
+      id: '/_app/escritorio'
+      path: '/escritorio'
+      fullPath: '/escritorio'
+      preLoaderRoute: typeof AppEscritorioRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/family-office': {
@@ -824,6 +843,7 @@ interface AppRouteChildren {
   AppContenciosoRoute: typeof AppContenciosoRoute
   AppCustodiaRoute: typeof AppCustodiaRoute
   AppDashboardRoute: typeof AppDashboardRoute
+  AppEscritorioRoute: typeof AppEscritorioRoute
   AppFamilyOfficeRoute: typeof AppFamilyOfficeRoute
   AppFinanceiroRoute: typeof AppFinanceiroRoute
   AppFornecedoresRoute: typeof AppFornecedoresRoute
@@ -857,6 +877,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppContenciosoRoute: AppContenciosoRoute,
   AppCustodiaRoute: AppCustodiaRoute,
   AppDashboardRoute: AppDashboardRoute,
+  AppEscritorioRoute: AppEscritorioRoute,
   AppFamilyOfficeRoute: AppFamilyOfficeRoute,
   AppFinanceiroRoute: AppFinanceiroRoute,
   AppFornecedoresRoute: AppFornecedoresRoute,
