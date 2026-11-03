@@ -33,6 +33,7 @@ import { Route as AppPrivadosRouteImport } from './routes/_app.privados'
 import { Route as AppProjecaoRouteImport } from './routes/_app.projecao'
 import { Route as AppRegularizacaoRouteImport } from './routes/_app.regularizacao'
 import { Route as AppRelatoriosRouteImport } from './routes/_app.relatorios'
+import { Route as AppRiscoMercadoRouteImport } from './routes/_app.risco-mercado'
 import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
 import { Route as AppSaudeDocumentalRouteImport } from './routes/_app.saude-documental'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
@@ -164,6 +165,11 @@ const AppRelatoriosRoute = AppRelatoriosRouteImport.update({
   path: '/relatorios',
   getParentRoute: () => AppRoute,
 } as any)
+const AppRiscoMercadoRoute = AppRiscoMercadoRouteImport.update({
+  id: '/risco-mercado',
+  path: '/risco-mercado',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppRiscosRoute = AppRiscosRouteImport.update({
   id: '/riscos',
   path: '/riscos',
@@ -244,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/projecao': typeof AppProjecaoRoute
   '/regularizacao': typeof AppRegularizacaoRoute
   '/relatorios': typeof AppRelatoriosRoute
+  '/risco-mercado': typeof AppRiscoMercadoRoute
   '/riscos': typeof AppRiscosRoute
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/settings': typeof AppSettingsRoute
@@ -279,6 +286,7 @@ export interface FileRoutesByTo {
   '/projecao': typeof AppProjecaoRoute
   '/regularizacao': typeof AppRegularizacaoRoute
   '/relatorios': typeof AppRelatoriosRoute
+  '/risco-mercado': typeof AppRiscoMercadoRoute
   '/riscos': typeof AppRiscosRoute
   '/saude-documental': typeof AppSaudeDocumentalRoute
   '/settings': typeof AppSettingsRoute
@@ -317,6 +325,7 @@ export interface FileRoutesById {
   '/_app/projecao': typeof AppProjecaoRoute
   '/_app/regularizacao': typeof AppRegularizacaoRoute
   '/_app/relatorios': typeof AppRelatoriosRoute
+  '/_app/risco-mercado': typeof AppRiscoMercadoRoute
   '/_app/riscos': typeof AppRiscosRoute
   '/_app/saude-documental': typeof AppSaudeDocumentalRoute
   '/_app/settings': typeof AppSettingsRoute
@@ -355,6 +364,7 @@ export interface FileRouteTypes {
     | '/projecao'
     | '/regularizacao'
     | '/relatorios'
+    | '/risco-mercado'
     | '/riscos'
     | '/saude-documental'
     | '/settings'
@@ -390,6 +400,7 @@ export interface FileRouteTypes {
     | '/projecao'
     | '/regularizacao'
     | '/relatorios'
+    | '/risco-mercado'
     | '/riscos'
     | '/saude-documental'
     | '/settings'
@@ -427,6 +438,7 @@ export interface FileRouteTypes {
     | '/_app/projecao'
     | '/_app/regularizacao'
     | '/_app/relatorios'
+    | '/_app/risco-mercado'
     | '/_app/riscos'
     | '/_app/saude-documental'
     | '/_app/settings'
@@ -616,6 +628,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRelatoriosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/risco-mercado': {
+      id: '/_app/risco-mercado'
+      path: '/risco-mercado'
+      fullPath: '/risco-mercado'
+      preLoaderRoute: typeof AppRiscoMercadoRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/riscos': {
       id: '/_app/riscos'
       path: '/riscos'
@@ -742,6 +761,7 @@ interface AppRouteChildren {
   AppProjecaoRoute: typeof AppProjecaoRoute
   AppRegularizacaoRoute: typeof AppRegularizacaoRoute
   AppRelatoriosRoute: typeof AppRelatoriosRoute
+  AppRiscoMercadoRoute: typeof AppRiscoMercadoRoute
   AppRiscosRoute: typeof AppRiscosRoute
   AppSaudeDocumentalRoute: typeof AppSaudeDocumentalRoute
   AppSettingsRoute: typeof AppSettingsRoute
@@ -770,6 +790,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProjecaoRoute: AppProjecaoRoute,
   AppRegularizacaoRoute: AppRegularizacaoRoute,
   AppRelatoriosRoute: AppRelatoriosRoute,
+  AppRiscoMercadoRoute: AppRiscoMercadoRoute,
   AppRiscosRoute: AppRiscosRoute,
   AppSaudeDocumentalRoute: AppSaudeDocumentalRoute,
   AppSettingsRoute: AppSettingsRoute,
