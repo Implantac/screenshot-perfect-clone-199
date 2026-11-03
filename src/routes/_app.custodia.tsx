@@ -16,6 +16,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   ArrowLeftRight,
+  Landmark,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -40,6 +41,7 @@ import type { PositionInput } from "@/lib/validation/schemas";
 import { PositionForm } from "@/components/forms/PositionForm";
 import { CashFlowForm } from "@/components/forms/CashFlowForm";
 import { ReconciliationPanel } from "@/components/custody/ReconciliationPanel";
+import { TesouroPanel } from "@/components/custody/TesouroPanel";
 import {
   summarizeAllocation,
   computeDrift,
@@ -62,6 +64,7 @@ const pct = (v: number) => `${v.toFixed(2).replace(".", ",")}%`;
 const TABS = [
   { id: "visao", label: "Visão geral", icon: Layers },
   { id: "posicoes", label: "Posições", icon: Wallet },
+  { id: "renda-fixa", label: "Renda fixa a mercado", icon: Landmark },
   { id: "conciliacao", label: "Conciliação", icon: ArrowLeftRight },
   { id: "politica", label: "Política & drift", icon: Target },
   { id: "qualidade", label: "Qualidade do dado", icon: AlertTriangle },
@@ -451,6 +454,8 @@ function Custodia() {
           </div>
         </div>
       )}
+
+      {tab === "renda-fixa" && <TesouroPanel entityFilter={entityFilter || undefined} />}
 
       {tab === "conciliacao" && (
         <ReconciliationPanel

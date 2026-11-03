@@ -18,6 +18,7 @@
     "verify:db": "bun run scripts/verify-e2e.ts",
     "verify:llm": "bun run scripts/verify-llm.ts",
     "verify:ui": "bun run scripts/smoke-ui.ts",
+    "verify:tesouro": "bun run scripts/verify-tesouro.ts",
     "verify": "bun run test && bun run verify:llm && bun run verify:db",
     "ci": "bun run typecheck && bun run test && bun run build",
     "check:schema": "bun run scripts/check-schema.ts",

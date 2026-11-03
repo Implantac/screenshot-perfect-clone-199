@@ -49,6 +49,7 @@ import {
 } from "@/lib/api/crud.functions";
 import { seedDemo } from "@/lib/api/demo.functions";
 import { syncQuotes, type SyncQuotesResult } from "@/lib/api/quotes.functions";
+import { syncTesouro, type SyncTesouroResult } from "@/lib/api/tesouro.functions";
 import {
   createCommitment,
   updateCommitment,
@@ -492,6 +493,56 @@ export const useSyncQuotes = () => {
     onError: (error) => {
       console.error("[quotes]", error);
       toast.error(error.message || "Não foi possível atualizar as cotações.");
+    },
+  });
+};
+
+// ------------------------------------------------- renda fixa (wave 27)
+
+/**
+ * Marca título público a mercado pela curva do Tesouro.
+ *
+ * `apply: false` só grava a curva e devolve o impacto — é o modo que a tela usa
+ * para mostrar "isto mudaria R$ X" antes de o operador decidir.
+ */
+export const useSyncTesouro = () => {
+  const queryClient = useQueryClient();
+  return useMutation<SyncTesouroResult, Error, { entity_id?: string; apply?: boolean }>({
+    mutationFn: (data) => syncTesouro({ data }),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ["positions"] });
+      queryClient.invalidateQueries({ queryKey: ["quote_runs"] });
+      queryClient.invalidateQueries({ queryKey: ["tesouro-curve"] });
+
+      if (!result.ok) {
+        toast.error(result.note ?? "Não foi possível sincronizar a curva do Tesouro.");
+        return;
+      }
+
+      const delta = result.totalDeltaBrl;
+      const signal = delta >= 0 ? "+" : "−";
+      if (result.positionsUpdated === 0) {
+        toast.info(
+          `Curva de ${result.asOf ?? "—"} sincronizada (${result.bonds} títulos).` +
+            (result.positionsUnresolved + result.positionsAmbiguous > 0
+              ? ` ${result.positionsUnresolved + result.positionsAmbiguous} posição(ões) sem correspondência no Tesouro.`
+              : " Nenhuma posição precisava de ajuste."),
+        );
+        return;
+      }
+      toast.success(
+        `${result.positionsUpdated} posição(ões) marcada(s) a mercado — ${signal}R$ ${Math.abs(delta).toLocaleString(
+          "pt-BR",
+          { maximumFractionDigits: 0 },
+        )} no patrimônio.`,
+      );
+      if (result.unknownBonds.length > 0) {
+        toast.warning(`Título fora do catálogo: ${result.unknownBonds.slice(0, 3).join(", ")}.`);
+      }
+    },
+    onError: (error) => {
+      console.error("[tesouro]", error);
+      toast.error(error.message || "Falha ao sincronizar a renda fixa.");
     },
   });
 };

@@ -13,7 +13,12 @@
  *    exatamente deve mudar. É o que permite testar sem rede.
  */
 
-export type QuoteSource = "yahoo" | "brapi" | "cvm";
+/**
+ * Origem do preço. `tesouro` (wave 27) é a curva oficial do Tesouro Direto —
+ * ela não passa por `QuoteProvider` porque não é cotação de ticker: é PU de
+ * título público, tratado em `src/lib/market/tesouro.ts`.
+ */
+export type QuoteSource = "yahoo" | "brapi" | "cvm" | "tesouro";
 
 export type Quote = {
   /** Símbolo canônico do PATRIUM (PETR4, HGLG11, USD/BRL, US:AAPL). */
