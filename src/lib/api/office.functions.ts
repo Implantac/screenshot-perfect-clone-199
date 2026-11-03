@@ -16,6 +16,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
+  officeDetailSchema,
+  officeAccessLogSchema,
+  officeScopeUpdateSchema,
   officeCreateSchema,
   officeGrantSchema,
   officeInviteSchema,
@@ -27,6 +30,15 @@ import {
   type OfficeConsolidation,
   type OfficeFamilyRow,
 } from "@/lib/office/consolidate";
+import {
+  normalizeFamilyDetail,
+  parseScopes,
+  summarizeAccessLog,
+  type AccessLogRow,
+  type AccessSummary,
+  type FamilyDetailPayload,
+  type OfficeScope,
+} from "@/lib/office/access";
 
 export type OfficeSummary = {
   id: string;
@@ -54,6 +66,8 @@ export type OfficeFamilyLink = {
   label: string;
   status: string;
   grantedAt: string | null;
+  /** Seções consentidas (wave 24). */
+  scopes: OfficeScope[];
 };
 
 export type OfficeWorkspace = {
@@ -65,6 +79,8 @@ export type OfficeWorkspace = {
   myGrants: OfficeFamilyLink[];
   /** Consolidados agregados das famílias que concederam acesso. */
   consolidations: OfficeConsolidation[];
+  /** Quem abriu o meu detalhe (log de acesso, wave 24). */
+  accessLog: AccessSummary;
   /** Convites reivindicados nesta sessão (por e-mail). */
   claimedInvites: number;
   /** Migration 20261030270000 aplicada? */
@@ -83,6 +99,7 @@ export const getOfficeWorkspace = createServerFn({ method: "GET" })
       members: [],
       myGrants: [],
       consolidations: [],
+      accessLog: summarizeAccessLog([]),
       claimedInvites: 0,
       available: false,
     };
@@ -100,7 +117,9 @@ export const getOfficeWorkspace = createServerFn({ method: "GET" })
 
     const [memberships, grants] = await Promise.all([
       supabase.from("office_members").select("office_id, role, status, id, email, user_id"),
-      supabase.from("office_clients").select("id, office_id, label, status, granted_at, owner_user_id"),
+      supabase
+        .from("office_clients")
+        .select("id, office_id, label, status, granted_at, owner_user_id, scopes"),
     ]);
 
     const membershipRows = (memberships.data ?? []) as {
@@ -176,6 +195,7 @@ export const getOfficeWorkspace = createServerFn({ method: "GET" })
         label: grant.label,
         status: grant.status,
         grantedAt: grant.granted_at,
+        scopes: parseScopes(grant.scopes),
       }));
 
     // Consolidado: RPC agregada (nunca linhas cruas de cliente).
@@ -189,11 +209,19 @@ export const getOfficeWorkspace = createServerFn({ method: "GET" })
       consolidations = buildAllConsolidations((rows.data ?? []) as unknown as OfficeFamilyRow[]);
     }
 
+    // Log de acesso: quem abriu o meu detalhe (a RPC filtra por auth.uid()).
+    let accessLog: AccessSummary = summarizeAccessLog([]);
+    const accessRows = await supabase.rpc("office_my_access_log" as never, { _limit: 100 } as never);
+    if (!accessRows.error) {
+      accessLog = summarizeAccessLog((accessRows.data ?? []) as unknown as AccessLogRow[]);
+    }
+
     return {
       offices,
       members,
       myGrants,
       consolidations,
+      accessLog,
       claimedInvites,
       available: true,
     };
@@ -334,7 +362,7 @@ export const grantOfficeAccess = createServerFn({ method: "POST" })
         status: "ativo",
         granted_by: context.userId,
       })
-      .select("id, office_id, label, status, granted_at")
+      .select("id, office_id, label, status, granted_at, scopes")
       .single();
 
     if (error || !created) {
@@ -353,6 +381,7 @@ export const grantOfficeAccess = createServerFn({ method: "POST" })
       label: created.label,
       status: created.status,
       grantedAt: created.granted_at,
+      scopes: parseScopes(created.scopes),
     };
   });
 
@@ -367,4 +396,66 @@ export const revokeOfficeAccess = createServerFn({ method: "POST" })
       .eq("id", data.grantId);
     if (error) throw new Error(`Não consegui revogar: ${error.message}`);
     return { ok: true };
+  });
+
+// ------------------------------------------- detalhe por escopo (wave 24)
+
+/**
+ * Abre o detalhe de uma família.
+ *
+ * Quem decide é o banco: `office_family_detail()` confere o vínculo, confere o
+ * escopo de cada seção e **grava o acesso** em `office_access_log` antes de
+ * devolver. Aqui só normalizamos o jsonb — e descartamos qualquer seção fora do
+ * escopo, como defesa em profundidade.
+ */
+export const getOfficeFamilyDetail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator(officeDetailSchema)
+  .handler(async ({ data, context }): Promise<FamilyDetailPayload> => {
+    const { data: payload, error } = await context.supabase.rpc("office_family_detail" as never, {
+      _owner: data.ownerUserId,
+    } as never);
+
+    if (error) {
+      const migrationPending = isMigrationMissing(error.message);
+      throw new Error(
+        migrationPending
+          ? "A migration 20261030290000 (escopo e log de acesso) ainda não foi aplicada."
+          : error.message,
+      );
+    }
+
+    const detail = normalizeFamilyDetail(payload);
+    if (!detail) throw new Error("O detalhe voltou vazio — verifique se o vínculo continua ativo.");
+    return detail;
+  });
+
+/** A família ajusta os próprios escopos (o banco recusa se não for o dono). */
+export const updateOfficeScopes = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator(officeScopeUpdateSchema)
+  .handler(async ({ data, context }): Promise<{ scopes: OfficeScope[] }> => {
+    const { data: scopes, error } = await context.supabase.rpc("office_set_scopes" as never, {
+      _grant: data.grantId,
+      _scopes: data.scopes,
+    } as never);
+
+    if (error) throw new Error(error.message);
+    return { scopes: parseScopes(scopes) };
+  });
+
+/** Log de acesso do meu próprio tenant (quem do escritório abriu o quê). */
+export const getMyAccessLog = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator(officeAccessLogSchema)
+  .handler(async ({ data, context }): Promise<AccessSummary> => {
+    const { data: rows, error } = await context.supabase.rpc("office_my_access_log" as never, {
+      _limit: data.limit ?? 100,
+    } as never);
+
+    if (error) {
+      if (isMigrationMissing(error.message)) return summarizeAccessLog([]);
+      throw new Error(error.message);
+    }
+    return summarizeAccessLog((rows ?? []) as unknown as AccessLogRow[]);
   });

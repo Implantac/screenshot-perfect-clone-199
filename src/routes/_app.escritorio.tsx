@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   Copy,
   Link2,
+  Eye,
   Loader2,
   ShieldCheck,
   UserPlus,
@@ -21,7 +22,11 @@ import {
   inviteOfficeMember,
   revokeOfficeAccess,
   updateOfficeMember,
+  updateOfficeScopes,
 } from "@/lib/api/office.functions";
+import { ScopePicker } from "@/components/office/ScopePicker";
+import { FamilyDetailPanel } from "@/components/office/FamilyDetailPanel";
+import type { OfficeScope } from "@/lib/office/access";
 
 export const Route = createFileRoute("/_app/escritorio")({
   component: Escritorio,
@@ -67,6 +72,10 @@ function Escritorio() {
   const [inviteRole, setInviteRole] = useState<"socio" | "gestor" | "analista" | "leitor">("analista");
   const [grantSlug, setGrantSlug] = useState("");
   const [grantLabel, setGrantLabel] = useState("");
+  const [grantScopes, setGrantScopes] = useState<OfficeScope[]>(["resumo"]);
+  const [editingGrant, setEditingGrant] = useState<string | null>(null);
+  const [editingScopes, setEditingScopes] = useState<OfficeScope[]>([]);
+  const [openFamily, setOpenFamily] = useState<{ ownerUserId: string; label: string } | null>(null);
   const [feedback, setFeedback] = useState<{ tone: "ok" | "erro"; text: string } | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
 
@@ -104,14 +113,28 @@ function Escritorio() {
     onError: fail,
   });
 
+  const scopeMutation = useMutation({
+    mutationFn: (input: { grantId: string; scopes: OfficeScope[] }) => updateOfficeScopes({ data: input }),
+    onSuccess: (result) => {
+      setEditingGrant(null);
+      setFeedback({
+        tone: "ok",
+        text: `Escopos atualizados: ${result.scopes.join(", ")}. A mudança vale na próxima abertura.`,
+      });
+      refresh();
+    },
+    onError: fail,
+  });
+
   const grantMutation = useMutation({
     mutationFn: () => grantOfficeAccess({ data: { officeSlug: grantSlug, label: grantLabel } }),
     onSuccess: (link) => {
       setGrantSlug("");
       setGrantLabel("");
+      setGrantScopes(["resumo"]);
       setFeedback({
         tone: "ok",
-        text: `Acesso concedido a ${link.officeName}. Você aparece no consolidado como "${link.label}".`,
+        text: `Acesso concedido a ${link.officeName} (${link.scopes.join(", ")}). Você aparece no consolidado como "${link.label}".`,
       });
       refresh();
     },
@@ -466,6 +489,7 @@ function Escritorio() {
                   <th className="py-2 text-right">Peso</th>
                   <th className="py-2 text-right">Riscos</th>
                   <th className="py-2 text-right">Atualização</th>
+                  <th className="py-2 text-right">Detalhe</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -507,11 +531,20 @@ function Escritorio() {
                     <td className="py-2 text-right text-[10px] text-muted-foreground">
                       {family.daysSinceUpdate === null ? "—" : `há ${family.daysSinceUpdate} d`}
                     </td>
+                    <td className="py-2 text-right">
+                      <button
+                        type="button"
+                        onClick={() => setOpenFamily({ ownerUserId: family.ownerUserId, label: family.label })}
+                        className="inline-flex items-center gap-1 rounded-lg border border-primary/20 bg-primary/10 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-primary hover:bg-primary/20"
+                      >
+                        <Eye className="h-2.5 w-2.5" /> Abrir
+                      </button>
+                    </td>
                   </tr>
                 ))}
                 {office.families.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="py-3 text-muted-foreground">
+                    <td colSpan={8} className="py-3 text-muted-foreground">
                       Nenhuma família vinculada a este escritório ainda.
                     </td>
                   </tr>
@@ -567,6 +600,12 @@ function Escritorio() {
             placeholder="Como você quer aparecer no consolidado"
             className="h-10 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-[12px] outline-none focus:border-primary/40"
           />
+          <div className="space-y-1">
+            <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/70">
+              O que o escritório pode abrir
+            </p>
+            <ScopePicker value={grantScopes} onChange={setGrantScopes} compact />
+          </div>
           <button
             type="button"
             onClick={() => grantMutation.mutate()}
@@ -595,9 +634,44 @@ function Escritorio() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-[12px] font-black">{grant.officeName}</p>
                     <p className="text-[10px] text-muted-foreground">
-                      como “{grant.label}” · {STATUS_LABEL[grant.status] ?? grant.status}
+                      como “{grant.label}” · {STATUS_LABEL[grant.status] ?? grant.status} · escopos:{" "}
+                      {grant.scopes.join(", ")}
                     </p>
+                    {editingGrant === grant.id && (
+                      <div className="mt-2 w-full space-y-2">
+                        <ScopePicker value={editingScopes} onChange={setEditingScopes} compact />
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => scopeMutation.mutate({ grantId: grant.id, scopes: editingScopes })}
+                            disabled={scopeMutation.isPending}
+                            className="rounded-xl bg-primary px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary-foreground disabled:opacity-40"
+                          >
+                            Salvar escopos
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditingGrant(null)}
+                            className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground"
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
+                  {grant.status !== "encerrado" && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingGrant(grant.id);
+                        setEditingScopes(grant.scopes);
+                      }}
+                      className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground"
+                    >
+                      Escopos
+                    </button>
+                  )}
                   {grant.status !== "encerrado" && (
                     <button
                       type="button"
@@ -614,6 +688,71 @@ function Escritorio() {
           )}
         </div>
       </section>
+
+      {/* ------------------------------------------------ log de acesso */}
+      <section className="glass-card space-y-3 rounded-[2rem] border border-white/5 p-5">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em]">
+            <Eye className="h-3.5 w-3.5 text-primary" /> Quem abriu os meus dados
+          </h2>
+          <span className="text-[10px] text-muted-foreground">
+            {workspace?.accessLog.totals.entries ?? 0} acesso(s) ·{" "}
+            {workspace?.accessLog.totals.distinctReaders ?? 0} pessoa(s)
+          </span>
+        </div>
+
+        {(workspace?.accessLog.flags.length ?? 0) > 0 && (
+          <div className="space-y-1 rounded-2xl border border-white/10 bg-white/[0.02] px-3 py-2">
+            {workspace?.accessLog.flags.map((flag) => (
+              <p key={flag} className="text-[10px] text-muted-foreground">
+                {flag}
+              </p>
+            ))}
+          </div>
+        )}
+
+        {(workspace?.accessLog.entries.length ?? 0) > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-[11px]">
+              <thead className="text-[9px] uppercase tracking-widest text-muted-foreground/60">
+                <tr>
+                  <th className="py-2">Escritório</th>
+                  <th className="py-2">Quem abriu</th>
+                  <th className="py-2">Seção</th>
+                  <th className="py-2 text-right">Quando</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {workspace?.accessLog.entries.slice(0, 12).map((entry) => (
+                  <tr key={entry.id}>
+                    <td className="py-2">{entry.officeName}</td>
+                    <td className="py-2 font-mono text-[10px] text-muted-foreground">{entry.reader}</td>
+                    <td className="py-2">
+                      {entry.scopeLabel}
+                      {entry.action === "negado_sem_escopo" && (
+                        <span className="ml-2 rounded-full bg-amber-500/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-amber-400">
+                          negado
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-2 text-right text-[10px] text-muted-foreground">
+                      {entry.daysAgo === null ? "—" : entry.daysAgo === 0 ? "hoje" : `há ${entry.daysAgo} d`}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      {openFamily && (
+        <FamilyDetailPanel
+          ownerUserId={openFamily.ownerUserId}
+          label={openFamily.label}
+          onClose={() => setOpenFamily(null)}
+        />
+      )}
     </div>
   );
 }

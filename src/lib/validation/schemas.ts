@@ -285,6 +285,26 @@ export const officeRevokeSchema = z.object({
 });
 export type OfficeRevokeInput = z.input<typeof officeRevokeSchema>;
 
+export const officeDetailSchema = z.object({
+  ownerUserId: z.string().uuid("Família inválida."),
+});
+export type OfficeDetailInput = z.input<typeof officeDetailSchema>;
+
+/** Escopos que a família consente (wave 24). `resumo` é obrigatório no banco. */
+export const officeScopeUpdateSchema = z.object({
+  grantId: z.string().uuid("Vínculo inválido."),
+  scopes: z
+    .array(z.enum(["resumo", "custodia", "contencioso", "agro", "documentos", "riscos"]))
+    .min(1, "Conceda ao menos o resumo.")
+    .refine((list) => list.includes("resumo"), "O resumo não pode ser removido."),
+});
+export type OfficeScopeUpdateInput = z.input<typeof officeScopeUpdateSchema>;
+
+export const officeAccessLogSchema = z.object({
+  limit: z.number().int().min(1).max(500).optional(),
+});
+export type OfficeAccessLogInput = z.input<typeof officeAccessLogSchema>;
+
 /** Primeiro erro legível de um ZodError (para toast). */
 export function firstZodError(error: z.ZodError): string {
   const issue = error.issues[0];

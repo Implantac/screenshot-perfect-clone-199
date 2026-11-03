@@ -1510,6 +1510,44 @@ export type Database = {
           },
         ]
       }
+      office_access_log: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          office_id: string
+          scope: string
+          target_owner_id: string
+          user_id: string
+        }
+        Insert: {
+          action?: string
+          created_at?: string
+          id?: string
+          office_id: string
+          scope: string
+          target_owner_id: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          office_id?: string
+          scope?: string
+          target_owner_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "office_access_log_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       office_clients: {
         Row: {
           granted_at: string
@@ -1519,6 +1557,7 @@ export type Database = {
           office_id: string
           owner_user_id: string
           revoked_at: string | null
+          scopes: string[]
           status: string
         }
         Insert: {
@@ -1529,6 +1568,7 @@ export type Database = {
           office_id: string
           owner_user_id: string
           revoked_at?: string | null
+          scopes?: string[]
           status?: string
         }
         Update: {
@@ -1539,6 +1579,7 @@ export type Database = {
           office_id?: string
           owner_user_id?: string
           revoked_at?: string | null
+          scopes?: string[]
           status?: string
         }
         Relationships: [
@@ -2008,6 +2049,29 @@ export type Database = {
           agro_area_ha: number
           last_update: string
         }[]
+      }
+      office_client_scopes: {
+        Args: { _owner: string }
+        Returns: string[]
+      }
+      office_family_detail: {
+        Args: { _owner: string }
+        Returns: Json
+      }
+      office_my_access_log: {
+        Args: { _limit?: number }
+        Returns: {
+          id: string
+          office_name: string
+          reader_email: string | null
+          scope: string
+          action: string
+          created_at: string
+        }[]
+      }
+      office_set_scopes: {
+        Args: { _grant: string; _scopes: string[] }
+        Returns: string[]
       }
       office_lookup: {
         Args: { _slug: string }
