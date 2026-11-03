@@ -1,18 +1,32 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { FileText, Printer, Loader2, CheckCircle2, AlertTriangle, Download } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Download,
+  FileText,
+  Loader2,
+  Printer,
+  Sparkles,
+} from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import {
   useAssets,
   useDocuments,
   useEntities,
+  useGoals,
   useLegalCases,
+  useLiabilities,
   useMembers,
   usePortfolioSnapshots,
   usePositions,
+  useQuotes,
   useRisks,
   useSuppliers,
 } from "@/hooks/usePatrimonio";
+import { buildMonthlyReport } from "@/lib/reports/monthly";
+import { brl as brlFmt, pct as pctFmt, signedPoints } from "@/lib/reports/format";
 import { summarizeAllocation, positionValue } from "@/lib/wealth/allocation";
 import { summarizePerformance } from "@/lib/wealth/performance";
 import { buildQualityReport } from "@/lib/wealth/quality";
@@ -26,6 +40,7 @@ const pct = (v: number) => `${v.toFixed(2).replace(".", ",")}%`;
 
 const SECTIONS = [
   { id: "capa", label: "Capa" },
+  { id: "mensal", label: "Resumo do mês" },
   { id: "patrimonio", label: "Patrimônio" },
   { id: "performance", label: "Performance" },
   { id: "governanca", label: "Governança" },
@@ -42,8 +57,20 @@ function Relatorios() {
   const { data: members } = useMembers();
   const { data: legalCases } = useLegalCases();
   const { data: suppliers } = useSuppliers();
+  const { data: liabilities } = useLiabilities();
+  const { data: goals } = useGoals();
+  const { data: quotes } = useQuotes();
 
-  const [selected, setSelected] = useState<string[]>(["capa", "patrimonio", "performance", "governanca", "qualidade"]);
+  const [selected, setSelected] = useState<string[]>([
+    "capa",
+    "mensal",
+    "patrimonio",
+    "performance",
+    "governanca",
+    "qualidade",
+  ]);
+  const [competencia, setCompetencia] = useState(() => new Date().toISOString().slice(0, 7));
+  const [baixando, setBaixando] = useState(false);
   const [entityFilter, setEntityFilter] = useState("todas");
   const [cliente, setCliente] = useState("");
 
@@ -70,6 +97,64 @@ function Relatorios() {
     () => buildQualityReport({ positions: filteredPositions, documents, assets }),
     [filteredPositions, documents, assets],
   );
+
+  const monthly = useMemo(
+    () =>
+      buildMonthlyReport({
+        competencia,
+        clientName: cliente,
+        entityName:
+          entityFilter === "todas"
+            ? null
+            : ((entities ?? []).find((entity) => entity.id === entityFilter)?.name ?? null),
+        positions: filteredPositions,
+        registeredAssets: (assets ?? []).map((asset) => ({ current_value: asset.value })),
+        snapshots: (snapshots ?? []).map((snapshot) => ({
+          as_of: snapshot.as_of,
+          market_value: snapshot.market_value,
+          net_flow: snapshot.net_flow,
+        })),
+        liabilities: (liabilities ?? []).map((liability) => ({
+          ...liability,
+          outstanding: Number(liability.outstanding ?? 0),
+        })),
+        goals: (goals ?? []).map((goal) => ({
+          ...goal,
+          target_amount: Number(goal.target_amount ?? 0),
+          allocated: Number(goal.allocated ?? 0),
+        })),
+        quotes: (quotes ?? []).map((quote) => ({
+          symbol: quote.symbol,
+          asOf: quote.as_of,
+          price: Number(quote.price),
+        })),
+      }),
+    [competencia, cliente, entityFilter, entities, filteredPositions, assets, snapshots, liabilities, goals, quotes],
+  );
+
+  const baixarPdf = async () => {
+    setBaixando(true);
+    try {
+      // jsPDF só entra no bundle quando o usuário pede o arquivo.
+      const { renderMonthlyPdf } = await import("@/lib/reports/pdf");
+      const blob = await renderMonthlyPdf(monthly);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `patrium-relatorio-${monthly.meta.competencia}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      toast.success(`Relatório de ${monthly.meta.label} gerado`);
+    } catch (error) {
+      toast.error("Não foi possível gerar o PDF", {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    } finally {
+      setBaixando(false);
+    }
+  };
 
   const assetsTotal = (assets ?? []).reduce((sum, a) => sum + Number(a.value ?? 0), 0);
   const openRisks = (risks ?? []).filter((r) => r.status !== "resolved" && r.status !== "ignored");
@@ -102,12 +187,29 @@ function Relatorios() {
               próprio navegador.
             </p>
           </div>
-          <button
-            onClick={() => window.print()}
-            className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
-          >
-            <Printer className="h-4 w-4" /> Imprimir / salvar PDF
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              type="month"
+              value={competencia}
+              onChange={(event) => setCompetencia(event.target.value || competencia)}
+              className="h-12 bg-background border border-white/10 rounded-2xl px-4 text-[11px] font-bold"
+              aria-label="Competência do relatório"
+            />
+            <button
+              onClick={baixarPdf}
+              disabled={baixando}
+              className="h-12 px-6 bg-primary text-primary-foreground rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+            >
+              {baixando ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+              {baixando ? "Gerando…" : "Baixar PDF do mês"}
+            </button>
+            <button
+              onClick={() => window.print()}
+              className="h-12 px-6 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+            >
+              <Printer className="h-4 w-4" /> Imprimir
+            </button>
+          </div>
         </div>
 
         <div className="glass-card rounded-2xl p-4 flex flex-col lg:flex-row gap-4 lg:items-center">
@@ -186,6 +288,72 @@ function Relatorios() {
               <Cover label="Score de dados" value={`${quality.score} (${quality.grade})`} />
             </div>
           </header>
+        )}
+
+        {selected.includes("mensal") && (
+          <section className="space-y-4">
+            <SectionTitle index="00" title="Resumo do mês" />
+            <p className="text-base font-bold leading-snug">{monthly.narrative.headline}</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Cover label="No mês" value={pctFmt(monthly.summary.monthReturnPct)} />
+              <Cover label="No ano" value={pctFmt(monthly.summary.ytdReturnPct)} />
+              <Cover label="Ganho do mês" value={brlFmt(monthly.summary.monthGain)} />
+              <Cover label="Cobertura de cotação" value={pctFmt(monthly.summary.coverage, 0)} />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-1">
+              <div className="space-y-2">
+                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 print:text-black/50">
+                  Contribuição por classe
+                </p>
+                {monthly.attribution.month.byClass.map((bucket) => (
+                  <div key={bucket.key} className="flex items-center justify-between gap-3 text-[12px]">
+                    <span>{bucket.label}</span>
+                    <span className="tabular-nums">
+                      <span className="text-muted-foreground print:text-black/60 mr-2">
+                        {pctFmt(bucket.weight, 1)}
+                      </span>
+                      <span className="font-bold">{signedPoints(bucket.contribution)}</span>
+                    </span>
+                  </div>
+                ))}
+                {monthly.attribution.month.byClass.length === 0 && (
+                  <p className="text-xs text-muted-foreground">Sem posições no período.</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 print:text-black/50">
+                  Pendências do fechamento
+                </p>
+                {monthly.pendencies.slice(0, 5).map((item) => (
+                  <div key={item.text} className="flex items-start gap-2 text-[11px]">
+                    <span
+                      className={cn(
+                        "mt-1 h-1.5 w-1.5 rounded-full shrink-0",
+                        item.severity === "alta"
+                          ? "bg-red-500"
+                          : item.severity === "media"
+                            ? "bg-amber-500"
+                            : "bg-white/30 print:bg-black/30",
+                      )}
+                    />
+                    <span>
+                      <strong className="uppercase text-[9px] tracking-widest">{item.area}.</strong>{" "}
+                      <span className="text-muted-foreground print:text-black/60">{item.text}</span>
+                    </span>
+                  </div>
+                ))}
+                {monthly.pendencies.length === 0 && (
+                  <p className="text-xs text-muted-foreground">Nenhuma pendência aberta.</p>
+                )}
+              </div>
+            </div>
+            <p className="text-[10px] text-muted-foreground/70 print:text-black/50 flex items-center gap-1.5">
+              <Sparkles className="h-3 w-3" />
+              Competência {monthly.meta.label} · janela de atribuição desde{" "}
+              {monthly.attribution.windows.monthFrom} · {monthly.pendencies.length} pendência(s).
+              O PDF sai deste mesmo documento, em vetor.
+            </p>
+          </section>
         )}
 
         {selected.includes("patrimonio") && (
