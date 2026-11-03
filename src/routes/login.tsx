@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { DEFAULT_SECURITY_POLICY, evaluatePassword } from "@/lib/security/policy";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
@@ -174,6 +175,18 @@ function LoginPage() {
     if (password.length < 8) {
       toast.error("A senha deve ter pelo menos 8 caracteres.");
       return;
+    }
+
+    // Régua de senha da wave 17: o GoTrue não aceita política customizada em
+    // projeto gerenciado, então a checagem acontece antes da chamada.
+    if (isSignUp) {
+      const evaluation = evaluatePassword(password, DEFAULT_SECURITY_POLICY, [email]);
+      if (!evaluation.ok) {
+        toast.error("Senha recusada pela política", {
+          description: evaluation.issues.map((issue) => issue.message).join(" "),
+        });
+        return;
+      }
     }
 
     setLoading(true);

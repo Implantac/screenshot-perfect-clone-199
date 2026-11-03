@@ -1139,6 +1139,57 @@ export type Database = {
         };
         Relationships: [];
       };
+      security_policies: {
+        Row: {
+          id: boolean;
+          mfa_required_admin: boolean;
+          mfa_required_portal: boolean;
+          mfa_grace_days: number;
+          min_password_length: number;
+          require_mixed_case: boolean;
+          require_number: boolean;
+          require_symbol: boolean;
+          block_common_passwords: boolean;
+          password_history: number;
+          max_failed_attempts: number;
+          session_timeout_minutes: number;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          id?: boolean;
+          mfa_required_admin?: boolean;
+          mfa_required_portal?: boolean;
+          mfa_grace_days?: number;
+          min_password_length?: number;
+          require_mixed_case?: boolean;
+          require_number?: boolean;
+          require_symbol?: boolean;
+          block_common_passwords?: boolean;
+          password_history?: number;
+          max_failed_attempts?: number;
+          session_timeout_minutes?: number;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          id?: boolean;
+          mfa_required_admin?: boolean;
+          mfa_required_portal?: boolean;
+          mfa_grace_days?: number;
+          min_password_length?: number;
+          require_mixed_case?: boolean;
+          require_number?: boolean;
+          require_symbol?: boolean;
+          block_common_passwords?: boolean;
+          password_history?: number;
+          max_failed_attempts?: number;
+          session_timeout_minutes?: number;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [];
+      };
       suppliers: {
         Row: {
           category: string | null
@@ -1338,6 +1389,12 @@ export type Database = {
         Returns: boolean
       }
       owns_entity: { Args: { _entity_id: string }; Returns: boolean }
+      my_mfa_factors: {
+        Args: Record<string, never>
+        Returns: { id: string; friendly_name: string | null; status: string; created_at: string }[]
+      }
+      mfa_satisfied: { Args: { _scope?: string }; Returns: boolean }
+      session_is_elevated: { Args: Record<string, never>; Returns: boolean }
     }
     Enums: {
       account_kind: "corretora" | "banco" | "fundo" | "previdencia" | "cripto" | "outro"
@@ -1353,6 +1410,7 @@ export type Database = {
       portal_role: "titular" | "conjuge" | "herdeiro" | "socio" | "gestor" | "contador" | "auditor";
       portal_visibility: "completo" | "resumido" | "faixas";
       portal_status: "convite_pendente" | "ativo" | "suspenso" | "revogado";
+      mfa_scope: "admin" | "portal" | "todos";
       supplier_status: "homologado" | "em_analise" | "risco_critico" | "inativo"
       capital_event_kind: "call" | "distribution"
       capital_event_status: "previsto" | "pago" | "atrasado" | "cancelado"
@@ -1501,6 +1559,7 @@ export const Constants = {
       capital_event_kind: ["call", "distribution"],
       capital_event_status: ["previsto", "pago", "atrasado", "cancelado"],
       private_strategy: ["private_equity", "venture_capital", "infraestrutura", "real_estate", "agro", "credito_privado", "outro"],
+      mfa_scope: ["admin", "portal", "todos"],
       liability_kind: ["financiamento_imobiliario", "credito_rural", "emprestimo", "consignado", "cartao", "debenture", "divida_societaria", "outro"],
       amortization_kind: ["price", "sac", "bullet"],
       goal_kind: ["liquidez", "sucessao", "imovel", "educacao", "filantropia", "reserva_oportunidade", "meta_patrimonial", "outro"],

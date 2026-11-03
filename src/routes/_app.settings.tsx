@@ -19,6 +19,8 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { getSecurityState } from "@/lib/api/security.functions";
+import { evaluatePassword } from "@/lib/security/policy";
 import { useUserSettings } from "@/lib/userSettings";
 
 export const Route = createFileRoute("/_app/settings")({
@@ -236,6 +238,16 @@ function SecurityTab({
     }
     if (newPassword !== confirmPassword) {
       toast.error("As senhas não coincidem.");
+      return;
+    }
+    // A régua do tenant vale também na troca de senha — senão a política seria
+    // mais forte no cadastro do que na atualização.
+    const state = await getSecurityState();
+    const evaluation = evaluatePassword(newPassword, state.policy, [email ?? ""]);
+    if (!evaluation.ok) {
+      toast.error("Senha recusada pela política", {
+        description: evaluation.issues.map((issue) => issue.message).join(" "),
+      });
       return;
     }
     setSaving(true);

@@ -36,6 +36,7 @@ import { Route as AppRelatoriosRouteImport } from './routes/_app.relatorios'
 import { Route as AppRiscoMercadoRouteImport } from './routes/_app.risco-mercado'
 import { Route as AppRiscosRouteImport } from './routes/_app.riscos'
 import { Route as AppSaudeDocumentalRouteImport } from './routes/_app.saude-documental'
+import { Route as AppSegurancaRouteImport } from './routes/_app.seguranca'
 import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 import { Route as AppSucessorioRouteImport } from './routes/_app.sucessorio'
 import { Route as AppJarvisIndexRouteImport } from './routes/_app.jarvis.index'
@@ -180,6 +181,11 @@ const AppSaudeDocumentalRoute = AppSaudeDocumentalRouteImport.update({
   path: '/saude-documental',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSegurancaRoute = AppSegurancaRouteImport.update({
+  id: '/seguranca',
+  path: '/seguranca',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -253,6 +259,7 @@ export interface FileRoutesByFullPath {
   '/risco-mercado': typeof AppRiscoMercadoRoute
   '/riscos': typeof AppRiscosRoute
   '/saude-documental': typeof AppSaudeDocumentalRoute
+  '/seguranca': typeof AppSegurancaRoute
   '/settings': typeof AppSettingsRoute
   '/sucessorio': typeof AppSucessorioRoute
   '/jarvis/acoes': typeof AppJarvisAcoesRoute
@@ -289,6 +296,7 @@ export interface FileRoutesByTo {
   '/risco-mercado': typeof AppRiscoMercadoRoute
   '/riscos': typeof AppRiscosRoute
   '/saude-documental': typeof AppSaudeDocumentalRoute
+  '/seguranca': typeof AppSegurancaRoute
   '/settings': typeof AppSettingsRoute
   '/sucessorio': typeof AppSucessorioRoute
   '/jarvis/acoes': typeof AppJarvisAcoesRoute
@@ -328,6 +336,7 @@ export interface FileRoutesById {
   '/_app/risco-mercado': typeof AppRiscoMercadoRoute
   '/_app/riscos': typeof AppRiscosRoute
   '/_app/saude-documental': typeof AppSaudeDocumentalRoute
+  '/_app/seguranca': typeof AppSegurancaRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/sucessorio': typeof AppSucessorioRoute
   '/_app/jarvis/acoes': typeof AppJarvisAcoesRoute
@@ -367,6 +376,7 @@ export interface FileRouteTypes {
     | '/risco-mercado'
     | '/riscos'
     | '/saude-documental'
+    | '/seguranca'
     | '/settings'
     | '/sucessorio'
     | '/jarvis/acoes'
@@ -403,6 +413,7 @@ export interface FileRouteTypes {
     | '/risco-mercado'
     | '/riscos'
     | '/saude-documental'
+    | '/seguranca'
     | '/settings'
     | '/sucessorio'
     | '/jarvis/acoes'
@@ -441,6 +452,7 @@ export interface FileRouteTypes {
     | '/_app/risco-mercado'
     | '/_app/riscos'
     | '/_app/saude-documental'
+    | '/_app/seguranca'
     | '/_app/settings'
     | '/_app/sucessorio'
     | '/_app/jarvis/acoes'
@@ -649,6 +661,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSaudeDocumentalRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/seguranca': {
+      id: '/_app/seguranca'
+      path: '/seguranca'
+      fullPath: '/seguranca'
+      preLoaderRoute: typeof AppSegurancaRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/settings': {
       id: '/_app/settings'
       path: '/settings'
@@ -764,6 +783,7 @@ interface AppRouteChildren {
   AppRiscoMercadoRoute: typeof AppRiscoMercadoRoute
   AppRiscosRoute: typeof AppRiscosRoute
   AppSaudeDocumentalRoute: typeof AppSaudeDocumentalRoute
+  AppSegurancaRoute: typeof AppSegurancaRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppSucessorioRoute: typeof AppSucessorioRoute
 }
@@ -793,6 +813,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppRiscoMercadoRoute: AppRiscoMercadoRoute,
   AppRiscosRoute: AppRiscosRoute,
   AppSaudeDocumentalRoute: AppSaudeDocumentalRoute,
+  AppSegurancaRoute: AppSegurancaRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppSucessorioRoute: AppSucessorioRoute,
 }
