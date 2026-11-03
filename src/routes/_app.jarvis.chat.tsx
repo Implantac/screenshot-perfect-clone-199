@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useJarvisChat } from "@/hooks/useJarvisChat";
 import { MarkdownLite } from "@/components/jarvis/MarkdownLite";
+import { ToolTraceList } from "@/components/jarvis/ToolTraceList";
+import { ProposalCard } from "@/components/jarvis/ProposalCard";
 
 export const Route = createFileRoute("/_app/jarvis/chat")({
   component: JarvisChatPage,
@@ -22,7 +24,19 @@ function brl(v: number): string {
 }
 
 function JarvisChatPage() {
-  const { messages, send, isThinking, status, briefing, isBriefingLoading } = useJarvisChat();
+  const {
+    messages,
+    send,
+    isThinking,
+    status,
+    briefing,
+    isBriefingLoading,
+    proposals,
+    pendingProposals,
+    busyProposal,
+    decide,
+    apply,
+  } = useJarvisChat();
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -126,6 +140,33 @@ function JarvisChatPage() {
                   >
                     {msg.role === "assistant" ? <MarkdownLite text={msg.content} /> : msg.content}
                   </div>
+
+                  {msg.toolCalls && msg.toolCalls.length > 0 && <ToolTraceList traces={msg.toolCalls} />}
+
+                  {msg.warnings && msg.warnings.length > 0 && (
+                    <div className="rounded-xl bg-orange-500/5 border border-orange-500/20 px-3 py-2 space-y-1">
+                      {msg.warnings.map((warning) => (
+                        <p key={warning} className="text-[10px] text-orange-400/90 flex items-start gap-1.5">
+                          <AlertTriangle className="h-3 w-3 mt-0.5 shrink-0" />
+                          <span>{warning}</span>
+                        </p>
+                      ))}
+                    </div>
+                  )}
+
+                  {msg.proposals && msg.proposals.length > 0 && (
+                    <div className="space-y-2">
+                      {msg.proposals.map((proposal) => (
+                        <ProposalCard
+                          key={proposal.id}
+                          proposal={proposal}
+                          busy={busyProposal === proposal.id}
+                          onDecide={decide}
+                          onApply={apply}
+                        />
+                      ))}
+                    </div>
+                  )}
 
                   {msg.sources && msg.sources.length > 0 && (
                     <div className="flex flex-wrap gap-2">
@@ -255,6 +296,39 @@ function JarvisChatPage() {
                     </div>
                   )}
 
+                  <div className="space-y-3">
+                    <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                      Propostas do JARVIS
+                    </p>
+                    {pendingProposals.length === 0 ? (
+                      <p className="text-[10px] text-muted-foreground/70 leading-relaxed px-3 py-2 rounded-xl bg-white/[0.02] border border-white/5">
+                        Nenhuma proposta pendente. Peça algo como “proponha um plano para reservar caixa” e a
+                        proposta aparece aqui para aprovação.
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        {pendingProposals.slice(0, 3).map((proposal) => (
+                          <div
+                            key={proposal.id}
+                            className="px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/25"
+                          >
+                            <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest truncate">
+                              {proposal.title}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground leading-relaxed line-clamp-2">
+                              {proposal.effect}
+                            </p>
+                          </div>
+                        ))}
+                        {pendingProposals.length > 3 && (
+                          <p className="text-[9px] text-muted-foreground/60 px-1">
+                            +{pendingProposals.length - 3} aguardando aprovação
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
                   <div className="p-4 lg:p-6 rounded-2xl lg:rounded-3xl bg-primary/5 border border-primary/20 space-y-3">
                     <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
                       <ShieldCheck className="h-3 w-3 text-primary" />
@@ -267,6 +341,10 @@ function JarvisChatPage() {
                     </p>
                     <p className="text-[9px] text-muted-foreground/60 flex items-center gap-1.5">
                       <Database className="h-3 w-3" /> consultas autenticadas, escopo por RLS
+                    </p>
+                    <p className="text-[9px] text-muted-foreground/60 flex items-center gap-1.5">
+                      <ShieldCheck className="h-3 w-3" />
+                      {proposals.length} proposta(s) registrada(s) · {pendingProposals.length} pendente(s)
                     </p>
                   </div>
                 </>

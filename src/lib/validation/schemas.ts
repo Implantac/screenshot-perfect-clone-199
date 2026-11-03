@@ -228,6 +228,21 @@ export const jarvisAskSchema = z.object({
 });
 export type JarvisAskInput = z.input<typeof jarvisAskSchema>;
 
+// ------------------------------------------------- JARVIS: propostas (wave 21)
+/** Decisão sobre uma proposta de escrita do JARVIS. */
+export const jarvisProposalDecisionSchema = z.object({
+  id: z.string().uuid("Proposta inválida."),
+  decision: z.enum(["approved", "rejected"]),
+  note: z.string().trim().max(500).optional(),
+});
+export type JarvisProposalDecisionInput = z.input<typeof jarvisProposalDecisionSchema>;
+
+/** Aplicação do efeito aprovado (idempotente: só roda uma vez). */
+export const jarvisProposalApplySchema = z.object({
+  id: z.string().uuid("Proposta inválida."),
+});
+export type JarvisProposalApplyInput = z.input<typeof jarvisProposalApplySchema>;
+
 /** Primeiro erro legível de um ZodError (para toast). */
 export function firstZodError(error: z.ZodError): string {
   const issue = error.issues[0];

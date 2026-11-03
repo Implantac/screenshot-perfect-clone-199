@@ -1002,6 +1002,81 @@ export type Database = {
           },
         ]
       }
+      jarvis_proposals: {
+        Row: {
+          applied_at: string | null
+          applied_record_id: string | null
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          decision_note: string | null
+          effect: string | null
+          error: string | null
+          id: string
+          kind: string
+          owner_user_id: string
+          payload: Json
+          question: string | null
+          rationale: string | null
+          status: string
+          title: string
+          tool: string | null
+        }
+        Insert: {
+          applied_at?: string | null
+          applied_record_id?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          effect?: string | null
+          error?: string | null
+          id?: string
+          kind: string
+          owner_user_id: string
+          payload?: Json
+          question?: string | null
+          rationale?: string | null
+          status?: string
+          title: string
+          tool?: string | null
+        }
+        Update: {
+          applied_at?: string | null
+          applied_record_id?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          effect?: string | null
+          error?: string | null
+          id?: string
+          kind?: string
+          owner_user_id?: string
+          payload?: Json
+          question?: string | null
+          rationale?: string | null
+          status?: string
+          title?: string
+          tool?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jarvis_proposals_decided_by_fkey"
+            columns: ["decided_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jarvis_proposals_owner_user_id_fkey"
+            columns: ["owner_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jarvis_insights: {
         Row: {
           asset_id: string | null
@@ -1798,6 +1873,16 @@ export type Database = {
           entity_id: string
           book_balance: number
           status: Database["public"]["Enums"]["legal_case_status"]
+        }[]
+      }
+      jarvis_pending_proposals: {
+        Args: { _limit?: number }
+        Returns: {
+          id: string
+          title: string
+          kind: string
+          effect: string | null
+          created_at: string
         }[]
       }
       my_mfa_factors: {

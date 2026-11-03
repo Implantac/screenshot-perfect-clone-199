@@ -92,9 +92,47 @@ export type BriefingCustody = {
 
 export type JarvisProvider = "openai" | "anthropic" | "gemini" | "local";
 
+/** Execução de ferramenta devolvida ao cliente (transparência do que foi consultado). */
+export type JarvisToolTrace = {
+  tool: string;
+  label: string;
+  ok: boolean;
+  summary: string;
+  sources: { label: string; value: string }[];
+  proposalId: string | null;
+};
+
+/**
+ * Valor de payload de proposta — só primitivos.
+ *
+ * Não é frescura de tipo: Server Functions do TanStack exigem retorno
+ * serializável, e `unknown` reprova. Manter o payload plano também impede que a
+ * proposta carregue um objeto arbitrário vindo do modelo.
+ */
+export type JarvisProposalValue = string | number | boolean | null;
+export type JarvisProposalPayload = Record<string, JarvisProposalValue>;
+
+/** Proposta de escrita exposta na UI (nunca aplicada sozinha). */
+export type JarvisProposalView = {
+  id: string;
+  kind: string;
+  title: string;
+  rationale: string;
+  effect: string;
+  payload: JarvisProposalPayload;
+  status: string;
+  createdAt: string;
+};
+
 export type JarvisAnswer = {
   answer: string;
   provider: JarvisProvider;
+  /** Ferramentas que rodaram nesta resposta. */
+  toolCalls?: JarvisToolTrace[];
+  /** Propostas criadas (aguardando aprovação). */
+  proposals?: JarvisProposalView[];
+  /** Avisos de dados incompletos (migration pendente, RLS etc.). */
+  warnings?: string[];
   /** Números do banco que embasaram a resposta (transparência). */
   sources: { label: string; value: string }[];
   /** Ações sugeridas, quando o modelo devolve o bloco estruturado. */

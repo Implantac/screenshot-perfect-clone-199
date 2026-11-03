@@ -23,10 +23,25 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { jarvisAskSchema } from "@/lib/validation/schemas";
 import { buildBriefing, briefingToPrompt } from "@/lib/jarvis/briefing.server";
 import { analyzeLocally } from "@/lib/jarvis/localAnalyst";
+import { runJarvisTools } from "@/lib/jarvis/runner.server";
+import { toolsToPrompt, toolResultsToPrompt, type ToolResult } from "@/lib/jarvis/tools";
+import {
+  applyProposal,
+  createProposal,
+  decideProposal,
+  listProposals,
+  type StoredProposal,
+} from "@/lib/jarvis/proposals.server";
+import {
+  jarvisProposalApplySchema,
+  jarvisProposalDecisionSchema,
+} from "@/lib/validation/schemas";
 import type {
   JarvisAnswer,
+  JarvisProposalView,
   JarvisProvider,
   JarvisStatus,
+  JarvisToolTrace,
   PortfolioBriefing,
 } from "@/lib/jarvis/types";
 
@@ -56,7 +71,9 @@ Regras invioláveis:
 5. Priorize risco e prazo. Aponte concentrações e vencimentos.
 6. Português do Brasil, tom profissional, no máximo 220 palavras, use markdown simples (negrito, listas).
 7. Nunca prometa resultado jurídico ou tributário; recomende validação com o responsável quando for o caso.
-8. Ao final, se fizer sentido, sugira 2 ou 3 próximos passos em uma lista curta iniciada por "Próximos passos:".`;
+8. Ao final, se fizer sentido, sugira 2 ou 3 próximos passos em uma lista curta iniciada por "Próximos passos:".
+9. Quando houver um bloco "FERRAMENTAS EXECUTADAS", os números dele são a fonte da verdade — use-os literalmente; não recalcule nem arredonde diferente.
+10. Você não escreve no banco. Se a ação exigir gravar algo, diga que a proposta será criada para aprovação humana.`;
 
 function resolveProvider(): {
   provider: JarvisProvider;
@@ -213,6 +230,34 @@ function extractFollowUps(answer: string): string[] {
     .slice(0, 3);
 }
 
+function tracesFrom(results: ToolResult[], proposals: JarvisProposalView[]): JarvisToolTrace[] {
+  return results.map((result) => ({
+    tool: result.tool,
+    label: result.label,
+    ok: result.ok,
+    summary: result.summary,
+    sources: result.sources,
+    proposalId:
+      result.proposal
+        ? (proposals.find((proposal) => proposal.kind === result.proposal?.kind && proposal.title === result.proposal?.title)
+            ?.id ?? null)
+        : null,
+  }));
+}
+
+function toView(proposal: StoredProposal): JarvisProposalView {
+  return {
+    id: proposal.id,
+    kind: proposal.kind,
+    title: proposal.title,
+    rationale: proposal.rationale,
+    effect: proposal.effect,
+    payload: proposal.payload,
+    status: proposal.status,
+    createdAt: proposal.createdAt,
+  };
+}
+
 function sourcesFromBriefing(b: PortfolioBriefing): { label: string; value: string }[] {
   const brl = (v: number) =>
     v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
@@ -248,20 +293,56 @@ export const askJarvis = createServerFn({ method: "POST" })
     const turns: ChatTurn[] = (data.history ?? []).slice(-8);
     const { provider, apiKey, model } = resolveProvider();
 
-    const fallback = (): JarvisAnswer => {
+    // 1) Ferramentas rodam ANTES do modelo: o número é calculado, não alucinado.
+    const tools = await runJarvisTools(context.supabase, question, briefing);
+    const warnings = [...tools.warnings];
+
+    // 2) Proposta de escrita nunca é aplicada aqui: nasce pendente e auditada.
+    const created: JarvisProposalView[] = [];
+    for (const result of tools.results) {
+      if (!result.proposal) continue;
+      const stored = await createProposal(context.supabase, context.userId, result.proposal, {
+        question,
+        tool: result.tool,
+      });
+      if (stored) created.push(toView(stored));
+      else warnings.push("Não consegui registrar a proposta (migration 20261030260000 aplicada?).");
+    }
+
+    const toolBlock = toolResultsToPrompt(tools.results);
+    const traces = tracesFrom(tools.results, created);
+
+    const fallback = (note?: string): JarvisAnswer => {
       const local = analyzeLocally(question, briefing);
+      // Com ferramenta executada, o analista local devolve o número calculado —
+      // é o que faz o tool-use valer alguma coisa mesmo sem chave de LLM.
+      const toolText = tools.results
+        .filter((result) => result.ok)
+        .map((result) => `**${result.label}** — ${result.summary}`)
+        .join("\n\n");
+      const answer = toolText
+        ? [note, toolText, local.answer].filter(Boolean).join("\n\n")
+        : [note, local.answer].filter(Boolean).join("\n\n");
       return {
-        answer: local.answer,
+        answer,
         provider: "local",
-        sources: sourcesFromBriefing(briefing),
+        sources: [
+          ...tools.results.flatMap((result) => result.sources),
+          ...sourcesFromBriefing(briefing),
+        ],
         followUps: local.followUps,
         generatedAt: new Date().toISOString(),
+        toolCalls: traces,
+        proposals: created,
+        warnings,
       };
     };
 
     if (provider === "local" || !apiKey || !model) return fallback();
 
-    const contextPrompt = briefingToPrompt(briefing);
+    const contextPrompt = [briefingToPrompt(briefing), toolBlock && `### FERRAMENTAS EXECUTADAS\n${toolBlock}`, `### FERRAMENTAS DISPONÍVEIS (já executadas pelo sistema)\n${toolsToPrompt()}`]
+      .filter(Boolean)
+      .join("\n\n");
 
     try {
       let answer: string;
@@ -276,22 +357,53 @@ export const askJarvis = createServerFn({ method: "POST" })
       return {
         answer,
         provider,
-        sources: sourcesFromBriefing(briefing),
+        sources: [
+          ...tools.results.flatMap((result) => result.sources),
+          ...sourcesFromBriefing(briefing),
+        ],
         followUps: extractFollowUps(answer),
         generatedAt: new Date().toISOString(),
+        toolCalls: traces,
+        proposals: created,
+        warnings,
       };
     } catch (error) {
       // Falha do provedor não pode virar tela quebrada: cai no analista local.
       console.error("[JARVIS] falha no provedor de LLM, usando analista local:", error);
-      const local = analyzeLocally(question, briefing);
-      return {
-        answer: `_Não consegui falar com o provedor de IA agora; segue a análise local sobre os seus dados._\n\n${local.answer}`,
-        provider: "local",
-        sources: sourcesFromBriefing(briefing),
-        followUps: local.followUps,
-        generatedAt: new Date().toISOString(),
-      };
+      return fallback(
+        "_Não consegui falar com o provedor de IA agora; segue a análise local sobre os seus dados._",
+      );
     }
+  });
+
+// ------------------------------------------------- propostas (aprovação humana)
+
+export const listJarvisProposals = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<JarvisProposalView[]> => {
+    const proposals = await listProposals(context.supabase);
+    return proposals.map(toView);
+  });
+
+export const decideJarvisProposal = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator(jarvisProposalDecisionSchema)
+  .handler(async ({ data, context }): Promise<JarvisProposalView> => {
+    const updated = await decideProposal(context.supabase, context.userId, data);
+    if (!updated) throw new Error("Não consegui registrar a decisão.");
+    return toView(updated);
+  });
+
+export const applyJarvisProposal = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator(jarvisProposalApplySchema)
+  .handler(async ({ data, context }): Promise<{ ok: boolean; message: string; proposal: JarvisProposalView | null }> => {
+    const result = await applyProposal(context.supabase, context.userId, data.id);
+    return {
+      ok: result.ok,
+      message: result.message,
+      proposal: result.proposal ? toView(result.proposal) : null,
+    };
   });
 
 /** Pré-visualização do briefing — usada no painel de contexto do chat. */

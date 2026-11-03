@@ -4,9 +4,16 @@
  * LLM configurado e analista local — o cliente nunca inventa conteúdo.
  */
 import { useCallback, useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { askJarvis, getJarvisStatus, getPortfolioBriefing } from "@/lib/api/jarvis.functions";
-import type { JarvisProvider } from "@/lib/jarvis/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  applyJarvisProposal,
+  askJarvis,
+  decideJarvisProposal,
+  getJarvisStatus,
+  getPortfolioBriefing,
+  listJarvisProposals,
+} from "@/lib/api/jarvis.functions";
+import type { JarvisProposalView, JarvisProvider, JarvisToolTrace } from "@/lib/jarvis/types";
 
 export type ChatMessage = {
   id: string;
@@ -15,6 +22,11 @@ export type ChatMessage = {
   provider?: JarvisProvider;
   sources?: { label: string; value: string }[];
   followUps?: string[];
+  /** Ferramentas que o agente executou para responder. */
+  toolCalls?: JarvisToolTrace[];
+  /** Propostas criadas nesta resposta (pendentes de aprovação). */
+  proposals?: JarvisProposalView[];
+  warnings?: string[];
 };
 
 const GREETING: ChatMessage = {
@@ -26,7 +38,8 @@ const GREETING: ChatMessage = {
     "Quais são meus riscos críticos?",
     "Quais documentos vencem nos próximos 60 dias?",
     "Resumo do patrimônio",
-    "Como está meu compliance?",
+    "Qual meu VaR em 21 dias?",
+    "E se os imóveis caírem 20%?",
   ],
 };
 
@@ -36,6 +49,8 @@ const nextId = () => `m-${Date.now()}-${counter++}`;
 export function useJarvisChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([GREETING]);
   const [isThinking, setIsThinking] = useState(false);
+  const [busyProposal, setBusyProposal] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   const statusQuery = useQuery({
     queryKey: ["jarvis-status"],
@@ -47,6 +62,13 @@ export function useJarvisChat() {
     queryKey: ["jarvis-briefing"],
     queryFn: () => getPortfolioBriefing(),
     staleTime: 30_000,
+  });
+
+  /** Propostas persistidas: sobrevivem ao refresh e aparecem após a resposta. */
+  const proposalsQuery = useQuery({
+    queryKey: ["jarvis-proposals"],
+    queryFn: () => listJarvisProposals(),
+    staleTime: 15_000,
   });
 
   const mutation = useMutation({
@@ -64,9 +86,13 @@ export function useJarvisChat() {
           provider: answer.provider,
           sources: answer.sources,
           followUps: answer.followUps,
+          toolCalls: answer.toolCalls,
+          proposals: answer.proposals,
+          warnings: answer.warnings,
         },
       ]);
       briefingQuery.refetch();
+      if ((answer.proposals?.length ?? 0) > 0) proposalsQuery.refetch();
     },
     onError: (error: Error) => {
       setMessages((prev) => [
@@ -99,6 +125,69 @@ export function useJarvisChat() {
     [messages, mutation],
   );
 
+  /** Aprovar/rejeitar — chamado pelo cartão de proposta. */
+  const decide = useCallback(
+    async (id: string, decision: "approved" | "rejected") => {
+      setBusyProposal(id);
+      try {
+        const updated = await decideJarvisProposal({ data: { id, decision } });
+        // Atualiza a cópia dentro das mensagens e a lista lateral.
+        setMessages((prev) =>
+          prev.map((message) =>
+            message.proposals
+              ? {
+                  ...message,
+                  proposals: message.proposals.map((proposal) =>
+                    proposal.id === id ? { ...proposal, status: updated.status } : proposal,
+                  ),
+                }
+              : message,
+          ),
+        );
+        await proposalsQuery.refetch();
+      } finally {
+        setBusyProposal(null);
+      }
+    },
+    [proposalsQuery],
+  );
+
+  /** Aplicar o efeito aprovado (grava no módulo, com trilha). */
+  const apply = useCallback(
+    async (id: string) => {
+      setBusyProposal(id);
+      try {
+        const result = await applyJarvisProposal({ data: { id } });
+        const nextStatus = result.proposal?.status ?? (result.ok ? "applied" : "failed");
+        setMessages((prev) => [
+          ...prev.map((message) =>
+            message.proposals
+              ? {
+                  ...message,
+                  proposals: message.proposals.map((proposal) =>
+                    proposal.id === id ? { ...proposal, status: nextStatus } : proposal,
+                  ),
+                }
+              : message,
+          ),
+          {
+            id: nextId(),
+            role: "assistant",
+            content: result.ok
+              ? `Proposta aplicada: ${result.message} Registro criado e evento gravado na trilha de auditoria.`
+              : `Não consegui aplicar a proposta: ${result.message} A proposta ficou marcada como falha e você pode revisá-la.`,
+          },
+        ]);
+        await Promise.all([proposalsQuery.refetch(), briefingQuery.refetch()]);
+      } finally {
+        setBusyProposal(null);
+      }
+    },
+    [briefingQuery, proposalsQuery],
+  );
+
+  const pendingProposals = (proposalsQuery.data ?? []).filter((proposal) => proposal.status === "pending");
+
   return {
     messages,
     send,
@@ -106,5 +195,12 @@ export function useJarvisChat() {
     status: statusQuery.data,
     briefing: briefingQuery.data,
     isBriefingLoading: briefingQuery.isLoading,
+    proposals: proposalsQuery.data ?? [],
+    pendingProposals,
+    isProposalsLoading: proposalsQuery.isLoading,
+    busyProposal,
+    decide,
+    apply,
+    queryClient,
   };
 }
