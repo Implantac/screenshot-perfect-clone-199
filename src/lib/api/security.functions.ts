@@ -9,6 +9,12 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { DEFAULT_SECURITY_POLICY, type SecurityPolicy } from "@/lib/security/policy";
+import {
+  assessIsolation,
+  type IsolationPolicyRow,
+  type IsolationReport,
+  type OrphanRow,
+} from "@/lib/security/isolation";
 
 const authed = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]);
 
@@ -102,3 +108,32 @@ export const updateSecurityPolicy = authed
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
+
+// ------------------------------------------------------------- isolamento (wave 23)
+
+/**
+ * Estado do isolamento entre tenants.
+ *
+ * Lê `patrium_isolation_audit()` (metadados de policy — não dado de cliente) e,
+ * se a pessoa for admin, `patrium_orphan_counts()`. A contagem de órfãos é
+ * restrita porque revela volume de dados de outros tenants; o veredito de
+ * policy não revela dado nenhum e serve para qualquer sessão autenticada.
+ */
+export const getIsolationReport = authed.handler(async ({ context }): Promise<IsolationReport> => {
+  const audit = await context.supabase.rpc("patrium_isolation_audit" as never);
+  if (audit.error) {
+    // Migration pendente: o relatório sai vazio e avisa qual migration aplicar,
+    // em vez de derrubar a tela de segurança inteira.
+    return assessIsolation({ policies: [] });
+  }
+
+  const policies = (audit.data ?? []) as unknown as IsolationPolicyRow[];
+
+  let orphans: OrphanRow[] = [];
+  const orphan = await context.supabase.rpc("patrium_orphan_counts" as never);
+  if (!orphan.error) {
+    orphans = (orphan.data ?? []) as unknown as OrphanRow[];
+  }
+
+  return assessIsolation({ policies, orphans });
+});

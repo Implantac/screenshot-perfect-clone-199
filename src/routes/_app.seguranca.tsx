@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { IsolationPanel } from "@/components/security/IsolationPanel";
 import { getSecurityState, updateSecurityPolicy } from "@/lib/api/security.functions";
 import {
   POLICY_LABELS,
@@ -179,6 +180,8 @@ function Seguranca() {
           mas o banco ainda não tem a trava. Rode <code>supabase/APLICAR-TUDO.sql</code>.
         </div>
       ) : null}
+
+      <IsolationPanel />
 
       <div className="grid gap-4 lg:grid-cols-2">
         {/* -------------------------------------------------- segundo fator */}
