@@ -676,6 +676,57 @@ export type Database = {
           },
         ]
       }
+      audit_anchors: {
+        Row: {
+          chain_hash: string
+          created_at: string
+          created_by: string | null
+          entries: number
+          head_hash: string | null
+          head_sequence: number | null
+          id: string
+          manifest: Json
+          manifest_hash: string
+          owner_user_id: string
+          period_from: string | null
+          period_to: string | null
+          signature: string | null
+          signature_algorithm: string | null
+        }
+        Insert: {
+          chain_hash: string
+          created_at?: string
+          created_by?: string | null
+          entries: number
+          head_hash?: string | null
+          head_sequence?: number | null
+          id?: string
+          manifest: Json
+          manifest_hash: string
+          owner_user_id: string
+          period_from?: string | null
+          period_to?: string | null
+          signature?: string | null
+          signature_algorithm?: string | null
+        }
+        Update: {
+          chain_hash?: string
+          created_at?: string
+          created_by?: string | null
+          entries?: number
+          head_hash?: string | null
+          head_sequence?: number | null
+          id?: string
+          manifest?: Json
+          manifest_hash?: string
+          owner_user_id?: string
+          period_from?: string | null
+          period_to?: string | null
+          signature?: string | null
+          signature_algorithm?: string | null
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           owner_user_id: string | null
@@ -687,6 +738,9 @@ export type Database = {
           record_id: string | null
           table_name: string | null
           user_id: string | null
+          entry_hash: string | null
+          prev_hash: string | null
+          sequence: number | null
         }
         Insert: {
           owner_user_id?: string | null
@@ -698,6 +752,9 @@ export type Database = {
           record_id?: string | null
           table_name?: string | null
           user_id?: string | null
+          entry_hash: string | null
+          prev_hash: string | null
+          sequence: number | null
         }
         Update: {
           owner_user_id?: string | null
@@ -1696,7 +1753,24 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      audit_logs_chain: {
+        Row: {
+          action: string
+          created_at: string | null
+          entry_hash: string | null
+          id: string
+          new_data: Json | null
+          old_data: Json | null
+          owner_user_id: string | null
+          payload_text: string | null
+          prev_hash: string | null
+          record_id: string | null
+          sequence: number | null
+          table_name: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
@@ -1707,6 +1781,15 @@ export type Database = {
         Returns: boolean
       }
       owns_entity: { Args: { _entity_id: string }; Returns: boolean }
+      verify_audit_chain: {
+        Args: { _limit?: number }
+        Returns: {
+          checked: number
+          broken: number
+          first_broken_sequence: number
+          started_mid_chain: boolean
+        }[]
+      }
       provisions_pending_closure: {
         Args: Record<string, never>
         Returns: {
