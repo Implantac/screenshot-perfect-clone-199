@@ -389,3 +389,21 @@ export function useQuotes() {
     retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
   });
 }
+
+// ------------------------------------------- portal do cliente (wave 14)
+
+/** Concessões de leitura do portal: quem vê o quê, com que grão e até quando. */
+export function usePortalGrants() {
+  return useQuery({
+    queryKey: ["portal_grants"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("portal_grants")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) ensureTable(error, "portal_grants", "20261030210000_portal_access.sql");
+      return data ?? [];
+    },
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+  });
+}

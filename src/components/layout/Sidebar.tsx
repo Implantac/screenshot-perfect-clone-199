@@ -25,6 +25,7 @@ import {
   Sparkles,
   UploadCloud,
   User,
+  Users,
   Users2,
   Wallet,
 } from "lucide-react";
@@ -60,6 +61,7 @@ const navGroups = [
       { label: "Capital calls & privados", icon: Building2, to: "/privados" },
       { label: "Balanço & metas", icon: Scale, to: "/balanco" },
       { label: "Atribuição de retorno", icon: PieChart, to: "/atribuicao" },
+      { label: "Portal do cliente", icon: Users, to: "/portal" },
       { label: "Sucessão & Tributação", icon: SuccessionIcon, to: "/sucessorio" },
       { label: "Relatórios", icon: FileText, to: "/relatorios" },
     ]

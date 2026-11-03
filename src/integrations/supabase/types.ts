@@ -1073,6 +1073,72 @@ export type Database = {
           },
         ]
       }
+      portal_grants: {
+        Row: {
+          id: string;
+          entity_id: string;
+          member_id: string | null;
+          full_name: string;
+          email: string;
+          role: Database["public"]["Enums"]["portal_role"];
+          sections: string[];
+          visibility: Database["public"]["Enums"]["portal_visibility"];
+          status: Database["public"]["Enums"]["portal_status"];
+          can_export: boolean;
+          can_see_liabilities: boolean;
+          can_see_documents: boolean;
+          require_mfa: boolean;
+          expires_at: string | null;
+          invited_at: string | null;
+          last_access_at: string | null;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          entity_id: string;
+          member_id?: string | null;
+          full_name: string;
+          email: string;
+          role?: Database["public"]["Enums"]["portal_role"];
+          sections?: string[];
+          visibility?: Database["public"]["Enums"]["portal_visibility"];
+          status?: Database["public"]["Enums"]["portal_status"];
+          can_export?: boolean;
+          can_see_liabilities?: boolean;
+          can_see_documents?: boolean;
+          require_mfa?: boolean;
+          expires_at?: string | null;
+          invited_at?: string | null;
+          last_access_at?: string | null;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          entity_id?: string;
+          member_id?: string | null;
+          full_name?: string;
+          email?: string;
+          role?: Database["public"]["Enums"]["portal_role"];
+          sections?: string[];
+          visibility?: Database["public"]["Enums"]["portal_visibility"];
+          status?: Database["public"]["Enums"]["portal_status"];
+          can_export?: boolean;
+          can_see_liabilities?: boolean;
+          can_see_documents?: boolean;
+          require_mfa?: boolean;
+          expires_at?: string | null;
+          invited_at?: string | null;
+          last_access_at?: string | null;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       suppliers: {
         Row: {
           category: string | null
@@ -1284,6 +1350,9 @@ export type Database = {
       legal_case_status: "em_andamento" | "suspenso" | "acordo" | "encerrado"
       legal_case_type: "civel" | "tributario" | "ambiental" | "trabalhista" | "societario" | "imobiliario"
       risk_severity: "low" | "medium" | "high" | "critical"
+      portal_role: "titular" | "conjuge" | "herdeiro" | "socio" | "gestor" | "contador" | "auditor";
+      portal_visibility: "completo" | "resumido" | "faixas";
+      portal_status: "convite_pendente" | "ativo" | "suspenso" | "revogado";
       supplier_status: "homologado" | "em_analise" | "risco_critico" | "inativo"
       capital_event_kind: "call" | "distribution"
       capital_event_status: "previsto" | "pago" | "atrasado" | "cancelado"

@@ -38,6 +38,8 @@ import {
   capitalEventInputSchema,
   capitalEventUpdateSchema,
   liabilityInputSchema,
+  portalGrantInputSchema,
+  portalGrantUpdateSchema,
   liabilityUpdateSchema,
   goalInputSchema,
   goalUpdateSchema,
@@ -796,6 +798,53 @@ export const updateGoal = authed.validator(goalUpdateSchema).handler(async ({ da
 
 export const deleteGoal = authed.validator(idSchema).handler(async ({ data, context }) => {
   const { error } = await context.supabase.from("goals").delete().eq("id", data.id);
+  if (error) throw new Error(error.message);
+  return { ok: true as const, id: data.id };
+});
+
+// ============================================ portal do cliente (wave 14)
+
+/**
+ * Concessão de acesso ao portal. `sections` é lista explícita: negar por padrão,
+ * conceder por seção — mexer no pacote da persona no código não amplia acesso
+ * de quem já existe.
+ */
+export const createPortalGrant = authed
+  .validator(portalGrantInputSchema)
+  .handler(async ({ data, context }) => {
+    const payload = nullify(data) as Tables["portal_grants"]["Insert"];
+    const { data: row, error } = await context.supabase
+      .from("portal_grants")
+      .insert({
+        ...payload,
+        entity_id: data.entity_id,
+        member_id: data.member_id ? data.member_id : null,
+        sections: data.sections,
+        invited_at: new Date().toISOString(),
+      })
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+    return { ok: true as const, id: row.id };
+  });
+
+export const updatePortalGrant = authed
+  .validator(portalGrantUpdateSchema)
+  .handler(async ({ data, context }) => {
+    const { id, ...rest } = data;
+    const patch = nullify(rest) as Tables["portal_grants"]["Update"];
+    if (rest.member_id !== undefined) patch.member_id = rest.member_id ? rest.member_id : null;
+    if (rest.sections !== undefined) patch.sections = rest.sections;
+    const { error } = await context.supabase
+      .from("portal_grants")
+      .update({ ...patch, updated_at: new Date().toISOString() })
+      .eq("id", id);
+    if (error) throw new Error(error.message);
+    return { ok: true as const, id };
+  });
+
+export const deletePortalGrant = authed.validator(idSchema).handler(async ({ data, context }) => {
+  const { error } = await context.supabase.from("portal_grants").delete().eq("id", data.id);
   if (error) throw new Error(error.message);
   return { ok: true as const, id: data.id };
 });

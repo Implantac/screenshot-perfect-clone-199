@@ -407,3 +407,37 @@ export const goalInputSchema = z.object({
 });
 export type GoalInput = z.input<typeof goalInputSchema>;
 export const goalUpdateSchema = goalInputSchema.partial().extend({ id: uuid });
+
+// ---------------------------------------------------- portal do cliente (wave 14)
+
+export const portalRoleEnum = z.enum([
+  "titular",
+  "conjuge",
+  "herdeiro",
+  "socio",
+  "gestor",
+  "contador",
+  "auditor",
+]);
+
+export const portalVisibilityEnum = z.enum(["completo", "resumido", "faixas"]);
+export const portalStatusEnum = z.enum(["convite_pendente", "ativo", "suspenso", "revogado"]);
+
+export const portalGrantInputSchema = z.object({
+  entity_id: uuid,
+  member_id: uuid.optional().or(z.literal("")),
+  full_name: text(120),
+  email: z.string().trim().toLowerCase().email("Informe um e-mail válido.").max(160),
+  role: portalRoleEnum.default("herdeiro"),
+  sections: z.array(z.string().trim().min(1)).min(1, "Conceda ao menos uma seção."),
+  visibility: portalVisibilityEnum.default("resumido"),
+  status: portalStatusEnum.default("convite_pendente"),
+  can_export: z.boolean().default(false),
+  can_see_liabilities: z.boolean().default(false),
+  can_see_documents: z.boolean().default(false),
+  require_mfa: z.boolean().default(true),
+  expires_at: optionalDate,
+  notes: z.string().trim().max(300).optional().or(z.literal("")),
+});
+export type PortalGrantInput = z.input<typeof portalGrantInputSchema>;
+export const portalGrantUpdateSchema = portalGrantInputSchema.partial().extend({ id: uuid });

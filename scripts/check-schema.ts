@@ -33,6 +33,7 @@ const EXPECTED: { table: string; migration: string }[] = [
   { table: "capital_events", migration: "20261030190000_private_markets.sql" },
   { table: "liabilities", migration: "20261030200000_balance_sheet.sql" },
   { table: "goals", migration: "20261030200000_balance_sheet.sql" },
+  { table: "portal_grants", migration: "20261030210000_portal_access.sql" },
 ];
 
 /** Colunas que provam que a migration foi aplicada inteira. */

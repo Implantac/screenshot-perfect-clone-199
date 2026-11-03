@@ -61,6 +61,9 @@ import {
   updateLiability,
   deleteLiability,
   createGoal,
+  createPortalGrant,
+  updatePortalGrant,
+  deletePortalGrant,
   updateGoal,
   deleteGoal,
 } from "@/lib/api/crud.functions";
@@ -95,6 +98,8 @@ import type {
   liabilityUpdateSchema,
   goalInputSchema,
   goalUpdateSchema,
+  portalGrantInputSchema,
+  portalGrantUpdateSchema,
   cashFlowInputSchema,
   snapshotInputSchema,
   taxScenarioInputSchema,
@@ -563,4 +568,26 @@ export const useDeleteGoal = () =>
   useInvalidatingMutation<IdInput, unknown>(deleteGoal, BALANCE_KEYS, {
     success: "Meta removida.",
     error: "Não foi possível remover a meta.",
+  });
+
+// ---------------------------------------------------- portal do cliente (wave 14)
+
+const PORTAL_KEYS: QueryKey[] = [["portal_grants"]];
+
+export const useCreatePortalGrant = () =>
+  useInvalidatingMutation<z.input<typeof portalGrantInputSchema>, unknown>(createPortalGrant, PORTAL_KEYS, {
+    success: "Acesso concedido.",
+    error: "Não foi possível conceder o acesso.",
+  });
+
+export const useUpdatePortalGrant = () =>
+  useInvalidatingMutation<z.input<typeof portalGrantUpdateSchema>, unknown>(updatePortalGrant, PORTAL_KEYS, {
+    success: "Acesso atualizado.",
+    error: "Não foi possível atualizar o acesso.",
+  });
+
+export const useDeletePortalGrant = () =>
+  useInvalidatingMutation<IdInput, unknown>(deletePortalGrant, PORTAL_KEYS, {
+    success: "Acesso revogado.",
+    error: "Não foi possível revogar o acesso.",
   });
