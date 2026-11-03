@@ -25,6 +25,7 @@ import {
   ShieldAlert,
   ShieldCheck,
   Sparkles,
+  Sprout,
   UploadCloud,
   User,
   UserCheck,
@@ -69,6 +70,7 @@ const navGroups = [
       { label: "Área do cliente", icon: UserCheck, to: "/portal-cliente" },
       { label: "Segurança de acesso", icon: ShieldCheck, to: "/seguranca" },
       { label: "Contencioso", icon: Gavel, to: "/contencioso" },
+      { label: "Agro", icon: Sprout, to: "/agro" },
       { label: "Sucessão & Tributação", icon: SuccessionIcon, to: "/sucessorio" },
       { label: "Relatórios", icon: FileText, to: "/relatorios" },
     ]

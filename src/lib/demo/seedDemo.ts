@@ -508,6 +508,88 @@ export async function seedDemoData(
     }
   }
 
+  // 13. Agro (wave 19): talhão, arrendamento, barter e ambiental.
+  // Cada bloco é independente: projeto sem a migration do agro continua semeando
+  // o resto em vez de abortar.
+  const recordAgro = (table: string, error: unknown, length: number) => {
+    if (!error) {
+      counts[table] = length;
+      return;
+    }
+    if (isMissingTable(error)) skipped.push(table);
+    else throw error;
+  };
+
+  const agroEntityId = entityRef(demo.entities[1]?.name ?? demo.entities[0]?.name);
+
+  if (demo.agroFields.length > 0) {
+    const rows = demo.agroFields.map((field) => ({
+      asset_id: assetRef(field.asset),
+      entity_id: agroEntityId,
+      name: field.name,
+      area_ha: field.areaHa,
+      crop: field.crop,
+      system: field.system,
+      productivity_sc_ha: field.productivityScHa,
+      cost_per_ha: field.costPerHa,
+      season: field.season,
+    }));
+    const { error } = await supabase.from("agro_fields").insert(rows);
+    recordAgro("agro_fields", error, rows.length);
+  }
+
+  if (demo.agroLeases.length > 0) {
+    const rows = demo.agroLeases.map((lease) => ({
+      asset_id: assetRef(lease.asset),
+      entity_id: agroEntityId,
+      role: lease.role,
+      counterparty: lease.counterparty,
+      area_ha: lease.areaHa,
+      payment: lease.payment,
+      price_per_ha_year: lease.pricePerHaYear,
+      bags_per_ha: lease.bagsPerHa,
+      share_percent: lease.sharePercent,
+      starts_on: isoDate(new Date(Date.now() - 365 * 86_400_000)),
+      ends_on: addMonths(lease.endsInMonths),
+      adjustment_index: lease.adjustmentIndex,
+    }));
+    const { error } = await supabase.from("agro_leases").insert(rows);
+    recordAgro("agro_leases", error, rows.length);
+  }
+
+  if (demo.agroBarters.length > 0) {
+    const rows = demo.agroBarters.map((barter) => ({
+      asset_id: assetRef(barter.asset),
+      entity_id: agroEntityId,
+      supplier: barter.supplier,
+      season: barter.season,
+      input_value: barter.inputValue,
+      bags_due: barter.bagsDue,
+      bag_reference_price: barter.bagReferencePrice,
+      area_ha: barter.areaHa,
+      months_to_delivery: barter.monthsToDelivery,
+      delivery_on: addMonths(barter.monthsToDelivery),
+    }));
+    const { error } = await supabase.from("agro_barters").insert(rows);
+    recordAgro("agro_barters", error, rows.length);
+  }
+
+  if (demo.agroEnvironmental.length > 0) {
+    const rows = demo.agroEnvironmental.map((env) => ({
+      asset_id: assetRef(env.asset),
+      entity_id: agroEntityId,
+      total_ha: env.totalHa,
+      biome: env.biome,
+      in_legal_amazon: env.inLegalAmazon,
+      legal_reserve_declared_ha: env.legalReserveDeclaredHa,
+      app_ha: env.appHa,
+      car_number: env.carNumber,
+      car_status: env.carStatus,
+    }));
+    const { error } = await supabase.from("agro_environmental").insert(rows);
+    recordAgro("agro_environmental", error, rows.length);
+  }
+
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
   const base = `Demonstração criada: ${total} registros em ${Object.keys(counts).length} tabelas.`;
   return {

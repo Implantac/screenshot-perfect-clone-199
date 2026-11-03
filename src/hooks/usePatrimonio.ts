@@ -148,6 +148,67 @@ export function useLegalCases() {
   });
 }
 
+// ---------------------------------------------------------------- agro (wave 19)
+export function useAgroFields() {
+  return useQuery({
+    queryKey: ["agro_fields"],
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("agro_fields")
+        .select("*, assets(name), entities(name)")
+        .order("area_ha", { ascending: false });
+      if (error) ensureTable(error, "agro_fields", "20261030240000_agro.sql");
+      return data;
+    },
+  });
+}
+
+export function useAgroLeases() {
+  return useQuery({
+    queryKey: ["agro_leases"],
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("agro_leases")
+        .select("*, assets(name)")
+        .order("area_ha", { ascending: false });
+      if (error) ensureTable(error, "agro_leases", "20261030240000_agro.sql");
+      return data;
+    },
+  });
+}
+
+export function useAgroBarters() {
+  return useQuery({
+    queryKey: ["agro_barters"],
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("agro_barters")
+        .select("*, assets(name)")
+        .order("created_at", { ascending: false });
+      if (error) ensureTable(error, "agro_barters", "20261030240000_agro.sql");
+      return data;
+    },
+  });
+}
+
+export function useAgroEnvironmental() {
+  return useQuery({
+    queryKey: ["agro_environmental"],
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("agro_environmental")
+        .select("*, assets(name)")
+        .order("total_ha", { ascending: false });
+      if (error) ensureTable(error, "agro_environmental", "20261030240000_agro.sql");
+      return data;
+    },
+  });
+}
+
 /**
  * Lançamentos de provisão (wave 18). O saldo escriturado nasce daqui, não de um
  * campo digitado — é o que permite explicar a variação para o auditor.

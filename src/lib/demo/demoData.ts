@@ -141,6 +141,53 @@ export type DemoLegalCase = {
   lawyer_assessment: string;
 };
 
+/** Talhão da demonstração (wave 19). */
+export type DemoAgroField = {
+  asset: string;
+  name: string;
+  areaHa: number;
+  crop: "soja" | "milho" | "milho_safrinha" | "algodao" | "cana" | "cafe" | "pastagem" | "floresta" | "saf" | "outro";
+  system: "lavoura" | "pastagem" | "saf" | "floresta" | "il" | "app";
+  productivityScHa: number | null;
+  costPerHa: number | null;
+  season: string;
+};
+
+export type DemoAgroLease = {
+  asset: string;
+  role: "arrendador" | "arrendatario" | "parceiro_outorgante" | "parceiro_outorgado";
+  counterparty: string;
+  areaHa: number;
+  payment: "dinheiro" | "sacas" | "parceria";
+  pricePerHaYear: number | null;
+  bagsPerHa: number | null;
+  sharePercent: number | null;
+  adjustmentIndex: string;
+  endsInMonths: number;
+};
+
+export type DemoAgroBarter = {
+  asset: string;
+  supplier: string;
+  season: string;
+  inputValue: number;
+  bagsDue: number;
+  bagReferencePrice: number;
+  areaHa: number;
+  monthsToDelivery: number;
+};
+
+export type DemoAgroEnvironmental = {
+  asset: string;
+  totalHa: number;
+  biome: "amazonia" | "cerrado" | "mata_atlantica" | "pampa" | "pantanal" | "caatinga";
+  inLegalAmazon: boolean;
+  legalReserveDeclaredHa: number;
+  appHa: number;
+  carNumber: string | null;
+  carStatus: "ativo" | "pendente" | "em_analise" | "irregular" | "sem_car";
+};
+
 /** Lançamento de provisão da demonstração (subledger da wave 18). */
 export type DemoProvisionEntry = {
   case_number: string;
@@ -201,6 +248,10 @@ export type DemoDataset = {
   suppliers: DemoSupplier[];
   legalCases: DemoLegalCase[];
   provisionEntries: DemoProvisionEntry[];
+  agroFields: DemoAgroField[];
+  agroLeases: DemoAgroLease[];
+  agroBarters: DemoAgroBarter[];
+  agroEnvironmental: DemoAgroEnvironmental[];
   accounts: DemoAccount[];
   positions: DemoPosition[];
   cashFlows: DemoCashFlow[];
@@ -1286,6 +1337,115 @@ export function buildDemoDataset(): DemoDataset {
     },
   ];
 
+  // ------------------------------------------------------------------ agro
+  // Área total das fazendas da demonstração: 1.240 + 860 + 520 + 2.800 ha.
+  // Os talhões somam menos que isso porque o resto é reserva legal, APP e sede —
+  // exatamente a diferença que a tela de passivo ambiental cobra.
+  const agroFields: DemoAgroField[] = [
+    { asset: FAZENDA, name: "Talhão 1 — Santa Fé", areaHa: 420, crop: "soja", system: "lavoura", productivityScHa: 64, costPerHa: 7_450, season: "2025/26" },
+    { asset: FAZENDA, name: "Talhão 2 — Santa Fé", areaHa: 260, crop: "milho_safrinha", system: "lavoura", productivityScHa: 92, costPerHa: 4_350, season: "2026" },
+    { asset: FAZENDA, name: "Talhão 3 — Santa Fé", areaHa: 180, crop: "soja", system: "lavoura", productivityScHa: 58, costPerHa: 7_600, season: "2025/26" },
+    { asset: BOA_VISTA, name: "Talhão A — Boa Vista", areaHa: 380, crop: "soja", system: "lavoura", productivityScHa: 66, costPerHa: 7_100, season: "2025/26" },
+    { asset: BOA_VISTA, name: "Talhão B — Boa Vista", areaHa: 240, crop: "milho_safrinha", system: "lavoura", productivityScHa: 96, costPerHa: 4_200, season: "2026" },
+    { asset: SERRA_VERDE, name: "Pasto 1 — Serra Verde", areaHa: 300, crop: "pastagem", system: "pastagem", productivityScHa: null, costPerHa: 980, season: "2025/26" },
+    { asset: RIO_VERDE, name: "Talhão 1 — Rio Verde", areaHa: 1_100, crop: "soja", system: "lavoura", productivityScHa: 61, costPerHa: 7_900, season: "2025/26" },
+    { asset: RIO_VERDE, name: "Talhão 2 — Rio Verde", areaHa: 620, crop: "algodao", system: "lavoura", productivityScHa: 268, costPerHa: 14_200, season: "2025/26" },
+    { asset: RIO_VERDE, name: "Talhão 3 — Rio Verde", areaHa: 480, crop: "milho", system: "lavoura", productivityScHa: 102, costPerHa: 6_300, season: "2025/26" },
+  ];
+
+  const agroLeases: DemoAgroLease[] = [
+    {
+      asset: SERRA_VERDE,
+      role: "arrendatario",
+      counterparty: "Fazenda Vizinho — Família Bertoldi",
+      areaHa: 180,
+      payment: "sacas",
+      pricePerHaYear: null,
+      bagsPerHa: 18,
+      sharePercent: null,
+      adjustmentIndex: "ipca",
+      endsInMonths: 30,
+    },
+    {
+      asset: FAZENDA,
+      role: "arrendador",
+      counterparty: "Cooperativa Agro Norte",
+      areaHa: 120,
+      payment: "dinheiro",
+      pricePerHaYear: 2_100,
+      bagsPerHa: null,
+      sharePercent: null,
+      adjustmentIndex: "igpm",
+      endsInMonths: 18,
+    },
+  ];
+
+  const agroBarters: DemoAgroBarter[] = [
+    {
+      asset: RIO_VERDE,
+      supplier: "Nutrien Soluções Agrícolas",
+      season: "2025/26",
+      inputValue: 4_200_000,
+      bagsDue: 34_000,
+      bagReferencePrice: 132,
+      areaHa: 1_100,
+      monthsToDelivery: 9,
+    },
+    {
+      asset: FAZENDA,
+      supplier: "Agrolink Insumos",
+      season: "2025/26",
+      inputValue: 1_150_000,
+      bagsDue: 9_200,
+      bagReferencePrice: 126,
+      areaHa: 420,
+      monthsToDelivery: 11,
+    },
+  ];
+
+  const agroEnvironmental: DemoAgroEnvironmental[] = [
+    {
+      asset: FAZENDA,
+      totalHa: 1_240,
+      biome: "mata_atlantica",
+      inLegalAmazon: false,
+      legalReserveDeclaredHa: 248,
+      appHa: 92,
+      carNumber: "PR-4101804-2F3A9B1C",
+      carStatus: "ativo",
+    },
+    {
+      asset: BOA_VISTA,
+      totalHa: 860,
+      biome: "mata_atlantica",
+      inLegalAmazon: false,
+      legalReserveDeclaredHa: 172,
+      appHa: 58,
+      carNumber: "PR-4115200-8C1D4E2F",
+      carStatus: "ativo",
+    },
+    {
+      asset: SERRA_VERDE,
+      totalHa: 520,
+      biome: "mata_atlantica",
+      inLegalAmazon: false,
+      legalReserveDeclaredHa: 74,
+      appHa: 20,
+      carNumber: null,
+      carStatus: "pendente",
+    },
+    {
+      asset: RIO_VERDE,
+      totalHa: 2_800,
+      biome: "cerrado",
+      inLegalAmazon: true,
+      legalReserveDeclaredHa: 610,
+      appHa: 120,
+      carNumber: "GO-5218805-7B2C8D3E",
+      carStatus: "irregular",
+    },
+  ];
+
   // ------------------------------------------------------------ custódia
   const accounts: DemoAccount[] = [
     {
@@ -1385,6 +1545,10 @@ export function buildDemoDataset(): DemoDataset {
     suppliers,
     legalCases,
     provisionEntries,
+    agroFields,
+    agroLeases,
+    agroBarters,
+    agroEnvironmental,
     accounts,
     positions,
     cashFlows,

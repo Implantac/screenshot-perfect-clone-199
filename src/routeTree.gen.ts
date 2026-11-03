@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppAgroRouteImport } from './routes/_app.agro'
 import { Route as AppAtribuicaoRouteImport } from './routes/_app.atribuicao'
 import { Route as AppBalancoRouteImport } from './routes/_app.balanco'
 import { Route as AppComplianceRouteImport } from './routes/_app.compliance'
@@ -61,6 +62,11 @@ const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppAgroRoute = AppAgroRouteImport.update({
+  id: '/agro',
+  path: '/agro',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppAtribuicaoRoute = AppAtribuicaoRouteImport.update({
   id: '/atribuicao',
@@ -241,6 +247,7 @@ const AppJarvisInsightsRoute = AppJarvisInsightsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/agro': typeof AppAgroRoute
   '/atribuicao': typeof AppAtribuicaoRoute
   '/balanco': typeof AppBalancoRoute
   '/compliance': typeof AppComplianceRoute
@@ -280,6 +287,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/agro': typeof AppAgroRoute
   '/atribuicao': typeof AppAtribuicaoRoute
   '/balanco': typeof AppBalancoRoute
   '/compliance': typeof AppComplianceRoute
@@ -320,6 +328,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/_app/agro': typeof AppAgroRoute
   '/_app/atribuicao': typeof AppAtribuicaoRoute
   '/_app/balanco': typeof AppBalancoRoute
   '/_app/compliance': typeof AppComplianceRoute
@@ -361,6 +370,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/agro'
     | '/atribuicao'
     | '/balanco'
     | '/compliance'
@@ -400,6 +410,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/agro'
     | '/atribuicao'
     | '/balanco'
     | '/compliance'
@@ -439,6 +450,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_app'
     | '/login'
+    | '/_app/agro'
     | '/_app/atribuicao'
     | '/_app/balanco'
     | '/_app/compliance'
@@ -504,6 +516,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/agro': {
+      id: '/_app/agro'
+      path: '/agro'
+      fullPath: '/agro'
+      preLoaderRoute: typeof AppAgroRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/atribuicao': {
       id: '/_app/atribuicao'
@@ -778,6 +797,7 @@ const AppJarvisRouteWithChildren = AppJarvisRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppAgroRoute: typeof AppAgroRoute
   AppAtribuicaoRoute: typeof AppAtribuicaoRoute
   AppBalancoRoute: typeof AppBalancoRoute
   AppComplianceRoute: typeof AppComplianceRoute
@@ -809,6 +829,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAgroRoute: AppAgroRoute,
   AppAtribuicaoRoute: AppAtribuicaoRoute,
   AppBalancoRoute: AppBalancoRoute,
   AppComplianceRoute: AppComplianceRoute,

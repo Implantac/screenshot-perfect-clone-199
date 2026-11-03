@@ -412,6 +412,270 @@ export type Database = {
           },
         ]
       }
+      agro_fields: {
+        Row: {
+          area_ha: number
+          asset_id: string | null
+          cost_per_ha: number | null
+          created_at: string
+          crop: Database["public"]["Enums"]["agro_crop"]
+          entity_id: string | null
+          id: string
+          name: string
+          notes: string | null
+          productivity_sc_ha: number | null
+          season: string | null
+          system: Database["public"]["Enums"]["agro_system"]
+          updated_at: string
+        }
+        Insert: {
+          area_ha: number
+          asset_id?: string | null
+          cost_per_ha?: number | null
+          created_at?: string
+          crop?: Database["public"]["Enums"]["agro_crop"]
+          entity_id?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          productivity_sc_ha?: number | null
+          season?: string | null
+          system?: Database["public"]["Enums"]["agro_system"]
+          updated_at?: string
+        }
+        Update: {
+          area_ha?: number
+          asset_id?: string | null
+          cost_per_ha?: number | null
+          created_at?: string
+          crop?: Database["public"]["Enums"]["agro_crop"]
+          entity_id?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          productivity_sc_ha?: number | null
+          season?: string | null
+          system?: Database["public"]["Enums"]["agro_system"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agro_fields_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agro_fields_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agro_leases: {
+        Row: {
+          adjustment_index: string | null
+          area_ha: number
+          asset_id: string | null
+          bags_per_ha: number | null
+          counterparty: string | null
+          created_at: string
+          ends_on: string | null
+          entity_id: string | null
+          id: string
+          notes: string | null
+          payment: Database["public"]["Enums"]["lease_payment"]
+          price_per_ha_year: number | null
+          role: Database["public"]["Enums"]["lease_role"]
+          share_percent: number | null
+          starts_on: string | null
+          updated_at: string
+        }
+        Insert: {
+          adjustment_index?: string | null
+          area_ha: number
+          asset_id?: string | null
+          bags_per_ha?: number | null
+          counterparty?: string | null
+          created_at?: string
+          ends_on?: string | null
+          entity_id?: string | null
+          id?: string
+          notes?: string | null
+          payment?: Database["public"]["Enums"]["lease_payment"]
+          price_per_ha_year?: number | null
+          role: Database["public"]["Enums"]["lease_role"]
+          share_percent?: number | null
+          starts_on?: string | null
+          updated_at?: string
+        }
+        Update: {
+          adjustment_index?: string | null
+          area_ha?: number
+          asset_id?: string | null
+          bags_per_ha?: number | null
+          counterparty?: string | null
+          created_at?: string
+          ends_on?: string | null
+          entity_id?: string | null
+          id?: string
+          notes?: string | null
+          payment?: Database["public"]["Enums"]["lease_payment"]
+          price_per_ha_year?: number | null
+          role?: Database["public"]["Enums"]["lease_role"]
+          share_percent?: number | null
+          starts_on?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agro_leases_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agro_leases_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agro_barters: {
+        Row: {
+          area_ha: number | null
+          asset_id: string | null
+          bag_reference_price: number
+          bags_due: number
+          created_at: string
+          delivery_on: string | null
+          entity_id: string | null
+          id: string
+          input_value: number
+          months_to_delivery: number | null
+          notes: string | null
+          season: string | null
+          supplier: string | null
+          updated_at: string
+        }
+        Insert: {
+          area_ha?: number | null
+          asset_id?: string | null
+          bag_reference_price: number
+          bags_due: number
+          created_at?: string
+          delivery_on?: string | null
+          entity_id?: string | null
+          id?: string
+          input_value: number
+          months_to_delivery?: number | null
+          notes?: string | null
+          season?: string | null
+          supplier?: string | null
+          updated_at?: string
+        }
+        Update: {
+          area_ha?: number | null
+          asset_id?: string | null
+          bag_reference_price?: number
+          bags_due?: number
+          created_at?: string
+          delivery_on?: string | null
+          entity_id?: string | null
+          id?: string
+          input_value?: number
+          months_to_delivery?: number | null
+          notes?: string | null
+          season?: string | null
+          supplier?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agro_barters_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agro_barters_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agro_environmental: {
+        Row: {
+          app_ha: number | null
+          asset_id: string | null
+          biome: Database["public"]["Enums"]["agro_biome"]
+          car_number: string | null
+          car_status: Database["public"]["Enums"]["car_status"] | null
+          created_at: string
+          entity_id: string | null
+          id: string
+          in_legal_amazon: boolean
+          legal_reserve_declared_ha: number | null
+          notes: string | null
+          total_ha: number
+          updated_at: string
+        }
+        Insert: {
+          app_ha?: number | null
+          asset_id?: string | null
+          biome?: Database["public"]["Enums"]["agro_biome"]
+          car_number?: string | null
+          car_status?: Database["public"]["Enums"]["car_status"] | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          in_legal_amazon?: boolean
+          legal_reserve_declared_ha?: number | null
+          notes?: string | null
+          total_ha: number
+          updated_at?: string
+        }
+        Update: {
+          app_ha?: number | null
+          asset_id?: string | null
+          biome?: Database["public"]["Enums"]["agro_biome"]
+          car_number?: string | null
+          car_status?: Database["public"]["Enums"]["car_status"] | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          in_legal_amazon?: boolean
+          legal_reserve_declared_ha?: number | null
+          notes?: string | null
+          total_ha?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agro_environmental_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agro_environmental_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           owner_user_id: string | null
@@ -1478,6 +1742,12 @@ export type Database = {
       legal_polarity: "passivo" | "ativo" | "neutro";
       legal_phase: "conhecimento" | "instrucao" | "sentenca" | "recurso" | "execucao" | "encerrado";
       provision_entry_kind: "constituicao" | "atualizacao" | "reversao" | "baixa";
+      agro_crop: "soja" | "milho" | "milho_safrinha" | "algodao" | "cana" | "cafe" | "pastagem" | "floresta" | "saf" | "outro";
+      agro_system: "lavoura" | "pastagem" | "saf" | "floresta" | "il" | "app";
+      agro_biome: "amazonia" | "cerrado" | "mata_atlantica" | "pampa" | "pantanal" | "caatinga";
+      car_status: "ativo" | "pendente" | "em_analise" | "irregular" | "sem_car";
+      lease_role: "arrendador" | "arrendatario" | "parceiro_outorgante" | "parceiro_outorgado";
+      lease_payment: "dinheiro" | "sacas" | "parceria";
       supplier_status: "homologado" | "em_analise" | "risco_critico" | "inativo"
       capital_event_kind: "call" | "distribution"
       capital_event_status: "previsto" | "pago" | "atrasado" | "cancelado"
@@ -1630,6 +1900,12 @@ export const Constants = {
       legal_polarity: ["passivo", "ativo", "neutro"],
       legal_phase: ["conhecimento", "instrucao", "sentenca", "recurso", "execucao", "encerrado"],
       provision_entry_kind: ["constituicao", "atualizacao", "reversao", "baixa"],
+      agro_crop: ["soja", "milho", "milho_safrinha", "algodao", "cana", "cafe", "pastagem", "floresta", "saf", "outro"],
+      agro_system: ["lavoura", "pastagem", "saf", "floresta", "il", "app"],
+      agro_biome: ["amazonia", "cerrado", "mata_atlantica", "pampa", "pantanal", "caatinga"],
+      car_status: ["ativo", "pendente", "em_analise", "irregular", "sem_car"],
+      lease_role: ["arrendador", "arrendatario", "parceiro_outorgante", "parceiro_outorgado"],
+      lease_payment: ["dinheiro", "sacas", "parceria"],
       liability_kind: ["financiamento_imobiliario", "credito_rural", "emprestimo", "consignado", "cartao", "debenture", "divida_societaria", "outro"],
       amortization_kind: ["price", "sac", "bullet"],
       goal_kind: ["liquidez", "sucessao", "imovel", "educacao", "filantropia", "reserva_oportunidade", "meta_patrimonial", "outro"],
