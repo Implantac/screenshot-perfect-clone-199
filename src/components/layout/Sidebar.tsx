@@ -17,6 +17,7 @@ import {
   LayoutDashboard,
   LogOut,
   Map as MapIcon,
+  PieChart,
   Scale,
   Settings,
   ShieldAlert,
@@ -58,6 +59,7 @@ const navGroups = [
       { label: "Projeção de caixa", icon: CalendarClock, to: "/projecao" },
       { label: "Capital calls & privados", icon: Building2, to: "/privados" },
       { label: "Balanço & metas", icon: Scale, to: "/balanco" },
+      { label: "Atribuição de retorno", icon: PieChart, to: "/atribuicao" },
       { label: "Sucessão & Tributação", icon: SuccessionIcon, to: "/sucessorio" },
       { label: "Relatórios", icon: FileText, to: "/relatorios" },
     ]

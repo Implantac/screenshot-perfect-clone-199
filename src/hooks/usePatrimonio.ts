@@ -370,3 +370,22 @@ export function useGoals() {
     retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
   });
 }
+
+// ------------------------------------------- atribuição de performance (wave 12)
+
+/** Série de cotações (todas as fontes) — base da atribuição por período. */
+export function useQuotes() {
+  return useQuery({
+    queryKey: ["quotes"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("quotes")
+        .select("symbol, price, currency, as_of, source")
+        .order("as_of", { ascending: true })
+        .limit(20000);
+      if (error) ensureTable(error, "quotes", "20261030170000_quotes.sql");
+      return data ?? [];
+    },
+    retry: (failureCount, error) => !isMissingTableError(error) && failureCount < 2,
+  });
+}
