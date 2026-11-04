@@ -750,6 +750,7 @@ export type Database = {
           currency: string
           entity_id: string
           id: string
+          instrument_id: string | null
           is_offshore: boolean
           liquidity: Database["public"]["Enums"]["asset_liquidity"]
           name: string
@@ -769,6 +770,7 @@ export type Database = {
           currency?: string
           entity_id: string
           id?: string
+          instrument_id?: string | null
           is_offshore?: boolean
           liquidity?: Database["public"]["Enums"]["asset_liquidity"]
           name: string
@@ -788,6 +790,7 @@ export type Database = {
           currency?: string
           entity_id?: string
           id?: string
+          instrument_id?: string | null
           is_offshore?: boolean
           liquidity?: Database["public"]["Enums"]["asset_liquidity"]
           name?: string
