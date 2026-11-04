@@ -754,6 +754,7 @@ export type Database = {
           liquidity: Database["public"]["Enums"]["asset_liquidity"]
           name: string
           notes: string | null
+          price_source: string | null
           quantity: number
           symbol: string | null
           unit_price: number
@@ -772,6 +773,7 @@ export type Database = {
           liquidity?: Database["public"]["Enums"]["asset_liquidity"]
           name: string
           notes?: string | null
+          price_source?: string | null
           quantity?: number
           symbol?: string | null
           unit_price?: number
@@ -790,6 +792,7 @@ export type Database = {
           liquidity?: Database["public"]["Enums"]["asset_liquidity"]
           name?: string
           notes?: string | null
+          price_source?: string | null
           quantity?: number
           symbol?: string | null
           unit_price?: number
@@ -811,6 +814,80 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      quote_runs: {
+        Row: {
+          created_at: string
+          entity_id: string | null
+          errors: Json
+          id: string
+          positions_updated: number
+          provider: string
+          symbols_found: number
+          symbols_requested: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          entity_id?: string | null
+          errors?: Json
+          id?: string
+          positions_updated?: number
+          provider: string
+          symbols_found?: number
+          symbols_requested?: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string | null
+          errors?: Json
+          id?: string
+          positions_updated?: number
+          provider?: string
+          symbols_found?: number
+          symbols_requested?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_runs_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quotes: {
+        Row: {
+          as_of: string
+          currency: string
+          fetched_at: string
+          id: string
+          price: number
+          source: string
+          symbol: string
+        }
+        Insert: {
+          as_of: string
+          currency?: string
+          fetched_at?: string
+          id?: string
+          price: number
+          source: string
+          symbol: string
+        }
+        Update: {
+          as_of?: string
+          currency?: string
+          fetched_at?: string
+          id?: string
+          price?: number
+          source?: string
+          symbol?: string
+        }
+        Relationships: []
       }
       risks: {
         Row: {
