@@ -16,6 +16,8 @@
     "test:watch": "bun test --watch",
     "test:components": "bun test src/components",
     "seed:sql": "bun run scripts/generate-seed-sql.ts",
+    "db:mirror": "bun run scripts/mirror-migrations.ts",
+    "check:migrations": "bun test src/lib/__tests__/migration-mirror.test.ts",
     "verify:db": "bun run scripts/verify-e2e.ts",
     "verify:llm": "bun run scripts/verify-llm.ts",
     "verify:ui": "bun run scripts/smoke-ui.ts",

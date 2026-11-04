@@ -64,6 +64,90 @@
       "when": 1793794694866,
       "tag": "0008_balance_sheet",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793794706866,
+      "tag": "0009_portal_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793794718866,
+      "tag": "0010_auth_security",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793794730866,
+      "tag": "0011_legal_provisions",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793794742866,
+      "tag": "0012_agro",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793794754866,
+      "tag": "0013_audit_chain",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1793794766866,
+      "tag": "0014_jarvis_tools",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1793794778866,
+      "tag": "0015_multi_family_office",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1793794790866,
+      "tag": "0016_tenant_isolation",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1793794802866,
+      "tag": "0017_office_detail_scope",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1793794814866,
+      "tag": "0018_anchor_signature",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1793794826866,
+      "tag": "0019_system_events",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1793794838866,
+      "tag": "0020_account_balances",
+      "breakpoints": true
     }
   ]
 }
