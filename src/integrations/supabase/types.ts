@@ -376,6 +376,65 @@ export type Database = {
           },
         ]
       }
+      import_batches: {
+        Row: {
+          created_at: string
+          entity_id: string | null
+          errors: Json
+          file_hash: string | null
+          file_name: string
+          format: string
+          id: string
+          period_end: string | null
+          period_start: string | null
+          rows_duplicated: number
+          rows_failed: number
+          rows_imported: number
+          rows_total: number
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id?: string | null
+          errors?: Json
+          file_hash?: string | null
+          file_name: string
+          format: string
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          rows_duplicated?: number
+          rows_failed?: number
+          rows_imported?: number
+          rows_total?: number
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string | null
+          errors?: Json
+          file_hash?: string | null
+          file_name?: string
+          format?: string
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          rows_duplicated?: number
+          rows_failed?: number
+          rows_imported?: number
+          rows_total?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_batches_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jarvis_action_plans: {
         Row: {
           created_at: string
@@ -940,7 +999,10 @@ export type Database = {
           category: string | null
           created_at: string | null
           entity_id: string | null
+          external_id: string | null
           id: string
+          import_batch_id: string | null
+          source: string | null
           title: string
           transaction_date: string | null
           type: string | null
@@ -951,7 +1013,10 @@ export type Database = {
           category?: string | null
           created_at?: string | null
           entity_id?: string | null
+          external_id?: string | null
           id?: string
+          import_batch_id?: string | null
+          source?: string | null
           title: string
           transaction_date?: string | null
           type?: string | null
@@ -962,7 +1027,10 @@ export type Database = {
           category?: string | null
           created_at?: string | null
           entity_id?: string | null
+          external_id?: string | null
           id?: string
+          import_batch_id?: string | null
+          source?: string | null
           title?: string
           transaction_date?: string | null
           type?: string | null
@@ -980,6 +1048,13 @@ export type Database = {
             columns: ["entity_id"]
             isOneToOne: false
             referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_import_batch_id_fkey"
+            columns: ["import_batch_id"]
+            isOneToOne: false
+            referencedRelation: "import_batches"
             referencedColumns: ["id"]
           },
         ]
