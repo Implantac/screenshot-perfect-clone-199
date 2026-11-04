@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      accounts: {
+        Row: {
+          account_number: string | null
+          created_at: string
+          currency: string
+          custodian_id: string | null
+          entity_id: string
+          id: string
+          is_active: boolean
+          kind: Database["public"]["Enums"]["account_kind"]
+          name: string
+          notes: string | null
+          opened_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          account_number?: string | null
+          created_at?: string
+          currency?: string
+          custodian_id?: string | null
+          entity_id: string
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["account_kind"]
+          name: string
+          notes?: string | null
+          opened_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          account_number?: string | null
+          created_at?: string
+          currency?: string
+          custodian_id?: string | null
+          entity_id?: string
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["account_kind"]
+          name?: string
+          notes?: string | null
+          opened_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounts_custodian_id_fkey"
+            columns: ["custodian_id"]
+            isOneToOne: false
+            referencedRelation: "custodians"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accounts_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assets: {
         Row: {
           area: string | null
@@ -74,6 +134,7 @@ export type Database = {
           id: string
           new_data: Json | null
           old_data: Json | null
+          owner_user_id: string | null
           record_id: string | null
           table_name: string | null
           user_id: string | null
@@ -84,6 +145,7 @@ export type Database = {
           id?: string
           new_data?: Json | null
           old_data?: Json | null
+          owner_user_id?: string | null
           record_id?: string | null
           table_name?: string | null
           user_id?: string | null
@@ -94,9 +156,213 @@ export type Database = {
           id?: string
           new_data?: Json | null
           old_data?: Json | null
+          owner_user_id?: string | null
           record_id?: string | null
           table_name?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      capital_events: {
+        Row: {
+          amount: number
+          commitment_id: string
+          created_at: string
+          due_date: string
+          entity_id: string
+          id: string
+          kind: Database["public"]["Enums"]["capital_event_kind"]
+          notes: string | null
+          notice_ref: string | null
+          paid_at: string | null
+          status: Database["public"]["Enums"]["capital_event_status"]
+        }
+        Insert: {
+          amount: number
+          commitment_id: string
+          created_at?: string
+          due_date: string
+          entity_id: string
+          id?: string
+          kind: Database["public"]["Enums"]["capital_event_kind"]
+          notes?: string | null
+          notice_ref?: string | null
+          paid_at?: string | null
+          status?: Database["public"]["Enums"]["capital_event_status"]
+        }
+        Update: {
+          amount?: number
+          commitment_id?: string
+          created_at?: string
+          due_date?: string
+          entity_id?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["capital_event_kind"]
+          notes?: string | null
+          notice_ref?: string | null
+          paid_at?: string | null
+          status?: Database["public"]["Enums"]["capital_event_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "capital_events_commitment_id_fkey"
+            columns: ["commitment_id"]
+            isOneToOne: false
+            referencedRelation: "commitments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "capital_events_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cash_flows: {
+        Row: {
+          account_id: string | null
+          amount: number
+          created_at: string
+          currency: string
+          description: string | null
+          entity_id: string
+          flow_date: string
+          id: string
+          kind: Database["public"]["Enums"]["flow_kind"]
+        }
+        Insert: {
+          account_id?: string | null
+          amount: number
+          created_at?: string
+          currency?: string
+          description?: string | null
+          entity_id: string
+          flow_date?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["flow_kind"]
+        }
+        Update: {
+          account_id?: string | null
+          amount?: number
+          created_at?: string
+          currency?: string
+          description?: string | null
+          entity_id?: string
+          flow_date?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["flow_kind"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_flows_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_flows_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commitments: {
+        Row: {
+          closed_at: string | null
+          committed: number
+          created_at: string
+          currency: string
+          entity_id: string
+          id: string
+          is_active: boolean
+          manager: string | null
+          name: string
+          nav: number
+          nav_as_of: string | null
+          notes: string | null
+          notice_days: number | null
+          strategy: Database["public"]["Enums"]["private_strategy"]
+          term_years: number | null
+          updated_at: string
+          vintage: number | null
+        }
+        Insert: {
+          closed_at?: string | null
+          committed: number
+          created_at?: string
+          currency?: string
+          entity_id: string
+          id?: string
+          is_active?: boolean
+          manager?: string | null
+          name: string
+          nav?: number
+          nav_as_of?: string | null
+          notes?: string | null
+          notice_days?: number | null
+          strategy?: Database["public"]["Enums"]["private_strategy"]
+          term_years?: number | null
+          updated_at?: string
+          vintage?: number | null
+        }
+        Update: {
+          closed_at?: string | null
+          committed?: number
+          created_at?: string
+          currency?: string
+          entity_id?: string
+          id?: string
+          is_active?: boolean
+          manager?: string | null
+          name?: string
+          nav?: number
+          nav_as_of?: string | null
+          notes?: string | null
+          notice_days?: number | null
+          strategy?: Database["public"]["Enums"]["private_strategy"]
+          term_years?: number | null
+          updated_at?: string
+          vintage?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commitments_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custodians: {
+        Row: {
+          code: string | null
+          country: string | null
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          code?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -231,6 +497,121 @@ export type Database = {
             columns: ["member_id"]
             isOneToOne: false
             referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      goals: {
+        Row: {
+          allocated: number
+          created_at: string
+          entity_id: string
+          expected_return: number
+          id: string
+          is_active: boolean
+          kind: Database["public"]["Enums"]["goal_kind"]
+          name: string
+          notes: string | null
+          priority: number
+          target_amount: number
+          target_date: string
+          updated_at: string
+        }
+        Insert: {
+          allocated?: number
+          created_at?: string
+          entity_id: string
+          expected_return?: number
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["goal_kind"]
+          name: string
+          notes?: string | null
+          priority?: number
+          target_amount: number
+          target_date: string
+          updated_at?: string
+        }
+        Update: {
+          allocated?: number
+          created_at?: string
+          entity_id?: string
+          expected_return?: number
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["goal_kind"]
+          name?: string
+          notes?: string | null
+          priority?: number
+          target_amount?: number
+          target_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goals_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_batches: {
+        Row: {
+          created_at: string
+          entity_id: string | null
+          errors: Json
+          file_hash: string | null
+          file_name: string
+          format: string
+          id: string
+          period_end: string | null
+          period_start: string | null
+          rows_duplicated: number
+          rows_failed: number
+          rows_imported: number
+          rows_total: number
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id?: string | null
+          errors?: Json
+          file_hash?: string | null
+          file_name: string
+          format: string
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          rows_duplicated?: number
+          rows_failed?: number
+          rows_imported?: number
+          rows_total?: number
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string | null
+          errors?: Json
+          file_hash?: string | null
+          file_name?: string
+          format?: string
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          rows_duplicated?: number
+          rows_failed?: number
+          rows_imported?: number
+          rows_total?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_batches_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
             referencedColumns: ["id"]
           },
         ]
@@ -390,6 +771,153 @@ export type Database = {
           },
         ]
       }
+      legal_cases: {
+        Row: {
+          asset_id: string | null
+          case_number: string
+          court: string | null
+          created_at: string
+          entity_id: string | null
+          id: string
+          next_hearing: string | null
+          notes: string | null
+          responsible_id: string | null
+          risk_level: Database["public"]["Enums"]["risk_severity"]
+          status: Database["public"]["Enums"]["legal_case_status"]
+          title: string
+          type: Database["public"]["Enums"]["legal_case_type"]
+          updated_at: string
+          value_at_stake: number | null
+        }
+        Insert: {
+          asset_id?: string | null
+          case_number: string
+          court?: string | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          next_hearing?: string | null
+          notes?: string | null
+          responsible_id?: string | null
+          risk_level?: Database["public"]["Enums"]["risk_severity"]
+          status?: Database["public"]["Enums"]["legal_case_status"]
+          title: string
+          type?: Database["public"]["Enums"]["legal_case_type"]
+          updated_at?: string
+          value_at_stake?: number | null
+        }
+        Update: {
+          asset_id?: string | null
+          case_number?: string
+          court?: string | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          next_hearing?: string | null
+          notes?: string | null
+          responsible_id?: string | null
+          risk_level?: Database["public"]["Enums"]["risk_severity"]
+          status?: Database["public"]["Enums"]["legal_case_status"]
+          title?: string
+          type?: Database["public"]["Enums"]["legal_case_type"]
+          updated_at?: string
+          value_at_stake?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_cases_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_cases_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_cases_responsible_id_fkey"
+            columns: ["responsible_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      liabilities: {
+        Row: {
+          amortization: Database["public"]["Enums"]["amortization_kind"]
+          collateral: string | null
+          created_at: string
+          creditor: string | null
+          currency: string
+          due_date: string | null
+          entity_id: string
+          id: string
+          is_offshore: boolean
+          kind: Database["public"]["Enums"]["liability_kind"]
+          name: string
+          notes: string | null
+          outstanding: number
+          principal: number
+          rate_annual: number
+          start_date: string | null
+          term_months: number | null
+          updated_at: string
+        }
+        Insert: {
+          amortization?: Database["public"]["Enums"]["amortization_kind"]
+          collateral?: string | null
+          created_at?: string
+          creditor?: string | null
+          currency?: string
+          due_date?: string | null
+          entity_id: string
+          id?: string
+          is_offshore?: boolean
+          kind?: Database["public"]["Enums"]["liability_kind"]
+          name: string
+          notes?: string | null
+          outstanding?: number
+          principal?: number
+          rate_annual?: number
+          start_date?: string | null
+          term_months?: number | null
+          updated_at?: string
+        }
+        Update: {
+          amortization?: Database["public"]["Enums"]["amortization_kind"]
+          collateral?: string | null
+          created_at?: string
+          creditor?: string | null
+          currency?: string
+          due_date?: string | null
+          entity_id?: string
+          id?: string
+          is_offshore?: boolean
+          kind?: Database["public"]["Enums"]["liability_kind"]
+          name?: string
+          notes?: string | null
+          outstanding?: number
+          principal?: number
+          rate_annual?: number
+          start_date?: string | null
+          term_months?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "liabilities_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
           created_at: string | null
@@ -420,6 +948,199 @@ export type Database = {
           role?: string | null
           tax_id?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      portfolio_snapshots: {
+        Row: {
+          as_of: string
+          cost_basis: number
+          created_at: string
+          entity_id: string
+          id: string
+          market_value: number
+          net_flow: number
+          source: string | null
+        }
+        Insert: {
+          as_of: string
+          cost_basis?: number
+          created_at?: string
+          entity_id: string
+          id?: string
+          market_value?: number
+          net_flow?: number
+          source?: string | null
+        }
+        Update: {
+          as_of?: string
+          cost_basis?: number
+          created_at?: string
+          entity_id?: string
+          id?: string
+          market_value?: number
+          net_flow?: number
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_snapshots_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      positions: {
+        Row: {
+          account_id: string | null
+          as_of: string
+          asset_class: Database["public"]["Enums"]["asset_class"]
+          cost_basis: number
+          created_at: string
+          currency: string
+          entity_id: string
+          id: string
+          instrument_id: string | null
+          is_offshore: boolean
+          liquidity: Database["public"]["Enums"]["asset_liquidity"]
+          name: string
+          notes: string | null
+          price_source: string | null
+          quantity: number
+          symbol: string | null
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          account_id?: string | null
+          as_of?: string
+          asset_class?: Database["public"]["Enums"]["asset_class"]
+          cost_basis?: number
+          created_at?: string
+          currency?: string
+          entity_id: string
+          id?: string
+          instrument_id?: string | null
+          is_offshore?: boolean
+          liquidity?: Database["public"]["Enums"]["asset_liquidity"]
+          name: string
+          notes?: string | null
+          price_source?: string | null
+          quantity?: number
+          symbol?: string | null
+          unit_price?: number
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string | null
+          as_of?: string
+          asset_class?: Database["public"]["Enums"]["asset_class"]
+          cost_basis?: number
+          created_at?: string
+          currency?: string
+          entity_id?: string
+          id?: string
+          instrument_id?: string | null
+          is_offshore?: boolean
+          liquidity?: Database["public"]["Enums"]["asset_liquidity"]
+          name?: string
+          notes?: string | null
+          price_source?: string | null
+          quantity?: number
+          symbol?: string | null
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "positions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "positions_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_runs: {
+        Row: {
+          created_at: string
+          entity_id: string | null
+          errors: Json
+          id: string
+          positions_updated: number
+          provider: string
+          symbols_found: number
+          symbols_requested: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          entity_id?: string | null
+          errors?: Json
+          id?: string
+          positions_updated?: number
+          provider: string
+          symbols_found?: number
+          symbols_requested?: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string | null
+          errors?: Json
+          id?: string
+          positions_updated?: number
+          provider?: string
+          symbols_found?: number
+          symbols_requested?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_runs_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quotes: {
+        Row: {
+          as_of: string
+          currency: string
+          fetched_at: string
+          id: string
+          price: number
+          source: string
+          symbol: string
+        }
+        Insert: {
+          as_of: string
+          currency?: string
+          fetched_at?: string
+          id?: string
+          price: number
+          source: string
+          symbol: string
+        }
+        Update: {
+          as_of?: string
+          currency?: string
+          fetched_at?: string
+          id?: string
+          price?: number
+          source?: string
+          symbol?: string
         }
         Relationships: []
       }
@@ -497,6 +1218,112 @@ export type Database = {
           },
         ]
       }
+      suppliers: {
+        Row: {
+          category: string | null
+          compliance_score: number | null
+          contact_email: string | null
+          contact_phone: string | null
+          contract_expiry: string | null
+          contract_value: number | null
+          created_at: string
+          entity_id: string | null
+          id: string
+          name: string
+          notes: string | null
+          status: Database["public"]["Enums"]["supplier_status"]
+          tax_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          compliance_score?: number | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          contract_expiry?: string | null
+          contract_value?: number | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["supplier_status"]
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          compliance_score?: number | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          contract_expiry?: string | null
+          contract_value?: number | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["supplier_status"]
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suppliers_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_scenarios: {
+        Row: {
+          assumptions: Json
+          created_at: string
+          created_by: string | null
+          entity_id: string | null
+          id: string
+          name: string
+          results: Json
+          state_code: string
+          total_cost: number
+          updated_at: string
+        }
+        Insert: {
+          assumptions?: Json
+          created_at?: string
+          created_by?: string | null
+          entity_id?: string | null
+          id?: string
+          name: string
+          results?: Json
+          state_code?: string
+          total_cost?: number
+          updated_at?: string
+        }
+        Update: {
+          assumptions?: Json
+          created_at?: string
+          created_by?: string | null
+          entity_id?: string | null
+          id?: string
+          name?: string
+          results?: Json
+          state_code?: string
+          total_cost?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_scenarios_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       transactions: {
         Row: {
           amount: number
@@ -504,7 +1331,10 @@ export type Database = {
           category: string | null
           created_at: string | null
           entity_id: string | null
+          external_id: string | null
           id: string
+          import_batch_id: string | null
+          source: string | null
           title: string
           transaction_date: string | null
           type: string | null
@@ -515,7 +1345,10 @@ export type Database = {
           category?: string | null
           created_at?: string | null
           entity_id?: string | null
+          external_id?: string | null
           id?: string
+          import_batch_id?: string | null
+          source?: string | null
           title: string
           transaction_date?: string | null
           type?: string | null
@@ -526,7 +1359,10 @@ export type Database = {
           category?: string | null
           created_at?: string | null
           entity_id?: string | null
+          external_id?: string | null
           id?: string
+          import_batch_id?: string | null
+          source?: string | null
           title?: string
           transaction_date?: string | null
           type?: string | null
@@ -544,6 +1380,13 @@ export type Database = {
             columns: ["entity_id"]
             isOneToOne: false
             referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_import_batch_id_fkey"
+            columns: ["import_batch_id"]
+            isOneToOne: false
+            referencedRelation: "import_batches"
             referencedColumns: ["id"]
           },
         ]
@@ -574,6 +1417,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      audit_owner_for: {
+        Args: { p_row: Json; p_table: string }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -584,10 +1431,66 @@ export type Database = {
       owns_entity: { Args: { _entity_id: string }; Returns: boolean }
     }
     Enums: {
+      account_kind:
+        | "corretora"
+        | "banco"
+        | "fundo"
+        | "previdencia"
+        | "cripto"
+        | "outro"
+      amortization_kind: "price" | "sac" | "bullet"
       app_role: "admin" | "user"
+      asset_class:
+        | "caixa"
+        | "renda_fixa"
+        | "renda_variavel"
+        | "fundos"
+        | "imoveis"
+        | "internacional"
+        | "alternativos"
+        | "cripto"
+      asset_liquidity: "d0" | "d1" | "d30" | "longo_prazo" | "iliquido"
       asset_type: "urbano" | "rural" | "veiculo" | "outro"
+      capital_event_kind: "call" | "distribution"
+      capital_event_status: "previsto" | "pago" | "atrasado" | "cancelado"
       compliance_status: "regular" | "pendente" | "alerta" | "critico"
+      flow_kind: "aporte" | "resgate" | "provento" | "taxa" | "imposto"
+      goal_kind:
+        | "liquidez"
+        | "sucessao"
+        | "imovel"
+        | "educacao"
+        | "filantropia"
+        | "reserva_oportunidade"
+        | "meta_patrimonial"
+        | "outro"
+      legal_case_status: "em_andamento" | "suspenso" | "acordo" | "encerrado"
+      legal_case_type:
+        | "civel"
+        | "tributario"
+        | "ambiental"
+        | "trabalhista"
+        | "societario"
+        | "imobiliario"
+      liability_kind:
+        | "financiamento_imobiliario"
+        | "credito_rural"
+        | "emprestimo"
+        | "consignado"
+        | "cartao"
+        | "debenture"
+        | "divida_societaria"
+        | "outro"
+      private_strategy:
+        | "private_equity"
+        | "venture_capital"
+        | "infraestrutura"
+        | "real_estate"
+        | "agro"
+        | "credito_privado"
+        | "outro"
       risk_severity: "low" | "medium" | "high" | "critical"
+      supplier_status: "homologado" | "em_analise" | "risco_critico" | "inativo"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -715,10 +1618,72 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      account_kind: [
+        "corretora",
+        "banco",
+        "fundo",
+        "previdencia",
+        "cripto",
+        "outro",
+      ],
+      amortization_kind: ["price", "sac", "bullet"],
       app_role: ["admin", "user"],
+      asset_class: [
+        "caixa",
+        "renda_fixa",
+        "renda_variavel",
+        "fundos",
+        "imoveis",
+        "internacional",
+        "alternativos",
+        "cripto",
+      ],
+      asset_liquidity: ["d0", "d1", "d30", "longo_prazo", "iliquido"],
       asset_type: ["urbano", "rural", "veiculo", "outro"],
+      capital_event_kind: ["call", "distribution"],
+      capital_event_status: ["previsto", "pago", "atrasado", "cancelado"],
       compliance_status: ["regular", "pendente", "alerta", "critico"],
+      flow_kind: ["aporte", "resgate", "provento", "taxa", "imposto"],
+      goal_kind: [
+        "liquidez",
+        "sucessao",
+        "imovel",
+        "educacao",
+        "filantropia",
+        "reserva_oportunidade",
+        "meta_patrimonial",
+        "outro",
+      ],
+      legal_case_status: ["em_andamento", "suspenso", "acordo", "encerrado"],
+      legal_case_type: [
+        "civel",
+        "tributario",
+        "ambiental",
+        "trabalhista",
+        "societario",
+        "imobiliario",
+      ],
+      liability_kind: [
+        "financiamento_imobiliario",
+        "credito_rural",
+        "emprestimo",
+        "consignado",
+        "cartao",
+        "debenture",
+        "divida_societaria",
+        "outro",
+      ],
+      private_strategy: [
+        "private_equity",
+        "venture_capital",
+        "infraestrutura",
+        "real_estate",
+        "agro",
+        "credito_privado",
+        "outro",
+      ],
       risk_severity: ["low", "medium", "high", "critical"],
+      supplier_status: ["homologado", "em_analise", "risco_critico", "inativo"],
     },
   },
 } as const
