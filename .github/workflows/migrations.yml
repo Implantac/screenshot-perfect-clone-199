@@ -1,0 +1,86 @@
+name: Migrations (Supabase)
+
+# POR QUE ESTE WORKFLOW EXISTE
+# O push no GitHub já publica o frontend (por isso o bundle servido está na wave 28).
+# O banco não tem esse caminho: GitHub não fala com Postgres sozinho. Este workflow
+# é o equivalente para o schema: pega supabase/migrations/*.sql e roda `supabase db push`.
+#
+# ELE NÃO RODA SOZINHO NO PRIMEIRO USO — disparo manual (Actions → Run workflow),
+# com dry-run por padrão. Depois de validado, descomente o gatilho `push` no fim.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Só listar o que seria aplicado (não altera o banco)"
+        type: boolean
+        default: true
+
+concurrency:
+  group: migrations-${{ github.ref }}
+  cancel-in-progress: false # migration nunca é cancelada no meio
+
+jobs:
+  push:
+    name: supabase db push
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # Segredos necessários (Settings → Secrets → Actions):
+    #   SUPABASE_ACCESS_TOKEN  — token pessoal de supabase.com/dashboard/account/tokens
+    #   SUPABASE_DB_PASSWORD   — senha do banco (Project Settings → Database)
+    #   SUPABASE_PUBLISHABLE_KEY — só para a verificação final (opcional)
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Apontar para o projeto (project_id vem de supabase/config.toml)
+        run: supabase link --project-ref gxmgjuzjohqgtzglerpt
+
+      - name: Ver o que seria aplicado (dry-run)
+        if: ${{ inputs.dry_run }}
+        run: supabase db push --dry-run --linked
+
+      - name: Aplicar migrations
+        if: ${{ !inputs.dry_run }}
+        run: supabase db push --linked --include-all
+
+      - name: Instalar Bun
+        if: ${{ !inputs.dry_run }}
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Instalar dependências
+        if: ${{ !inputs.dry_run }}
+        run: bun install --frozen-lockfile
+
+      - name: Verificação final (o mesmo check:schema do repo)
+        if: ${{ !inputs.dry_run }}
+        env:
+          SUPABASE_URL: https://gxmgjuzjohqgtzglerpt.supabase.co
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: bun run check:schema
+
+# Depois de validado em dry-run e numa primeira aplicação real, troque o bloco `on:`
+# acima por este — aí sim "push no GitHub e o resto acontece" para o banco também:
+#
+# on:
+#   push:
+#     branches: [main]
+#     paths:
+#       - "supabase/migrations/**"
+#   workflow_dispatch:
+#     inputs:
+#       dry_run:
+#         description: "Só listar o que seria aplicado"
+#         type: boolean
+#         default: false
