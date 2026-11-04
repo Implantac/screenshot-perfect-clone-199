@@ -501,6 +501,62 @@ export type Database = {
           },
         ]
       }
+      goals: {
+        Row: {
+          allocated: number
+          created_at: string
+          entity_id: string
+          expected_return: number
+          id: string
+          is_active: boolean
+          kind: Database["public"]["Enums"]["goal_kind"]
+          name: string
+          notes: string | null
+          priority: number
+          target_amount: number
+          target_date: string
+          updated_at: string
+        }
+        Insert: {
+          allocated?: number
+          created_at?: string
+          entity_id: string
+          expected_return?: number
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["goal_kind"]
+          name: string
+          notes?: string | null
+          priority?: number
+          target_amount: number
+          target_date: string
+          updated_at?: string
+        }
+        Update: {
+          allocated?: number
+          created_at?: string
+          entity_id?: string
+          expected_return?: number
+          id?: string
+          is_active?: boolean
+          kind?: Database["public"]["Enums"]["goal_kind"]
+          name?: string
+          notes?: string | null
+          priority?: number
+          target_amount?: number
+          target_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goals_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       import_batches: {
         Row: {
           created_at: string
@@ -787,6 +843,77 @@ export type Database = {
             columns: ["responsible_id"]
             isOneToOne: false
             referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      liabilities: {
+        Row: {
+          amortization: Database["public"]["Enums"]["amortization_kind"]
+          collateral: string | null
+          created_at: string
+          creditor: string | null
+          currency: string
+          due_date: string | null
+          entity_id: string
+          id: string
+          is_offshore: boolean
+          kind: Database["public"]["Enums"]["liability_kind"]
+          name: string
+          notes: string | null
+          outstanding: number
+          principal: number
+          rate_annual: number
+          start_date: string | null
+          term_months: number | null
+          updated_at: string
+        }
+        Insert: {
+          amortization?: Database["public"]["Enums"]["amortization_kind"]
+          collateral?: string | null
+          created_at?: string
+          creditor?: string | null
+          currency?: string
+          due_date?: string | null
+          entity_id: string
+          id?: string
+          is_offshore?: boolean
+          kind?: Database["public"]["Enums"]["liability_kind"]
+          name: string
+          notes?: string | null
+          outstanding?: number
+          principal?: number
+          rate_annual?: number
+          start_date?: string | null
+          term_months?: number | null
+          updated_at?: string
+        }
+        Update: {
+          amortization?: Database["public"]["Enums"]["amortization_kind"]
+          collateral?: string | null
+          created_at?: string
+          creditor?: string | null
+          currency?: string
+          due_date?: string | null
+          entity_id?: string
+          id?: string
+          is_offshore?: boolean
+          kind?: Database["public"]["Enums"]["liability_kind"]
+          name?: string
+          notes?: string | null
+          outstanding?: number
+          principal?: number
+          rate_annual?: number
+          start_date?: string | null
+          term_months?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "liabilities_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
             referencedColumns: ["id"]
           },
         ]
@@ -1311,6 +1438,7 @@ export type Database = {
         | "previdencia"
         | "cripto"
         | "outro"
+      amortization_kind: "price" | "sac" | "bullet"
       app_role: "admin" | "user"
       asset_class:
         | "caixa"
@@ -1327,6 +1455,15 @@ export type Database = {
       capital_event_status: "previsto" | "pago" | "atrasado" | "cancelado"
       compliance_status: "regular" | "pendente" | "alerta" | "critico"
       flow_kind: "aporte" | "resgate" | "provento" | "taxa" | "imposto"
+      goal_kind:
+        | "liquidez"
+        | "sucessao"
+        | "imovel"
+        | "educacao"
+        | "filantropia"
+        | "reserva_oportunidade"
+        | "meta_patrimonial"
+        | "outro"
       legal_case_status: "em_andamento" | "suspenso" | "acordo" | "encerrado"
       legal_case_type:
         | "civel"
@@ -1335,6 +1472,15 @@ export type Database = {
         | "trabalhista"
         | "societario"
         | "imobiliario"
+      liability_kind:
+        | "financiamento_imobiliario"
+        | "credito_rural"
+        | "emprestimo"
+        | "consignado"
+        | "cartao"
+        | "debenture"
+        | "divida_societaria"
+        | "outro"
       private_strategy:
         | "private_equity"
         | "venture_capital"
@@ -1480,6 +1626,7 @@ export const Constants = {
         "cripto",
         "outro",
       ],
+      amortization_kind: ["price", "sac", "bullet"],
       app_role: ["admin", "user"],
       asset_class: [
         "caixa",
@@ -1497,6 +1644,16 @@ export const Constants = {
       capital_event_status: ["previsto", "pago", "atrasado", "cancelado"],
       compliance_status: ["regular", "pendente", "alerta", "critico"],
       flow_kind: ["aporte", "resgate", "provento", "taxa", "imposto"],
+      goal_kind: [
+        "liquidez",
+        "sucessao",
+        "imovel",
+        "educacao",
+        "filantropia",
+        "reserva_oportunidade",
+        "meta_patrimonial",
+        "outro",
+      ],
       legal_case_status: ["em_andamento", "suspenso", "acordo", "encerrado"],
       legal_case_type: [
         "civel",
@@ -1505,6 +1662,16 @@ export const Constants = {
         "trabalhista",
         "societario",
         "imobiliario",
+      ],
+      liability_kind: [
+        "financiamento_imobiliario",
+        "credito_rural",
+        "emprestimo",
+        "consignado",
+        "cartao",
+        "debenture",
+        "divida_societaria",
+        "outro",
       ],
       private_strategy: [
         "private_equity",
