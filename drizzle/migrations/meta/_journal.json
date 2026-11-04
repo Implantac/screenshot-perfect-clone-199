@@ -50,6 +50,13 @@
       "when": 1793794654654,
       "tag": "0006_fund_quotes",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793794675515,
+      "tag": "0007_private_markets",
+      "breakpoints": true
     }
   ]
 }

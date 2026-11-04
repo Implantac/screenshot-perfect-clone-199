@@ -163,6 +163,63 @@ export type Database = {
         }
         Relationships: []
       }
+      capital_events: {
+        Row: {
+          amount: number
+          commitment_id: string
+          created_at: string
+          due_date: string
+          entity_id: string
+          id: string
+          kind: Database["public"]["Enums"]["capital_event_kind"]
+          notes: string | null
+          notice_ref: string | null
+          paid_at: string | null
+          status: Database["public"]["Enums"]["capital_event_status"]
+        }
+        Insert: {
+          amount: number
+          commitment_id: string
+          created_at?: string
+          due_date: string
+          entity_id: string
+          id?: string
+          kind: Database["public"]["Enums"]["capital_event_kind"]
+          notes?: string | null
+          notice_ref?: string | null
+          paid_at?: string | null
+          status?: Database["public"]["Enums"]["capital_event_status"]
+        }
+        Update: {
+          amount?: number
+          commitment_id?: string
+          created_at?: string
+          due_date?: string
+          entity_id?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["capital_event_kind"]
+          notes?: string | null
+          notice_ref?: string | null
+          paid_at?: string | null
+          status?: Database["public"]["Enums"]["capital_event_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "capital_events_commitment_id_fkey"
+            columns: ["commitment_id"]
+            isOneToOne: false
+            referencedRelation: "commitments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "capital_events_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cash_flows: {
         Row: {
           account_id: string | null
@@ -207,6 +264,74 @@ export type Database = {
           },
           {
             foreignKeyName: "cash_flows_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commitments: {
+        Row: {
+          closed_at: string | null
+          committed: number
+          created_at: string
+          currency: string
+          entity_id: string
+          id: string
+          is_active: boolean
+          manager: string | null
+          name: string
+          nav: number
+          nav_as_of: string | null
+          notes: string | null
+          notice_days: number | null
+          strategy: Database["public"]["Enums"]["private_strategy"]
+          term_years: number | null
+          updated_at: string
+          vintage: number | null
+        }
+        Insert: {
+          closed_at?: string | null
+          committed: number
+          created_at?: string
+          currency?: string
+          entity_id: string
+          id?: string
+          is_active?: boolean
+          manager?: string | null
+          name: string
+          nav?: number
+          nav_as_of?: string | null
+          notes?: string | null
+          notice_days?: number | null
+          strategy?: Database["public"]["Enums"]["private_strategy"]
+          term_years?: number | null
+          updated_at?: string
+          vintage?: number | null
+        }
+        Update: {
+          closed_at?: string | null
+          committed?: number
+          created_at?: string
+          currency?: string
+          entity_id?: string
+          id?: string
+          is_active?: boolean
+          manager?: string | null
+          name?: string
+          nav?: number
+          nav_as_of?: string | null
+          notes?: string | null
+          notice_days?: number | null
+          strategy?: Database["public"]["Enums"]["private_strategy"]
+          term_years?: number | null
+          updated_at?: string
+          vintage?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commitments_entity_id_fkey"
             columns: ["entity_id"]
             isOneToOne: false
             referencedRelation: "entities"
@@ -1198,6 +1323,8 @@ export type Database = {
         | "cripto"
       asset_liquidity: "d0" | "d1" | "d30" | "longo_prazo" | "iliquido"
       asset_type: "urbano" | "rural" | "veiculo" | "outro"
+      capital_event_kind: "call" | "distribution"
+      capital_event_status: "previsto" | "pago" | "atrasado" | "cancelado"
       compliance_status: "regular" | "pendente" | "alerta" | "critico"
       flow_kind: "aporte" | "resgate" | "provento" | "taxa" | "imposto"
       legal_case_status: "em_andamento" | "suspenso" | "acordo" | "encerrado"
@@ -1208,6 +1335,14 @@ export type Database = {
         | "trabalhista"
         | "societario"
         | "imobiliario"
+      private_strategy:
+        | "private_equity"
+        | "venture_capital"
+        | "infraestrutura"
+        | "real_estate"
+        | "agro"
+        | "credito_privado"
+        | "outro"
       risk_severity: "low" | "medium" | "high" | "critical"
       supplier_status: "homologado" | "em_analise" | "risco_critico" | "inativo"
     }
@@ -1358,6 +1493,8 @@ export const Constants = {
       ],
       asset_liquidity: ["d0", "d1", "d30", "longo_prazo", "iliquido"],
       asset_type: ["urbano", "rural", "veiculo", "outro"],
+      capital_event_kind: ["call", "distribution"],
+      capital_event_status: ["previsto", "pago", "atrasado", "cancelado"],
       compliance_status: ["regular", "pendente", "alerta", "critico"],
       flow_kind: ["aporte", "resgate", "provento", "taxa", "imposto"],
       legal_case_status: ["em_andamento", "suspenso", "acordo", "encerrado"],
@@ -1368,6 +1505,15 @@ export const Constants = {
         "trabalhista",
         "societario",
         "imobiliario",
+      ],
+      private_strategy: [
+        "private_equity",
+        "venture_capital",
+        "infraestrutura",
+        "real_estate",
+        "agro",
+        "credito_privado",
+        "outro",
       ],
       risk_severity: ["low", "medium", "high", "critical"],
       supplier_status: ["homologado", "em_analise", "risco_critico", "inativo"],
