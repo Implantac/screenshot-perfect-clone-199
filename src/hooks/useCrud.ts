@@ -51,6 +51,12 @@ import { seedDemo } from "@/lib/api/demo.functions";
 import { syncQuotes, type SyncQuotesResult } from "@/lib/api/quotes.functions";
 import { syncTesouro, type SyncTesouroResult } from "@/lib/api/tesouro.functions";
 import {
+  assignTransactionsToAccount,
+  recordAccountBalance,
+  type RecordBalanceResult,
+  type AssignResult,
+} from "@/lib/api/reconciliation.functions";
+import {
   createCommitment,
   updateCommitment,
   deleteCommitment,
@@ -544,6 +550,57 @@ export const useSyncTesouro = () => {
       console.error("[tesouro]", error);
       toast.error(error.message || "Falha ao sincronizar a renda fixa.");
     },
+  });
+};
+
+// ------------------------------------- conciliação de saldo (wave 28)
+
+/**
+ * Registra o saldo informado do banco para uma conta em uma data.
+ * Reimportar o mesmo fechamento atualiza a contraprova em vez de duplicá-la.
+ */
+export const useRecordAccountBalance = () => {
+  const queryClient = useQueryClient();
+  return useMutation<RecordBalanceResult, Error, {
+    account_id: string;
+    as_of: string;
+    balance: number;
+    source?: "ofx" | "manual" | "api" | "extrato";
+    note?: string;
+  }>({
+    mutationFn: (data) => recordAccountBalance({ data }),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ["account-reconciliation"] });
+      queryClient.invalidateQueries({ queryKey: ["account_balances"] });
+      if (!result.ok) {
+        toast.error(result.note ?? "Não foi possível gravar o saldo.");
+        return;
+      }
+      toast.success(result.replaced ? "Saldo do dia atualizado." : "Saldo registrado.");
+    },
+    onError: (error) => {
+      console.error("[reconciliation]", error);
+      toast.error(error.message || "Falha ao gravar o saldo da conta.");
+    },
+  });
+};
+
+/** Atribui conta a lançamentos órfãos (importados antes da wave 28). */
+export const useAssignTransactionsToAccount = () => {
+  const queryClient = useQueryClient();
+  return useMutation<AssignResult, Error, { account_id: string; transaction_ids: string[] }>({
+    mutationFn: (data) => assignTransactionsToAccount({ data }),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ["account-reconciliation"] });
+      queryClient.invalidateQueries({ queryKey: ["unassigned-transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      if (result.note) {
+        toast.error(result.note);
+        return;
+      }
+      toast.success(`${result.updated} lançamento(s) atribuído(s) à conta.`);
+    },
+    onError: (error) => toast.error(error.message || "Falha ao atribuir a conta."),
   });
 };
 

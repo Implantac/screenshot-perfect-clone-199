@@ -564,7 +564,7 @@ export const deleteTaxScenario = authed.inputValidator(idSchema).handler(async (
 export const importStatement = authed
   .inputValidator(importStatementSchema)
   .handler(async ({ data, context }) => {
-    const { entity_id, file_name, format, file_hash, rows } = data;
+    const { entity_id, file_name, format, file_hash, rows, account_id, ledger_balance } = data;
 
     // 1. O que já existe nesta entidade (em blocos, para não estourar a URL).
     const existing = new Set<string>();
@@ -615,6 +615,7 @@ export const importStatement = authed
     }
 
     // 3. Inserção. `title` é a descrição do extrato; `category` vem inferida.
+    // `account_id` (wave 28) é o que permite somar lançamentos por conta depois.
     const payload = fresh.map((row) => ({
       entity_id,
       title: row.description,
@@ -625,6 +626,7 @@ export const importStatement = authed
       external_id: row.external_id,
       source: format,
       import_batch_id: batch.id,
+      ...(account_id ? { account_id } : {}),
     }));
 
     let insertedIds: string[] = [];
@@ -661,6 +663,40 @@ export const importStatement = authed
       .update({ rows_imported: imported, rows_failed: fresh.length - imported })
       .eq("id", batch.id);
 
+    // 4. Contraprova da conciliação (wave 28): o saldo que veio no OFX.
+    // Falhar aqui NÃO desfaz a importação — os lançamentos já entraram e são a
+    // parte cara do trabalho. O operador informa o saldo à mão no painel.
+    let balanceNote: string | undefined;
+    if (account_id && ledger_balance) {
+      const { data: account, error: accountError } = await context.supabase
+        .from("accounts")
+        .select("id, entity_id")
+        .eq("id", account_id)
+        .maybeSingle();
+
+      if (accountError || !account) {
+        balanceNote = "Saldo do arquivo não gravado: conta não encontrada.";
+      } else {
+        const { error: balanceError } = await context.supabase.from("account_balances").upsert(
+          {
+            entity_id: account.entity_id,
+            account_id,
+            as_of: ledger_balance.as_of,
+            balance: ledger_balance.balance,
+            source: format === "ofx" ? "ofx" : "extrato",
+            note: `Saldo de fechamento do arquivo ${file_name}`,
+            created_by: context.userId,
+          },
+          { onConflict: "account_id,as_of" },
+        );
+        if (balanceError) {
+          balanceNote = /does not exist|schema cache|relation/i.test(balanceError.message)
+            ? "Saldo do arquivo não gravado: falta a migration 20261030320000_account_balances.sql."
+            : `Saldo do arquivo não gravado: ${balanceError.message}`;
+        }
+      }
+    }
+
     return {
       batchId: batch.id,
       imported,
@@ -668,6 +704,8 @@ export const importStatement = authed
       failed: fresh.length - imported,
       periodStart: dates[0] ?? null,
       periodEnd: dates[dates.length - 1] ?? null,
+      balanceRecorded: Boolean(account_id && ledger_balance && !balanceNote),
+      balanceNote,
     };
   });
 

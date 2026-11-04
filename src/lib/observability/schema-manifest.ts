@@ -278,6 +278,14 @@ export const MIGRATIONS: MigrationEntry[] = [
     columns: [],
     functions: ["system_event_counts", "system_events_recent"],
   },
+  {
+    file: "20261030320000_account_balances.sql",
+    wave: 28,
+    summary: "Conciliação de saldo por conta: vínculo do extrato e saldos informados pelo banco.",
+    tables: ["account_balances"],
+    columns: ["transactions.account_id"],
+    functions: ["account_balance_entity_guard"],
+  },
 ];
 
 /** Todas as tabelas que o aplicativo espera encontrar. */

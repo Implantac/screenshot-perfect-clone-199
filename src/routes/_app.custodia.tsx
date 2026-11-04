@@ -42,6 +42,7 @@ import { PositionForm } from "@/components/forms/PositionForm";
 import { CashFlowForm } from "@/components/forms/CashFlowForm";
 import { ReconciliationPanel } from "@/components/custody/ReconciliationPanel";
 import { TesouroPanel } from "@/components/custody/TesouroPanel";
+import { AccountReconciliationPanel } from "@/components/custody/AccountReconciliationPanel";
 import {
   summarizeAllocation,
   computeDrift,
@@ -458,12 +459,15 @@ function Custodia() {
       {tab === "renda-fixa" && <TesouroPanel entityFilter={entityFilter || undefined} />}
 
       {tab === "conciliacao" && (
-        <ReconciliationPanel
-          transactions={transactions ?? []}
-          flows={flows ?? []}
-          entities={entities ?? []}
-          entityFilter={entityFilter}
-        />
+        <div className="space-y-5">
+          <ReconciliationPanel
+            transactions={transactions ?? []}
+            flows={flows ?? []}
+            entities={entities ?? []}
+            entityFilter={entityFilter}
+          />
+          <AccountReconciliationPanel entityFilter={entityFilter || undefined} />
+        </div>
       )}
 
       {tab === "politica" && (

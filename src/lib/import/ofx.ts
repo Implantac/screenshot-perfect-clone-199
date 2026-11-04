@@ -25,6 +25,17 @@ export type OfxStatement = {
   bankId: string | null;
   accountId: string | null;
   currency: string | null;
+  /**
+   * Saldo de fechamento do extrato (`<LEDGERBAL>`), quando o banco manda.
+   *
+   * É a contraprova da conciliação de saldo (wave 28): com ele, importar o
+   * extrato já registra o saldo informado e a conferência acontece sozinha, sem
+   * o operador digitar nada. `null` quando o arquivo não traz o bloco — e aí a
+   * tela pede o saldo à mão, em vez de fingir que conciliou.
+   */
+  ledgerBalance: { amount: number; asOf: string | null } | null;
+  /** Saldo disponível (`<AVAILBAL>`), quando existir — informativo. */
+  availableBalance: { amount: number; asOf: string | null } | null;
   /** Data inicial/final informadas no arquivo (DTSTART/DTEND). */
   periodStart: string | null;
   periodEnd: string | null;
@@ -76,6 +87,19 @@ function numberValue(raw: string | null): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
+/**
+ * Extrai um bloco de saldo (`LEDGERBAL`/`AVAILBAL`).
+ *
+ * Os dois dialetos do OFX também aparecem aqui: 1.x fecha com `</LEDGERBAL>`,
+ * 2.x fecha com `</LEDGERBAL>` dentro de `<LEDGERBAL>`. O valor pode vir negativo
+ * (conta corrente no limite) e a data pode trazer hora (`20261030120000`).
+ */
+function balanceBlock(block: string): { amount: number; asOf: string | null } | null {
+  const amount = numberValue(tagValue(block, "BALAMT"));
+  if (amount === null) return null;
+  return { amount, asOf: parseOfxDate(tagValue(block, "DTASOF")) };
+}
+
 export function parseOfx(content: string): OfxStatement {
   const text = content.replace(/^\uFEFF/, "");
 
@@ -84,6 +108,9 @@ export function parseOfx(content: string): OfxStatement {
   const currency = tagValue(text, "CURDEF");
   const periodStart = parseOfxDate(tagValue(text, "DTSTART"));
   const periodEnd = parseOfxDate(tagValue(text, "DTEND"));
+
+  const ledgerBlock = /<LEDGERBAL>([\s\S]*?)(?:<\/LEDGERBAL>|(?=<\/BANKTRANLIST>)|(?=<AVAILBAL>)|$)/i.exec(text);
+  const availBlock = /<AVAILBAL>([\s\S]*?)(?:<\/AVAILBAL>|$)/i.exec(text);
 
   const transactions: OfxTransaction[] = [];
   const warnings: string[] = [];
@@ -120,7 +147,24 @@ export function parseOfx(content: string): OfxStatement {
   }
   if (transactions.length === 0) warnings.push("Nenhum lançamento encontrado no arquivo OFX.");
 
-  return { bankId, accountId, currency, periodStart, periodEnd, transactions, warnings };
+  const ledgerBalance = ledgerBlock ? balanceBlock(ledgerBlock[1]) : null;
+  if (!ledgerBalance) {
+    warnings.push(
+      "O arquivo não traz saldo de fechamento (LEDGERBAL): informe o saldo da conta na conciliação.",
+    );
+  }
+
+  return {
+    bankId,
+    accountId,
+    currency,
+    periodStart,
+    periodEnd,
+    ledgerBalance,
+    availableBalance: availBlock ? balanceBlock(availBlock[1]) : null,
+    transactions,
+    warnings,
+  };
 }
 
 /** Detecta se o conteúdo é OFX (a maioria dos arquivos começa com `OFXHEADER`). */

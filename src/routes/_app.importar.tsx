@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import {
+  useAccounts,
   useEntities,
   useImportBatches,
   useTransactions,
@@ -64,16 +65,25 @@ type Preview = {
   rows: NormalizedRow[];
   warnings: string[];
   removedInFile: number;
+  /** Wave 28: saldo de fechamento que veio no OFX (contraprova da conciliação). */
+  ledgerBalance: { asOf: string; balance: number } | null;
 };
 
 function Importar() {
   const { data: entities } = useEntities();
+  const { data: accounts } = useAccounts();
   const batches = useImportBatches();
   const transactions = useTransactions();
   const importStatement = useImportStatement();
   const deleteBatch = useDeleteImportBatch();
 
   const [entityId, setEntityId] = useState<string>("");
+  /**
+   * Conta do extrato (wave 28). Sem ela, os lançamentos entram sem vínculo e não
+   * participam da conciliação de saldo — a tela avisa, não bloqueia: importar o
+   * extrato continua sendo o trabalho caro.
+   */
+  const [accountId, setAccountId] = useState<string>("");
   const [preview, setPreview] = useState<Preview | null>(null);
   const [parsing, setParsing] = useState(false);
   const [onlyNew, setOnlyNew] = useState(true);
@@ -116,7 +126,10 @@ function Importar() {
       const isOfx = looksLikeOfx(text) || /\.ofx$/i.test(file.name);
       const format: "ofx" | "csv" = isOfx ? "ofx" : "csv";
 
-      const parsed = isOfx ? parseOfx(text) : parseCsv(text);
+      // União discriminada explícita: o CSV não tem saldo nem período, e o TS
+      // precisa saber disso antes de acessar `ledgerBalance`.
+      const ofxParsed = isOfx ? parseOfx(text) : null;
+      const parsed = ofxParsed ?? parseCsv(text);
       const normalized = isOfx ? normalizeOfx(parsed.transactions) : normalizeCsv(parsed.transactions);
       const deduped = dedupeWithinFile(normalized);
 
@@ -139,6 +152,16 @@ function Importar() {
       }
       const rows = deduped.rows.map((row) => ({ ...row, duplicate: existing.has(row.external_id) }));
 
+      const ledger =
+        ofxParsed?.ledgerBalance
+          ? ofxParsed.ledgerBalance.asOf
+            ? ofxParsed.ledgerBalance
+            : // Sem DTASOF, o fechamento é o fim do período do próprio arquivo.
+              ofxParsed.periodEnd
+              ? { amount: ofxParsed.ledgerBalance.amount, asOf: ofxParsed.periodEnd }
+              : null
+          : null;
+
       setPreview({
         fileName: file.name,
         format,
@@ -146,6 +169,7 @@ function Importar() {
         rows,
         warnings: parsed.warnings ?? [],
         removedInFile: deduped.removed,
+        ledgerBalance: ledger ? { asOf: ledger.asOf as string, balance: ledger.amount } : null,
       });
       toast.success(`${rows.length} lançamento(s) lido(s) de ${file.name}.`);
     } catch (error) {
@@ -199,9 +223,18 @@ function Importar() {
         format: preview.format,
         file_hash: preview.fileHash,
         rows,
+        ...(accountId ? { account_id: accountId } : {}),
+        ...(accountId && preview.ledgerBalance
+          ? { ledger_balance: { as_of: preview.ledgerBalance.asOf, balance: preview.ledgerBalance.balance } }
+          : {}),
       });
       toast.success(
         `${result.imported} lançamento(s) importado(s); ${result.duplicated} já existiam.`,
+        result.balanceRecorded
+          ? { description: "Saldo de fechamento do arquivo registrado: a conciliação já pode ser conferida." }
+          : result.balanceNote
+            ? { description: result.balanceNote }
+            : undefined,
       );
       setPreview(null);
       batches.refetch();
@@ -236,6 +269,33 @@ function Importar() {
   }, [transactions.data, currentEntityId]);
 
   const shown = preview ? (onlyNew ? newRows : preview.rows) : [];
+
+  /**
+   * Avisos da wave 28 na pré-visualização: o que a importação vai (ou não vai)
+   * deixar para a conciliação de saldo. Aparece antes do commit, não depois.
+   */
+  const balanceHint = !preview
+    ? null
+    : !accountId
+      ? {
+          tone: "neutral" as const,
+          title: "Sem conta selecionada",
+          detail:
+            "Os lançamentos entram, mas não participam da conciliação de saldo. Escolha a conta acima para vincular.",
+        }
+      : preview.ledgerBalance
+        ? {
+            tone: "ok" as const,
+            title: `Saldo de fechamento do arquivo: ${brl(preview.ledgerBalance.balance)} em ${dateBr(preview.ledgerBalance.asOf)}`,
+            detail:
+              "Será gravado como contraprova da conciliação — a conferência acontece sem você digitar nada.",
+          }
+        : {
+            tone: "warn" as const,
+            title: "Este arquivo não traz saldo de fechamento",
+            detail:
+              "CSV (ou OFX sem LEDGERBAL) não informa saldo. Importe assim mesmo e informe o saldo em Custódia → Conciliação.",
+          };
   const batchesMissing = batches.error && isMissingTableError(batches.error);
 
   return (
@@ -252,6 +312,23 @@ function Importar() {
             digital do lançamento.
           </p>
         </div>
+        <label className="flex items-center gap-2 text-sm">
+          <span className="text-muted-foreground">Conta do extrato</span>
+          <select
+            className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+            value={accountId}
+            onChange={(event) => setAccountId(event.target.value)}
+          >
+            <option value="">— sem conta (não concilia saldo) —</option>
+            {(accounts ?? [])
+              .filter((account) => !currentEntityId || account.entity_id === currentEntityId)
+              .map((account) => (
+                <option key={account.id} value={account.id}>
+                  {account.name}
+                </option>
+              ))}
+          </select>
+        </label>
         <label className="flex items-center gap-2 text-sm">
           <span className="text-muted-foreground">Entidade</span>
           <select
@@ -388,6 +465,21 @@ function Importar() {
               As colunas de importação ainda não existem neste banco. Aplique{" "}
               <code>20261030160000_imports.sql</code> para liberar a gravação — a leitura do arquivo
               já está validada acima.
+            </p>
+          ) : null}
+
+          {balanceHint ? (
+            <p
+              className={cn(
+                "mx-4 rounded-md p-3 text-xs",
+                balanceHint.tone === "ok"
+                  ? "bg-emerald-500/10 text-emerald-700"
+                  : balanceHint.tone === "warn"
+                    ? "bg-amber-500/10 text-amber-700"
+                    : "bg-muted text-muted-foreground",
+              )}
+            >
+              <strong>{balanceHint.title}.</strong> {balanceHint.detail}
             </p>
           ) : null}
 

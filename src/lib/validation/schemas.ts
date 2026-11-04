@@ -411,6 +411,19 @@ export const importStatementSchema = z.object({
   format: z.enum(["ofx", "csv"]),
   file_hash: z.string().trim().max(64).optional().or(z.literal("")),
   rows: z.array(importRowSchema).min(1, "Nada para importar.").max(2000, "Limite de 2.000 linhas por arquivo."),
+  /** Wave 28: conta a que o extrato pertence. Sem isso, a conciliação de saldo não tem por onde começar. */
+  account_id: uuid.optional(),
+  /**
+   * Saldo de fechamento que veio no arquivo (OFX `LEDGERBAL`). Quando presente,
+   * a importação já grava a contraprova em `account_balances` e a conferência
+   * acontece sem digitação.
+   */
+  ledger_balance: z
+    .object({
+      as_of: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data do saldo inválida."),
+      balance: z.coerce.number().finite(),
+    })
+    .optional(),
 });
 export type ImportStatementInput = z.input<typeof importStatementSchema>;
 export type ImportRowInput = z.input<typeof importRowSchema>;

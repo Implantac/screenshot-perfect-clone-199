@@ -280,7 +280,7 @@ describe("manifesto x arquivos em disco", () => {
 
   it("a contagem publicada no README/docs bate com o manifesto", () => {
     expect(MIGRATION_COUNT).toBe(files.length);
-    expect(MIGRATION_COUNT).toBe(28);
+    expect(MIGRATION_COUNT).toBe(29);
   });
 
   it("as tabelas declaradas realmente aparecem no SQL da migration", () => {

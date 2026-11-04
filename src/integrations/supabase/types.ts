@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_balances: {
+        Row: {
+          account_id: string
+          as_of: string
+          balance: number
+          created_at: string
+          created_by: string | null
+          currency: string
+          entity_id: string
+          id: string
+          note: string | null
+          source: string
+        }
+        Insert: {
+          account_id: string
+          as_of: string
+          balance: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          entity_id: string
+          id?: string
+          note?: string | null
+          source?: string
+        }
+        Update: {
+          account_id?: string
+          as_of?: string
+          balance?: number
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          entity_id?: string
+          id?: string
+          note?: string | null
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_balances_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "account_balances_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       accounts: {
         Row: {
           account_number: string | null
@@ -1909,6 +1963,7 @@ export type Database = {
       }
       transactions: {
         Row: {
+          account_id: string | null
           amount: number
           asset_id: string | null
           category: string | null
@@ -1923,6 +1978,7 @@ export type Database = {
           type: string | null
         }
         Insert: {
+          account_id?: string | null
           amount: number
           asset_id?: string | null
           category?: string | null
@@ -1937,6 +1993,7 @@ export type Database = {
           type?: string | null
         }
         Update: {
+          account_id?: string | null
           amount?: number
           asset_id?: string | null
           category?: string | null

@@ -124,6 +124,10 @@ export type ImportResult = {
   failed: number;
   periodStart: string | null;
   periodEnd: string | null;
+  /** Wave 28: o saldo de fechamento do arquivo virou contraprova da conciliação. */
+  balanceRecorded?: boolean;
+  /** Por que o saldo não foi gravado, quando não foi (a importação segue válida). */
+  balanceNote?: string;
 };
 
 export type ImportSummary = {
